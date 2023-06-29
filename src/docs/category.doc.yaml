@@ -1,0 +1,31 @@
+swagger: '2.0'
+info:
+  description: 'Quản lý API dự án framework 2'
+  version: '1.0.0'
+  title: 'Swagger Quản lý dự án framework 2'
+  contact:
+    email: 'hungdang02042003@gmail.com'
+  license:
+    name: 'Nginx'
+tags:
+  - name: Category
+    description: All data of Category
+paths:
+  /category:
+    get:
+      tags:
+        - Category
+      summary: Lấy dữ liệu danh mục
+      description: Lấy dữ liệu danh mục
+      responses:
+        200:
+          description: Thành công
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                _id:
+                  type: string
+                name:
+                  type: string
