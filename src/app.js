@@ -18,7 +18,7 @@ app.use(cors());
 
 /* routes */
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDefinition));
-app.use('/api/', rootRoutes);
+app.use('/api', rootRoutes);
 
 /* connectDb */
 connectDb();

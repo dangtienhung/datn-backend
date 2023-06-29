@@ -14,7 +14,7 @@ export const swaggerDefinition = swaggerJSDoc({
     },
     servers: [
       {
-        url: `http://localhost:${process.env.PORT || 8000}/api/v1`,
+        url: `http://localhost:${process.env.PORT || 8000}/api`,
         description: 'Development API',
       },
     ],

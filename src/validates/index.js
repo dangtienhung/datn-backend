@@ -1,1 +1,3 @@
-console.log('cậu ăn cơm chưa ahihi');
+import { categoryValidate } from './category.validate.js';
+
+export { categoryValidate };
