@@ -2,6 +2,9 @@ import User from "../models/user.model.js";
 import { signupSchema } from "../validates/auth.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { generateRefreshToken, generateToken } from "../configs/token.js"
+import dotenv from 'dotenv'
+dotenv.config()
 
 
 
@@ -46,7 +49,7 @@ export const userController = {
     }
   },
   // register
-  register: async () => {
+  register: async (req, res) => {
     try {
       const { error } = await signupSchema.validate(
         req.body,
@@ -62,12 +65,11 @@ export const userController = {
       const findUser = await User.findOne({ email: req.body?.email })
       if (!findUser) {
         // create user
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const user = await User.create({
           ...req.body,
           password: hashedPassword,
         });
-
 
         return res.status(201).json({
           message: "register success",
@@ -87,51 +89,57 @@ export const userController = {
         throw new Error('User already exists')
       }
     } catch (error) {
-      return res.status(400).json({
+      res.status(400).json({
         message: error,
       });
     }
   },
   // login
   login: async (req, res) => {
-    const { email, password } = req.body;
-    // check user exists or not
-    const findUser = await User.findOne({ email });
-    if (findUser && (await findUser.isPasswordMatched(password))) {
+    try {
+      const { email, password } = req.body;
+      // check user exists or not
+      const findUser = await User.findOne({ email });
+      if (!findUser) {
+        return res.status(400).json({ message: "Tài khoản không tồn tại" });
+      }
+      const isMatch = await bcrypt.compare(password, findUser.password)
+      if (!isMatch) {
+        return res.status(400).json({ message: "Mật khẩu không khớp" });
+      }
 
       const token = await generateToken(findUser?._id)
       const refreshToken = await generateRefreshToken(findUser?._id)
-
-      const response = {
-        _id: findUser?._id,
-        username: findUser?.username,
-        slug: findUser?.slug,
-        email: findUser?.email,
-        phone: findUser?.phone,
-        address: findUser.address,
-        accessToken: token,
-        refreshToken,
-      }
-
-      res.json({
+      return res.json({
         message: "loign success",
-        user: response
+        user: {
+          _id: findUser?._id,
+          username: findUser?.username,
+          slug: findUser?.slug,
+          email: findUser?.email,
+          phone: findUser?.phone,
+          address: findUser.address,
+          accessToken: token,
+          refreshToken,
+        }
       });
+
+
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
     }
-    else {
-      throw new Error("Invalid Creadentrals")
-    }
+
   },
 
   handleRefreshToken: async (req, res) => {
     try {
-      const { token: refreshToken } = req.params
+      const { token: refreshToken } = req.params;
 
 
-      const isHasUser = jwt.verify(refreshToken, process.env.SECRET_REFRESH)
-      if (!user || !refreshToken) throw new Error("No refresh token present in db or not matched");
+      const isHasUser = jwt.verify(refreshToken, process.env.JWT_SECRET)
 
       const user = await User.findById(isHasUser?.id)
+      if (!user || !refreshToken) throw new Error("No refresh token present in db or not matched");
 
       if (refreshToken && user) {
 
@@ -144,7 +152,7 @@ export const userController = {
       }
     } catch (error) {
       res.json({
-        message: "Token invalid"
+        message: error.message
       })
     }
   }
@@ -157,6 +165,7 @@ export const userController = {
       const result = await User.findByIdAndUpdate(_id, req.body, {
         new: true
       })
+      result.password = undefined
       res.json({
         message: "update success",
         user: result
@@ -170,7 +179,10 @@ export const userController = {
 
     try {
       const userDelete = await User.findByIdAndDelete(_id)
-      res.json(userDelete)
+      res.json({
+        message: 'User deleted successfully',
+        user: userDelete
+      })
     } catch (error) {
       throw new Error(error)
     }
