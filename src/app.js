@@ -7,6 +7,7 @@ import express from 'express';
 import morgan from 'morgan';
 import rootRoutes from './routes/index.js';
 import swaggerUI from 'swagger-ui-express';
+import { errHandler, notFound } from './middlewares/errhandle.js';
 
 dotenv.config();
 
@@ -20,6 +21,11 @@ app.use(cors());
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDefinition));
 app.use('/api', rootRoutes);
 
+
+
+app.use(notFound)
+
+app.use(errHandler)
 /* connectDb */
 connectDb();
 
