@@ -1,6 +1,7 @@
 import YAML from 'yamljs';
 import express from 'express';
 import swaggerUI from 'swagger-ui-express';
+import { swaggerDefinition } from '../configs/swagger.config.js';
 
 const router = express.Router();
 
@@ -25,6 +26,10 @@ const swaggerDocs = [
   {
     endPoint: 'Topping',
     Docs: YAML.load('./src/docs/topping.doc.yaml'),
+  },
+  {
+    endPoint: '',
+    Docs: swaggerDefinition,
   },
 ];
 

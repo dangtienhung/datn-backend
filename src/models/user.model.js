@@ -26,6 +26,23 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: String,
     },
+    products: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+      },
+    ],
+    order: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Order',
+      },
+    ],
+    role: {
+      type: String,
+      enum: ['admin', 'staff', 'customer', 'shipper'],
+      default: 'customer',
+    },
   },
   { timestamps: true, versionKey: false }
 );
