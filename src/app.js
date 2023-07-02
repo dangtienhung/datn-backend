@@ -1,12 +1,12 @@
 import * as dotenv from 'dotenv';
 
-import { connectDb, swaggerDefinition } from './configs/index.js';
+import { connectDb } from './configs/index.js';
 
 import cors from 'cors';
 import express from 'express';
 import morgan from 'morgan';
 import rootRoutes from './routes/index.js';
-import swaggerUI from 'swagger-ui-express';
+import middleSwaggers from './docs/index.js';
 
 dotenv.config();
 
@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(cors());
 
 /* routes */
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDefinition));
+app.use('/api-docs', middleSwaggers);
 app.use('/api', rootRoutes);
 
 /* connectDb */
