@@ -3,7 +3,7 @@ import Product from '../models/product.model.js';
 import productValidate from '../validates/product.validate.js';
 
 export const ProductController = {
-  createProduct: async (req, res) => {
+  createProduct: async (req, res, next) => {
     try {
       const { category } = req.body;
       console.log(req.body);
@@ -24,11 +24,11 @@ export const ProductController = {
       await existCategory.updateOne({ $addToSet: { products: product._id } });
       return res.status(200).json({ message: 'succes', data: product });
     } catch (error) {
-      return res.status(500).json({ message: 'fail', err: error });
+      next(error);
     }
   },
 
-  getAllProducts: async (req, res) => {
+  getAllProducts: async (req, res, next) => {
     try {
       const { _page = 1, limit = 10, q } = req.query;
       const options = {
@@ -53,11 +53,11 @@ export const ProductController = {
       }
       return res.status(200).json({ message: 'succes', data: products });
     } catch (error) {
-      return res.status(500).json({ message: 'fail', err: error });
+      next(error);
     }
   },
 
-  getProduct: async (req, res) => {
+  getProduct: async (req, res, next) => {
     try {
       const product = await Product.findById(req.params.id).populate(
         'category size topping',
@@ -67,10 +67,12 @@ export const ProductController = {
         return res.status(404).json({ message: 'fail', err: 'Not found Product' });
       }
       return res.status(200).json({ message: 'success', data: product });
-    } catch (error) {}
+    } catch (error) {
+      next(error);
+    }
   },
 
-  updateProduct: async (req, res) => {
+  updateProduct: async (req, res, next) => {
     try {
       const { category } = req.body;
       const { error } = productValidate.validate(req.body, { abortEarly: false });
@@ -98,10 +100,12 @@ export const ProductController = {
       }
       await existCategory.updateOne({ $addToSet: { products: product._id } });
       return res.status(200).json({ message: 'success', data: product });
-    } catch (error) {}
+    } catch (error) {
+      next(error);
+    }
   },
 
-  deleteRealProduct: async (req, res) => {
+  deleteRealProduct: async (req, res, next) => {
     try {
       const product = await Product.findByIdAndRemove(req.params.id);
       const updateCategory = await Category.findByIdAndUpdate(product.category, {
@@ -115,10 +119,10 @@ export const ProductController = {
       }
       return res.status(200).json({ message: 'success', data: product });
     } catch (error) {
-      return res.status(500).json({ message: 'fail', err: error });
+      next(error);
     }
   },
-  deleteFakeProduct: async (req, res) => {
+  deleteFakeProduct: async (req, res, next) => {
     try {
       const product = await Product.findByIdAndUpdate(
         req.params.id,
@@ -132,10 +136,10 @@ export const ProductController = {
       }
       return res.status(200).json({ message: 'success', data: product });
     } catch (error) {
-      return res.status(500).json({ message: 'fail', err: error });
+      next(error);
     }
   },
-  restoreProduct: async (req, res) => {
+  restoreProduct: async (req, res, next) => {
     try {
       const product = await Product.findByIdAndUpdate(
         req.params.id,
@@ -149,7 +153,7 @@ export const ProductController = {
       }
       return res.status(200).json({ message: 'success', data: product });
     } catch (error) {
-      return res.status(500).json({ message: 'fail', err: error });
+      next(error);
     }
   },
 };

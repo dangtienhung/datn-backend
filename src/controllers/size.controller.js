@@ -2,7 +2,7 @@ import Size from '../models/size.model.js';
 import SizeValidate from '../validates/size.validate.js';
 
 export const SizeController = {
-  createSize: async (req, res) => {
+  createSize: async (req, res, next) => {
     try {
       const { error } = SizeValidate.validate(req.body, { abortEarly: false });
       if (error) {
@@ -17,11 +17,11 @@ export const SizeController = {
 
       return res.status(200).json({ message: 'succes', data: size });
     } catch (error) {
-      return res.status(500).json({ message: 'fail', err: error });
+      next(error);
     }
   },
 
-  getAllSize: async (req, res) => {
+  getAllSize: async (req, res, next) => {
     try {
       const size = await Size.find({});
       if (!size) {
@@ -29,21 +29,23 @@ export const SizeController = {
       }
       return res.status(200).json({ message: 'succes', data: size });
     } catch (error) {
-      return res.status(500).json({ message: 'fail', err: error });
+      next(error);
     }
   },
 
-  getSize: async (req, res) => {
+  getSize: async (req, res, next) => {
     try {
       const size = await Size.findById(req.params.id);
       if (!size) {
         return res.status(404).json({ message: 'fail', err: 'Not found Size' });
       }
       return res.status(200).json({ message: 'success', data: size });
-    } catch (error) {}
+    } catch (error) {
+      next(error);
+    }
   },
 
-  updateSize: async (req, res) => {
+  updateSize: async (req, res, next) => {
     try {
       const { error } = SizeValidate.validate(req.body, { abortEarly: false });
       if (error) {
@@ -56,10 +58,12 @@ export const SizeController = {
         return res.status(404).json({ message: 'fail', err: 'Not found Size to update' });
       }
       return res.status(200).json({ message: 'success', data: size });
-    } catch (error) {}
+    } catch (error) {
+      next(error);
+    }
   },
 
-  deleteSize: async (req, res) => {
+  deleteSize: async (req, res, next) => {
     try {
       const size = await Size.findByIdAndRemove(req.params.id);
       if (!size) {
@@ -67,7 +71,7 @@ export const SizeController = {
       }
       return res.status(200).json({ message: 'success', data: size });
     } catch (error) {
-      return res.status(500).json({ message: 'fail', err: error });
+      next(error);
     }
   },
 };

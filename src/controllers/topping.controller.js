@@ -2,7 +2,7 @@ import Topping from '../models/topping.model.js';
 import toppingValidate from '../validates/topping.validate.js';
 
 export const toppingController = {
-  createTopping: async (req, res) => {
+  createTopping: async (req, res, next) => {
     try {
       console.log('Hello');
       const { error } = toppingValidate.validate(req.body, { abortEarly: false });
@@ -18,11 +18,11 @@ export const toppingController = {
 
       return res.status(200).json({ message: 'succes', data: topping });
     } catch (error) {
-      return res.status(500).json({ message: 'fail', err: error });
+      next(error);
     }
   },
 
-  getAllTopping: async (req, res) => {
+  getAllTopping: async (req, res, next) => {
     try {
       const topping = await Topping.find({});
       if (!topping) {
@@ -30,23 +30,24 @@ export const toppingController = {
       }
       return res.status(200).json({ message: 'succes', data: topping });
     } catch (error) {
-      return res.status(500).json({ message: 'fail', err: error });
+      next(error);
     }
   },
 
-  getTopping: async (req, res) => {
+  getTopping: async (req, res, next) => {
     try {
       const topping = await Topping.findById(req.params.id);
+      console.log(req.params.id);
       if (!topping) {
         return res.status(404).json({ message: 'fail', err: 'Not found Topping' });
       }
       return res.status(200).json({ message: 'success', data: topping });
     } catch (error) {
-      return res.status(500).json({ message: 'fail', err: error });
+      next(error);
     }
   },
 
-  updateTopping: async (req, res) => {
+  updateTopping: async (req, res, next) => {
     try {
       const { error } = toppingValidate.validate(req.body, { abortEarly: false });
       if (error) {
@@ -60,11 +61,11 @@ export const toppingController = {
       }
       return res.status(200).json({ message: 'success', data: topping });
     } catch (error) {
-      return res.status(500).json({ message: 'fail', err: error });
+      next(error);
     }
   },
 
-  deleteTopping: async (req, res) => {
+  deleteTopping: async (req, res, next) => {
     try {
       const topping = await Topping.findByIdAndRemove(req.params.id);
       if (!topping) {
@@ -72,7 +73,7 @@ export const toppingController = {
       }
       return res.status(200).json({ message: 'success', data: topping });
     } catch (error) {
-      return res.status(500).json({ message: 'fail', err: error });
+      next(error);
     }
   },
 };
