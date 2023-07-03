@@ -17,8 +17,8 @@ const productValidate = joi.object({
     'any.required:': 'Price is required',
   }),
   category: joi.string().required(),
-  size: joi.string().required(),
-  topping: joi.string().required(),
+  size: joi.array().items(joi.string()),
+  topping: joi.array().items(joi.string()),
   is_deleted: joi.boolean(),
 });
 

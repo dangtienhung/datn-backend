@@ -187,9 +187,13 @@ components:
         category:
           type: string
         size:
-          type: string
+          type: array
+          items:
+            type: string
         topping:
-          type: string
+          type: array
+          items:
+            type: string
         is_deleted:
           type: boolean
           default: false

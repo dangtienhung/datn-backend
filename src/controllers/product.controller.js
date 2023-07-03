@@ -131,6 +131,12 @@ export const ProductController = {
         },
         { new: true }
       );
+      const updateCategory = await Category.findByIdAndUpdate(product.category, {
+        $pull: { products: product._id },
+      });
+      if (!updateCategory) {
+        return res.status(404).json({ message: 'fail', err: 'Delete Product failed' });
+      }
       if (!product) {
         return res.status(404).json({ message: 'fail', err: 'Delete Product failed' });
       }
@@ -148,8 +154,14 @@ export const ProductController = {
         },
         { new: true }
       );
+      const updateCategory = await Category.findByIdAndUpdate(product.category, {
+        $addToSet: { products: product._id },
+      });
+      if (!updateCategory) {
+        return res.status(404).json({ message: 'fail', err: 'Restore Product failed' });
+      }
       if (!product) {
-        return res.status(404).json({ message: 'fail', err: 'Delete Product failed' });
+        return res.status(404).json({ message: 'fail', err: 'Restore Product failed' });
       }
       return res.status(200).json({ message: 'success', data: product });
     } catch (error) {
