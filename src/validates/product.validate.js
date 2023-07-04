@@ -11,14 +11,14 @@ const productValidate = joi.object({
     'string.empty': 'Description is not allowed to be empty',
     'any.required': 'Description is required',
   }),
-  image: joi.string().required(),
+  image: joi.array().items(joi.string()).required(),
   price: joi.number().required({
     'number.base': 'Price must be a string',
     'any.required:': 'Price is required',
   }),
   category: joi.string().required(),
-  size: joi.array().items(joi.string()),
-  topping: joi.array().items(joi.string()),
+  size: joi.array().items(joi.string()).required(),
+  topping: joi.array().items(joi.string()).required(),
   is_deleted: joi.boolean(),
 });
 

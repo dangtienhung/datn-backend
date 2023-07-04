@@ -8,7 +8,6 @@ import morgan from 'morgan';
 import rootRoutes from './routes/index.js';
 import middleSwaggers from './docs/index.js';
 import { errHandler, notFound } from './middlewares/errhandle.js';
-// import 'express-async-errors';
 
 dotenv.config();
 

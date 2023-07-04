@@ -1,8 +1,9 @@
-import cloudinary from '../config/cloudinary.js';
+import cloudinary from '../configs/cloudinary.js';
 
-export const uploadImage = async (req, res) => {
+export const uploadImage = async (req, res, next) => {
+  console.log(req.files);
   const files = req.files;
-  if (!Array.isArray(files)) {
+  if (!Array.isArray(files) || files.length <= 0) {
     return res.status(400).json({ error: 'No files were uploaded' });
   }
   try {
@@ -10,7 +11,7 @@ export const uploadImage = async (req, res) => {
       // Sử dụng Cloudinary API để upload file lên Cloudinary
       return cloudinary.uploader.upload(file.path);
     });
-    console.log('uploadPromises', uploadPromises);
+    // console.log('uploadPromises', uploadPromises);
 
     // Chờ cho tất cả các file đều được upload lên Cloudinary
     const results = await Promise.all(uploadPromises);
@@ -28,12 +29,16 @@ export const uploadImage = async (req, res) => {
 export const deleteImage = async (req, res) => {
   const publicId = req.params.publicId;
   try {
-    const result = await cloudinary.uploader.destroy(publicId);
+    const { result } = await cloudinary.uploader.destroy(publicId);
+    if (result == 'not found') {
+      return res.status(404).json({ message: 'fail', error: 'Not found Image to delete' });
+    }
     return res.status(200).json({ message: 'Xóa ảnh thành công', result });
   } catch (error) {
     res.status(500).json({ error: error.message || 'Error deleting image' });
   }
 };
+
 export const updateImage = async (req, res) => {
   const files = req.files;
   if (!Array.isArray(files)) {

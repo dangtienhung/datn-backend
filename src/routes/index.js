@@ -6,6 +6,7 @@ import sizeRoutes from './size.routes.js';
 import toppingRoutes from './topping.routes.js';
 import productRoutes from './product.routes.js';
 import userRoutes from './auth.routes.js';
+import uploadRouter from './uploadfiles.routes.js';
 
 const router = express.Router();
 
@@ -17,6 +18,7 @@ const rootRoutes = [
   sizeRoutes,
   toppingRoutes,
   productRoutes,
+  uploadRouter,
 ];
 
 rootRoutes.map((route) => {

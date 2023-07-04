@@ -28,6 +28,10 @@ const swaggerDocs = [
     Docs: YAML.load('./src/docs/topping.doc.yaml'),
   },
   {
+    endPoint: 'uploadfile',
+    Docs: YAML.load('./src/docs/uploadfile.doc.yaml'),
+  },
+  {
     endPoint: '',
     Docs: swaggerDefinition,
   },
