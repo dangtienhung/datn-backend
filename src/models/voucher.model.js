@@ -1,27 +1,29 @@
+import moment from 'moment';
 import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 
+moment().format();
+
 const voucherSchema = new mongoose.Schema(
   {
-    nameVoucher: {
-      type: String,
-      required: true,
-    },
-    sale: {
-      type: Number,
-      require: true,
-    },
-    startDate: {
-      type: String,
-    },
-    endDate: {
-      type: String,
-    },
+    code: { type: String, required: true, unique: true },
+    discount: { type: Number, require: true },
+    sale: { type: Number, require: true },
+    startDate: { type: Date, default: Date.now },
+    // endDate sẽ hết hạn sau 7 ngày kể từ ngày tạo
+    endDate: { type: Date, default: () => moment().add(7, 'days').toDate() },
+    isActive: { type: Boolean, default: true },
   },
   { timestamps: true, versionKey: false }
 );
 voucherSchema.plugin(mongoosePaginate);
 
+/* kiểm tra xem voucher nào còn hoạt động và còn hiệu lực không */
+// voucherSchema.methods.isActive = function () {
+//   const currentDate = new Date();
+//   return this.isActive && this.startDate <= currentDate && this.endDate >= currentDate;
+// };
+
 const Voucher = mongoose.model('Voucher', voucherSchema);
 
-export default voucherSchema;
+export default Voucher;
