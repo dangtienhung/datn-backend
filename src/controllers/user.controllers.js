@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { signupSchema } from '../validates/auth.js';
+import Role from '../models/role.model.js';
 
 dotenv.config();
 
@@ -61,11 +62,18 @@ export const userController = {
       const findUser = await User.findOne({ email: req.body?.email });
       if (!findUser) {
         // create user
+        const roleUser = await Role.findOne({ name: 'customer' });
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const user = await User.create({
           ...req.body,
           password: hashedPassword,
+          role: roleUser._id,
         });
+        await Role.updateOne({ name: 'customer' }, { $addToSet: { users: user._id } });
+
+        if (!roleUser) {
+          return res.status(400).json({ message: 'fail', err: 'Register fail' });
+        }
 
         return res.status(201).json({
           message: 'register success',
@@ -83,7 +91,7 @@ export const userController = {
         throw new Error('User already exists');
       }
     } catch (error) {
-      res.status(400).json({
+      res.status(500).json({
         message: error,
       });
     }
@@ -102,8 +110,9 @@ export const userController = {
         return res.status(400).json({ message: 'Mật khẩu không khớp' });
       }
 
-      const token = await generateToken(findUser?._id);
-      const refreshToken = await generateRefreshToken(findUser?._id);
+      console.log(findUser);
+      const token = generateToken(findUser?._id);
+      const refreshToken = generateRefreshToken(findUser?._id);
       return res.json({
         message: 'loign success',
         user: {
@@ -146,11 +155,10 @@ export const userController = {
     }
   },
   updateUser: async (req, res) => {
-    const { _id } = req.user;
+    // const { _id } = req.user;
     // check id
-
     try {
-      const result = await User.findByIdAndUpdate(_id, req.body, {
+      const result = await User.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
       });
       result.password = undefined;
@@ -163,10 +171,10 @@ export const userController = {
     }
   },
   deleteUser: async (req, res) => {
-    const { _id } = req.user;
-
+    // const { _id } = req.user;
     try {
-      const userDelete = await User.findByIdAndDelete(_id);
+      const userDelete = await User.findByIdAndDelete(req.params.id);
+      await Role.findByIdAndUpdate(userDelete.role, { $pull: { users: userDelete._id } });
       res.json({
         message: 'User deleted successfully',
         user: userDelete,
@@ -178,9 +186,9 @@ export const userController = {
   // update passwword
   updatePassword: async (req, res) => {
     try {
-      const { _id } = req.user;
+      // const { _id } = req.user;
       const { password, passwordNew } = req.body;
-      const user = await User.findById(_id);
+      const user = await User.findById(req.params.id);
       if (findUser && (await findUser.isPasswordMatched(password))) {
         // if (password && user) {
         const hashedPassword = await bcrypt.hash(passwordNew, 10);
@@ -192,6 +200,23 @@ export const userController = {
       }
     } catch (error) {
       res.json({ message: error });
+    }
+  },
+
+  changeRoleUser: async (req, res, next) => {
+    try {
+      const { id, idRole } = req.params;
+      const user = await User.findById(id);
+      const oldRole = await Role.findByIdAndUpdate(user.role, { $pull: { users: id } });
+      await user.updateOne({ role: idRole });
+      const newRole = await Role.findByIdAndUpdate(idRole, { $addToSet: { users: id } });
+
+      if (!user || !oldRole || !newRole) {
+        return res.status(404).send({ message: 'fail', err: 'Change Role Failed' });
+      }
+      return res.status(200).send({ message: 'success', data: user });
+    } catch (error) {
+      next(error);
     }
   },
 };

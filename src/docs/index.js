@@ -32,6 +32,14 @@ const swaggerDocs = [
     Docs: YAML.load('./src/docs/uploadfile.doc.yaml'),
   },
   {
+    endPoint: 'Roles',
+    Docs: YAML.load('./src/docs/role.doc.yaml'),
+  },
+  {
+    endPoint: 'User',
+    Docs: YAML.load('./src/docs/autho.doc.yaml'),
+  },
+  {
     endPoint: '',
     Docs: swaggerDefinition,
   },

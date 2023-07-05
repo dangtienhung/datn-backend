@@ -7,6 +7,7 @@ import toppingRoutes from './topping.routes.js';
 import productRoutes from './product.routes.js';
 import userRoutes from './auth.routes.js';
 import uploadRouter from './uploadfiles.routes.js';
+import RoleRoutes from './role.router.js';
 
 const router = express.Router();
 
@@ -19,6 +20,7 @@ const rootRoutes = [
   toppingRoutes,
   productRoutes,
   uploadRouter,
+  RoleRoutes,
 ];
 
 rootRoutes.map((route) => {

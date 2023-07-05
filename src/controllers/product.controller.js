@@ -6,7 +6,6 @@ export const ProductController = {
   createProduct: async (req, res, next) => {
     try {
       const { category } = req.body;
-      console.log(req.body);
       const { error } = productValidate.validate(req.body, { abortEarly: false });
       if (error) {
         return res

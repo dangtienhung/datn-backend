@@ -199,3 +199,13 @@ components:
         is_deleted:
           type: boolean
           default: false
+
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []

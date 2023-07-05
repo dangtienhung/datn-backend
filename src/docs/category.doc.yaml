@@ -1,4 +1,4 @@
-swagger: '2.0'
+openapi: 3.0.3
 info:
   description: 'Quản lý API dự án framework 2'
   version: '1.0.0'
@@ -230,3 +230,13 @@ components:
           type: string
           format: date-time
           description: Ngày cập nhật danh mục
+
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []

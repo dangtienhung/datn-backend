@@ -39,9 +39,11 @@ const userSchema = new mongoose.Schema(
       },
     ],
     role: {
-      type: String,
-      enum: ['admin', 'staff', 'customer', 'shipper'],
-      default: 'customer',
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Role',
+      // type: String,
+      // enum: ['admin', 'staff', 'customer', 'shipper'],
+      // default: 'customer',
     },
   },
   { timestamps: true, versionKey: false }

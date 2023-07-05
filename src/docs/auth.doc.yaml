@@ -1,3 +1,4 @@
+openapi: 3.0.3
 tags:
   - name: Authentication
     description: Authentication is the process of verifying the identity of a user or process.
@@ -126,3 +127,13 @@ components:
         message:
           type: string
           description: Thông báo lỗi
+
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []

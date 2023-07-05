@@ -6,7 +6,7 @@ dotenv.config();
 
 export const swaggerDefinition = swaggerJSDoc({
   swaggerDefinition: {
-    openapi: '3.0.0',
+    openapi: '3.0.3',
     info: {
       title: 'Be dự án tốt nghiệp',
       version: '1.0.0',

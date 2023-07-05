@@ -1,3 +1,26 @@
+openapi: 3.0.3
+info:
+  title: This is Crud User
+  description: Quan ly du an fr 2
+  version: 1.0.0
+  contact:
+    email: .....@gmail.com
+  liscene:
+    name: Apache 2.0
+    url: 'http://apache.org'
+servers:
+  - url: '{protocol}://localhost:{port}/api'
+    variables:
+      port:
+        enum:
+          - '8000'
+          - '3000'
+        default: '8000'
+      protocol:
+        enum:
+          - 'http'
+          - 'https'
+        default: 'http'
 tags:
   - name: Authotication
     # description: Authentication is the process of verifying the identity of a user or process.
@@ -298,62 +321,91 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-# components:
-#   schemas:
-#     UserResponse:
-#       type: object
-#       properties:
-#         _id:
-#           type: string
-#           description: ID của người dùng
-#         username:
-#           type: string
-#           description: Tên đăng nhập của người dùng
-#         email:
-#           type: string
-#           description: Địa chỉ email của người dùng
-#         phone:
-#           type: string
-#           description: Số điện thoại của người dùng
-#         address:
-#           type: string
-#           description: Địa chỉ của người dùng
-#         slug:
-#           type: string
-#           description: Slug của người dùng
+  /changeRoleUser/{id}/{idRole}:
+    put:
+      summary: update status Role
+      tags:
+        - Role
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            required: true
+        - in: path
+          name: idRole
+          schema:
+            type: string
+            required: true
+      responses:
+        200:
+          decription: Update Role Success
+components:
+  schemas:
+    UserResponse:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID của người dùng
+        username:
+          type: string
+          description: Tên đăng nhập của người dùng
+        email:
+          type: string
+          description: Địa chỉ email của người dùng
+        phone:
+          type: string
+          description: Số điện thoại của người dùng
+        address:
+          type: string
+          description: Địa chỉ của người dùng
+        slug:
+          type: string
+          description: Slug của người dùng
 
-#     RegisterInput:
-#       type: object
-#       properties:
-#         username:
-#           type: string
-#           description: Tên đăng nhập
-#         email:
-#           type: string
-#           description: Địa chỉ email
-#         password:
-#           type: string
-#           description: Mật khẩu
-#         address:
-#           type: string
-#           description: Địa chỉ
-#         phone:
-#           type: string
-#           description: Số điện thoại
+    RegisterInput:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Tên đăng nhập
+        email:
+          type: string
+          description: Địa chỉ email
+        password:
+          type: string
+          description: Mật khẩu
+        address:
+          type: string
+          description: Địa chỉ
+        phone:
+          type: string
+          description: Số điện thoại
 
-#     LoginInput:
-#       type: object
-#       properties:
-#         email:
-#           type: string
-#           description: Địa chỉ email
-#         password:
-#           type: string
-#           description: Mật khẩu
+    LoginInput:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Địa chỉ email
+        password:
+          type: string
+          description: Mật khẩu
 
-#     Error:
-#       type: object
-#       properties:
-#         message:
-#           type: string
-#           description: Thông báo lỗi
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Thông báo lỗi
+
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
