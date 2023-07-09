@@ -8,9 +8,9 @@ export const swaggerDefinition = swaggerJSDoc({
   swaggerDefinition: {
     openapi: '3.0.3',
     info: {
-      title: 'Be dự án tốt nghiệp',
+      title: 'Be dự án frameword 2',
       version: '1.0.0',
-      description: 'API cho dự án tốt nghiệp',
+      description: 'API cho dự án frameword 2',
     },
     servers: [
       {
