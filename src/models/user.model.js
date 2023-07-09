@@ -3,22 +3,34 @@ import mongoosePaginate from 'mongoose-paginate-v2';
 
 const userSchema = new mongoose.Schema(
   {
+    googleId: {
+      type: String,
+    },
+    twitterId: {
+      type: String,
+    },
+    githubId: {
+      type: String,
+    },
+    facebookId: {
+      type: String,
+    },
     username: {
       type: String,
       required: true,
       unique: true,
     },
-    slug: {
-      type: String,
-      unique: true,
-    },
+    // slug: {
+    //   // type: String,
+    //   // unique: true,
+    // },
     email: {
       type: String,
-      required: true,
+      // required: true,
     },
     password: {
       type: String,
-      required: true,
+      // required: true,
     },
     address: {
       type: String,

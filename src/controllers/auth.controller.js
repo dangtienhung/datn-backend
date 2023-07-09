@@ -35,8 +35,8 @@ export const authController = {
         return res.status(400).json({ message: 'Email already exists' });
       }
       /* create slug */
-      const slug = slugify(body.username, { lower: true });
-      body.slug = slug;
+      // const slug = slugify(body.username, { lower: true });
+      // body.slug = slug;
       /* hash password */
       const salt = await bcrypt.genSalt(10);
       const hashPassword = await bcrypt.hash(body.password, salt);
