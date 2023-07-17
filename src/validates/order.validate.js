@@ -7,4 +7,9 @@ export const orderValidate = joi.object({
     quantity: joi.number().required(),
     price: joi.number().required(),
   }),
+  status: joi.string().valid('pending', 'confirmed', 'delivered', 'done', 'canceled'),
+  total: joi.number(),
+  priceShipping: joi.number(),
+  address: joi.string().required(),
+  is_active: joi.boolean().default(true).valid(true, false),
 });

@@ -34,12 +34,10 @@ const orderSchema = new mongoose.Schema(
     },
     total: {
       type: Number,
-      required: true,
     },
     priceShipping: {
       type: Number,
       default: 0,
-      required: true,
     },
     // paymentMethodId: {
     //   type: mongoose.Schema.Types.ObjectId,
