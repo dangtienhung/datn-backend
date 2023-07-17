@@ -1,5 +1,6 @@
 import { userLoginValidate, userRegisterValidate } from '../validates/index.js';
 
+import Role from '../models/role.model.js';
 import User from '../models/user.model.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -42,8 +43,25 @@ export const authController = {
       const hashPassword = await bcrypt.hash(body.password, salt);
       body.password = hashPassword;
       /* create */
-      const user = await User.create(body);
-      return res.status(201).json({ data: user });
+      /* gán giá trị mặc định role là customeer */
+      const roles = await Role.findOne({ name: 'customer' });
+      if (!roles) {
+        return res.status(400).json({ message: 'Role does not exist' });
+      }
+      body.role = roles._id;
+      /* tạo ra avatar */
+      const avatar = `https://ui-avatars.com/api/?name=${body.username}`;
+      body.avatar = avatar;
+      const user = await User.create(body).populate({
+        path: 'role',
+        select: '-users',
+      });
+      if (!user) {
+        return res.status(400).json({ message: 'Create user failed' });
+      }
+      /* loại bỏ passwork */
+      const { password, ...info } = user._doc;
+      return res.status(201).json({ data: info });
     } catch (error) {
       return res.status(500).json({ message: 'Server error' });
     }
@@ -58,7 +76,10 @@ export const authController = {
         return res.status(400).json({ message: error.message });
       }
       /* check email */
-      const emailExits = await User.findOne({ email: body.email });
+      const emailExits = await User.findOne({ email: body.email }).populate({
+        path: 'role',
+        select: '-users',
+      });
       if (!emailExits) {
         return res.status(400).json({ message: 'Email does not exist' });
       }

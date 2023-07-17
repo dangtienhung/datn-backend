@@ -4,6 +4,7 @@ import mongoosePaginate from 'mongoose-paginate-v2';
 const orderSchema = new mongoose.Schema(
   {
     user: {
+      // user này là id của user
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
@@ -11,6 +12,7 @@ const orderSchema = new mongoose.Schema(
     items: [
       {
         product: {
+          // product này là id của product
           type: mongoose.Schema.Types.ObjectId,
           ref: 'Product',
           required: true,
@@ -32,17 +34,15 @@ const orderSchema = new mongoose.Schema(
     },
     total: {
       type: Number,
-      required: true,
     },
     priceShipping: {
       type: Number,
       default: 0,
-      required: true,
     },
-    paymentMethodId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Payment',
-    },
+    // paymentMethodId: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: 'Payment',
+    // },
     address: {
       type: String,
       required: true,
