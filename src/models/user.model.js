@@ -8,6 +8,9 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    avatar: {
+      type: String,
+    },
     slug: {
       type: String,
       unique: true,
