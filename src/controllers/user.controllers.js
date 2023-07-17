@@ -95,7 +95,7 @@ export const userController = {
             email: user.email,
             phone: user.phone,
             address: user.address,
-            slug: user.slug,
+            // slug: user.slug,
           },
         });
       } else {
@@ -121,7 +121,7 @@ export const userController = {
         return res.status(400).json({ message: 'Mật khẩu không khớp' });
       }
 
-      console.log(findUser);
+      console.log('findUser');
       const token = generateToken(findUser?._id);
       const refreshToken = generateRefreshToken(findUser?._id);
       return res.json({
@@ -129,7 +129,7 @@ export const userController = {
         user: {
           _id: findUser?._id,
           username: findUser?.username,
-          slug: findUser?.slug,
+          // slug: findUser?.slug,
           email: findUser?.email,
           phone: findUser?.phone,
           address: findUser.address,

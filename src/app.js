@@ -5,9 +5,14 @@ import { connectDb } from './configs/index.js';
 import cors from 'cors';
 import express from 'express';
 import morgan from 'morgan';
+import session from 'express-session';
+import passport from 'passport';
 import rootRoutes from './routes/index.js';
 import middleSwaggers from './docs/index.js';
 import { errHandler, notFound } from './middlewares/errhandle.js';
+import passportMiddleware from './middlewares/passport.middlewares.js';
+import PassportRoutes from './routes/passport.routes.js';
+import User from './models/user.model.js';
 
 dotenv.config();
 
@@ -16,13 +21,43 @@ const app = express();
 app.use(morgan('common'));
 app.use(express.json());
 app.use(cors());
+// app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+app.use(
+  session({
+    secret: 'secretcode',
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+      secure: 'auto',
+    },
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser((user, done) => {
+  return done(null, user._id);
+});
+
+passport.deserializeUser((id, done) => {
+  (async () => {
+    const user = await User.findById(id);
+    return done(null, user);
+  })();
+});
+
+passport.use(passportMiddleware.GoogleAuth);
+passport.use(passportMiddleware.GithubAuth);
+passport.use(passportMiddleware.TwitterAuth);
+passport.use(passportMiddleware.FacebookAuth);
 
 /* routes */
 app.use('/api-docs', middleSwaggers);
 app.use('/api', rootRoutes);
+app.use('/auth', PassportRoutes);
 
 app.use(notFound);
-
 app.use(errHandler);
 /* connectDb */
 connectDb();
