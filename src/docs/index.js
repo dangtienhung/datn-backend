@@ -40,6 +40,10 @@ const swaggerDocs = [
     Docs: YAML.load('./src/docs/autho.doc.yaml'),
   },
   {
+    endPoint: 'User',
+    Docs: YAML.load('./src/docs/order.doc.yaml'),
+  },
+  {
     endPoint: '',
     Docs: swaggerDefinition,
   },
