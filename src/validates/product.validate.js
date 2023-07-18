@@ -1,5 +1,4 @@
 import joi from 'joi';
-import mongoose from 'mongoose';
 
 const productValidate = joi.object({
   name: joi.string().required({
@@ -11,15 +10,15 @@ const productValidate = joi.object({
     'string.empty': 'Description is not allowed to be empty',
     'any.required': 'Description is required',
   }),
-  image: joi.array().items(joi.string()).required(),
   price: joi.number().required({
     'number.base': 'Price must be a string',
     'any.required:': 'Price is required',
   }),
   category: joi.string().required(),
-  size: joi.array().items(joi.string()).required(),
-  topping: joi.array().items(joi.string()).required(),
+  sizes: joi.array().items(joi.string()).required(),
+  toppings: joi.array().items(joi.string()).required(),
   is_deleted: joi.boolean(),
+  images: joi.array().items(joi.object({ url: joi.string(), publicId: joi.string() })),
 });
 
 export default productValidate;

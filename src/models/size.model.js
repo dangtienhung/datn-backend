@@ -6,6 +6,10 @@ const sizeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  price: {
+    type: Number,
+    required: [true, 'price is required'],
+  },
 });
 
 sizeSchema.plugin(mongoosePaginate);
