@@ -7,7 +7,7 @@ const router = express.Router();
 router.get(
   '/users',
   // isAdmin,
-  authMiddleware.verifyTokenAdmin,
+  authMiddleware.verifyToken,
   userController.getAllUser
 );
 router.get('/users/:id', authMiddleware.verifyToken, userController.getUser);

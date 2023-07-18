@@ -1,5 +1,6 @@
 import Category from '../models/category.model.js';
 import Product from '../models/product.model.js';
+import Topping from '../models/topping.model.js';
 import productValidate from '../validates/product.validate.js';
 
 export const ProductController = {
@@ -20,7 +21,17 @@ export const ProductController = {
       if (!product) {
         return res.status(400).json({ message: 'fail', err: 'Create Product failed' });
       }
+      /* update category */
       await existCategory.updateOne({ $addToSet: { products: product._id } });
+      /* update id product topping array */
+      const toppings = req.body.toppings;
+      if (toppings.length > 0) {
+        for (let i = 0; i < toppings.length; i++) {
+          await Topping.findByIdAndUpdate(toppings[i], {
+            $addToSet: { products: product._id },
+          });
+        }
+      }
       return res.status(200).json({ message: 'succes', data: product });
     } catch (error) {
       next(error);
@@ -34,7 +45,11 @@ export const ProductController = {
         page: _page,
         limit: limit,
         sort: { createdAt: -1 },
-        populate: { path: 'category size topping', select: 'name' },
+        populate: [
+          { path: 'category', select: 'name' },
+          { path: 'sizes' },
+          { path: 'toppings', select: '-products' },
+        ],
       };
       const query = q
         ? {
@@ -50,7 +65,7 @@ export const ProductController = {
       if (!products) {
         return res.status(404).json({ message: 'fail', err: 'Not found any size' });
       }
-      return res.status(200).json({ message: 'succes', data: products });
+      return res.status(200).json({ message: 'succes', ...products });
     } catch (error) {
       next(error);
     }
@@ -58,10 +73,11 @@ export const ProductController = {
 
   getProduct: async (req, res, next) => {
     try {
-      const product = await Product.findById(req.params.id).populate(
-        'category size topping',
-        'name'
-      );
+      const product = await Product.findById(req.params.id).populate([
+        { path: 'category', select: 'name' },
+        { path: 'sizes' },
+        { path: 'toppings', select: '-products' },
+      ]);
       if (!product) {
         return res.status(404).json({ message: 'fail', err: 'Not found Product' });
       }
@@ -89,9 +105,26 @@ export const ProductController = {
         $pull: { products: req.params.id },
       });
       await product.updateOne(req.body, { new: true });
-
       if (!CatRefProduct) {
         return res.status(404).json({ message: 'fail', err: 'Update failed' });
+      }
+
+      /* cập nhật lại topping */
+      const toppings = product.toppings;
+      if (toppings.length > 0) {
+        for (let i = 0; i < toppings.length, i++; ) {
+          await Topping.findByIdAndUpdate(toppings[i], {
+            $pull: { products: product._id },
+          });
+        }
+      }
+      const updateTopping = req.body.toppings;
+      if (updateTopping.length > 0) {
+        for (let i = 0; i < updateTopping.length, i++; ) {
+          await Topping.findByIdAndUpdate(updateTopping[i], {
+            $addToSet: { products: product._id },
+          });
+        }
       }
 
       if (!product) {
@@ -107,11 +140,21 @@ export const ProductController = {
   deleteRealProduct: async (req, res, next) => {
     try {
       const product = await Product.findByIdAndRemove(req.params.id);
+      /* delete product */
       const updateCategory = await Category.findByIdAndUpdate(product.category, {
         $pull: { products: product._id },
       });
       if (!updateCategory) {
         return res.status(404).json({ message: 'fail', err: 'Delete Product failed' });
+      }
+      /* delete topping */
+      const toppings = product.toppings;
+      if (toppings.length > 0) {
+        for (let i = 0; i < toppings.length, i++; ) {
+          await Topping.findByIdAndUpdate(toppings[i], {
+            $pull: { products: product._id },
+          });
+        }
       }
       if (!product) {
         return res.status(404).json({ message: 'fail', err: 'Delete Product failed' });
@@ -130,11 +173,21 @@ export const ProductController = {
         },
         { new: true }
       );
+      /* khi người dùng xóa mềm product đi rồi thì cateogry cũng sẽ tự động cho product out */
       const updateCategory = await Category.findByIdAndUpdate(product.category, {
         $pull: { products: product._id },
       });
       if (!updateCategory) {
         return res.status(404).json({ message: 'fail', err: 'Delete Product failed' });
+      }
+      /* kèm topping cũng sẽ bị xóa đi */
+      const toppings = product.toppings;
+      if (toppings.length > 0) {
+        for (let i = 0; i < toppings.length, i++; ) {
+          await Topping.findByIdAndUpdate(toppings[i], {
+            $pull: { products: product._id },
+          });
+        }
       }
       if (!product) {
         return res.status(404).json({ message: 'fail', err: 'Delete Product failed' });
@@ -158,6 +211,15 @@ export const ProductController = {
       });
       if (!updateCategory) {
         return res.status(404).json({ message: 'fail', err: 'Restore Product failed' });
+      }
+      /* khi khôi phục lại sản phẩm thì cũng sẽ có các topping đi kèm import vào */
+      const toppings = product.toppings;
+      if (toppings.length > 0) {
+        for (let i = 0; i < toppings.length, i++; ) {
+          await Topping.findByIdAndUpdate(toppings[i], {
+            $addToSet: { products: product._id },
+          });
+        }
       }
       if (!product) {
         return res.status(404).json({ message: 'fail', err: 'Restore Product failed' });
