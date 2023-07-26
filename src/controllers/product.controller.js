@@ -1,5 +1,6 @@
 import Category from '../models/category.model.js';
 import Product from '../models/product.model.js';
+import Size from '../models/size.model.js';
 import Topping from '../models/topping.model.js';
 import productValidate from '../validates/product.validate.js';
 
@@ -20,6 +21,18 @@ export const ProductController = {
       const product = await Product.create(req.body);
       if (!product) {
         return res.status(400).json({ message: 'fail', err: 'Create Product failed' });
+      }
+      /* tạo ra bảng size & giá luôn */
+      const sizes = req.body.sizes;
+      if (sizes.length > 0) {
+        for (let size of sizes) {
+          const sizeItem = {
+            name: size.name,
+            price: size.price,
+            productId: product._id,
+          };
+          await Size.create(sizeItem);
+        }
       }
       /* update category */
       await existCategory.updateOne({ $addToSet: { products: product._id } });
@@ -48,7 +61,7 @@ export const ProductController = {
         populate: [
           { path: 'category', select: 'name' },
           { path: 'sizes' },
-          { path: 'toppings', select: '-products' },
+          { path: 'toppings', select: '-products -isDeleted -isActive' },
         ],
       };
       const query = q
@@ -58,9 +71,10 @@ export const ProductController = {
                 $or: [{ name: { $regex: q, $options: 'i' } }],
               },
               { is_deleted: false },
+              { is_active: true },
             ],
           }
-        : { is_deleted: false };
+        : { $and: [{ is_deleted: false }, { is_active: true }] };
       const products = await Product.paginate(query, options);
       if (!products) {
         return res.status(404).json({ message: 'fail', err: 'Not found any size' });
@@ -139,7 +153,7 @@ export const ProductController = {
 
   deleteRealProduct: async (req, res, next) => {
     try {
-      const product = await Product.findByIdAndRemove(req.params.id);
+      const product = await Product.findByIdAndDelete(req.params.id);
       /* delete product */
       const updateCategory = await Category.findByIdAndUpdate(product.category, {
         $pull: { products: product._id },
@@ -154,6 +168,13 @@ export const ProductController = {
           await Topping.findByIdAndUpdate(toppings[i], {
             $pull: { products: product._id },
           });
+        }
+      }
+      /* xóa size */
+      const sizes = product.sizes;
+      if (sizes.length > 0) {
+        for (let size of sizes) {
+          await Size.findByIdAndDelete(size._id);
         }
       }
       if (!product) {
