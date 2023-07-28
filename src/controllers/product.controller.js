@@ -79,7 +79,7 @@ export const ProductController = {
       if (!products) {
         return res.status(404).json({ message: 'fail', err: 'Not found any size' });
       }
-      return res.status(200).json({ message: 'succes', ...products });
+      return res.status(200).json({ ...products });
     } catch (error) {
       next(error);
     }
