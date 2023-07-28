@@ -23,11 +23,19 @@ export const SizeController = {
 
   getAllSize: async (req, res, next) => {
     try {
-      const size = await Size.find({});
+      const { _page = 1, limit = 10, q } = req.query;
+      const options = {
+        page: _page,
+        limit: limit,
+        sort: { createdAt: -1 },
+        populate: [],
+      };
+      const query = q ? { name: { $regex: new RegExp(q), $options: 'i' } } : {};
+      const size = await Size.paginate(query, options);
       if (!size) {
         return res.status(404).json({ message: 'fail', err: 'Not found any size' });
       }
-      return res.status(200).json({ message: 'succes', data: size });
+      return res.status(200).json({ ...size });
     } catch (error) {
       next(error);
     }

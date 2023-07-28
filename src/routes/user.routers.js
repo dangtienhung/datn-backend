@@ -1,19 +1,19 @@
+import { authMiddleware } from '../middlewares/authMiddleware.js';
 import express from 'express';
 import { userController } from '../controllers/user.controllers.js';
-import { authMiddleware } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 // get
 router.get(
   '/users',
   // isAdmin,
-  authMiddleware.verifyTokenAdmin,
+  authMiddleware.verifyToken,
   userController.getAllUser
 );
-router.get('/users/:id', authMiddleware.verifyTokenAdmin, userController.getUser);
+router.get('/users/:id', authMiddleware.verifyToken, userController.getUser);
 
 // update
-router.patch('/users/:id', authMiddleware.verifyTokenAdmin, userController.updateUser);
+router.patch('/users/:id', authMiddleware.verifyToken, userController.updateUser);
 router.patch(
   '/user/updatePassword',
   authMiddleware.verifyTokenAdmin,

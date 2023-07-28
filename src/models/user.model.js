@@ -20,10 +20,13 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    // slug: {
-    //   // type: String,
-    //   // unique: true,
-    // },
+    avatar: {
+      type: String,
+    },
+    slug: {
+      type: String,
+      unique: true,
+    },
     email: {
       type: String,
       // required: true,

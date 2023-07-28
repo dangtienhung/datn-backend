@@ -1,11 +1,12 @@
 import { generateRefreshToken, generateToken } from '../configs/token.js';
 
+import Role from '../models/role.model.js';
 import User from '../models/user.model.js';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { signupSchema } from '../validates/auth.js';
-import Role from '../models/role.model.js';
+import slugify from 'slugify';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ export const userController = {
       sort: {
         [_sort]: _order === 'desc' ? -1 : 1,
       },
+      populate: [{ path: 'role', select: '-users' }, { path: 'order' }, { path: 'products' }],
     };
     try {
       const users = await User.paginate({}, options);
@@ -27,7 +29,11 @@ export const userController = {
           message: 'Không có user nào',
         });
       }
-      return res.json(users);
+      /* loại bỏ password */
+      users.docs.map((user) => {
+        user.password = undefined;
+      });
+      return res.status(200).json(users);
     } catch (error) {
       return res.status(400).json({
         message: error,
@@ -36,10 +42,15 @@ export const userController = {
   },
   getUser: async (req, res) => {
     try {
-      const user = await User.findById(req.user._id);
+      const user = await User.findById(req.user._id).populate([
+        { path: 'role', select: '-users' },
+        { path: 'order' },
+        { path: 'products' },
+      ]);
       if (!user) {
         return res.status(404).json({ message: 'Không tìm thấy thông tin người dùng' });
       }
+      user.password = undefined;
       return res.status(200).json({
         message: 'Lấy thông tin người dùng thành công',
         user,
@@ -161,6 +172,13 @@ export const userController = {
       const result = await User.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
       });
+      if (!result) {
+        return res.status(404).json({ message: 'Không tìm thấy thông tin người dùng' });
+      }
+      /* update slug */
+      const slug = slugify(result.username, { lower: true });
+      result.slug = slug;
+      /* loại bỏ slug */
       result.password = undefined;
       res.json({
         message: 'update success',

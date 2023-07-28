@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
+import jwt from 'jsonwebtoken';
 
 export const authMiddleware = {
   verifyToken: async (req, res, next) => {
@@ -9,7 +9,7 @@ export const authMiddleware = {
       try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         // console.log("decoded", decoded);
-        const user = await User.findById(decoded?.id).populate('role');
+        const user = await User.findById(decoded?._id).populate('role');
         req.user = user;
         next();
       } catch (err) {
@@ -26,14 +26,20 @@ export const authMiddleware = {
           });
         }
 
-        throw new Error({
-          message: 'Not authorized token expired, Please login again',
-          err,
+        // throw new Error({
+        //   message: 'Not authorized token expired, Please login again',
+        //   err,
+        // });
+        return res.status(400).json({
+          message: 'Token không hợp lệ',
         });
       }
     } else {
-      throw new Error({
-        message: 'There is no token attached to header',
+      // throw new Error({
+      //   message: 'There is no token attached to header',
+      // });
+      return res.status(400).json({
+        message: 'Không có token',
       });
     }
   },

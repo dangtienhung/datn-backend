@@ -11,6 +11,7 @@ const toppingSchema = new mongoose.Schema(
       type: Number,
       require: true,
     },
+    products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
   },
   { timestamps: true, versionKey: false }
 );
