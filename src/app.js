@@ -47,6 +47,7 @@ passport.deserializeUser((id, done) => {
   })();
 });
 
+/* OAuth2 */
 passport.use(passportMiddleware.GoogleAuth);
 passport.use(passportMiddleware.GithubAuth);
 passport.use(passportMiddleware.TwitterAuth);

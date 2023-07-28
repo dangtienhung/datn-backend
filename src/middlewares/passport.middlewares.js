@@ -15,7 +15,6 @@ const passportMiddleware = {
     {
       clientID: process.env.GOOGLEID,
       clientSecret: process.env.SECRETGOOGLEID,
-      //   callbackURL: '/auth/google/callback',
       callbackURL: process.env.CALLBACKURLGOOGLE,
     },
     function (accessToken, refreshToken, profile, cb) {
@@ -44,7 +43,6 @@ const passportMiddleware = {
       proxy: false,
     },
     function (accessToken, refreshToken, profile, cb) {
-      //   console.log(profile);
       (async () => {
         try {
           const user = await User.findOne({ twitterId: profile.id });
