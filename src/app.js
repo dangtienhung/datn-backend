@@ -13,14 +13,16 @@ import { errHandler, notFound } from './middlewares/errhandle.js';
 import passportMiddleware from './middlewares/passport.middlewares.js';
 import PassportRoutes from './routes/passport.routes.js';
 import User from './models/user.model.js';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
 /* config */
 const app = express();
 app.use(morgan('common'));
-app.use(express.json());
 app.use(cors());
+app.use(cookieParser());
+app.use(express.json());
 // app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(
   session({

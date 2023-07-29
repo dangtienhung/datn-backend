@@ -112,7 +112,7 @@ export const userController = {
     try {
       const { email, password } = req.body;
       // check user exists or not
-      const findUser = await User.findOne({ email });
+      const findUser = await User.findOne({ email }).populate('role');
       if (!findUser) {
         return res.status(400).json({ message: 'Tài khoản không tồn tại' });
       }
@@ -121,9 +121,15 @@ export const userController = {
         return res.status(400).json({ message: 'Mật khẩu không khớp' });
       }
 
-      console.log('findUser');
-      const token = generateToken(findUser?._id);
-      const refreshToken = generateRefreshToken(findUser?._id);
+      const token = generateToken({ id: findUser?._id, role: findUser.role });
+      const refreshToken = generateRefreshToken({ id: findUser?._id, role: findUser.role });
+      await findUser.updateOne({ refreshToken: refreshToken });
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: false,
+        path: '/',
+        sameSite: 'strict',
+      });
       return res.json({
         message: 'loign success',
         user: {
@@ -144,21 +150,43 @@ export const userController = {
 
   handleRefreshToken: async (req, res) => {
     try {
-      const { token: refreshToken } = req.params;
-
-      const isHasUser = jwt.verify(refreshToken, process.env.JWT_SECRET);
-
-      const user = await User.findById(isHasUser?.id);
-      if (!user || !refreshToken) throw new Error('No refresh token present in db or not matched');
-
-      if (refreshToken && user) {
-        const accessToken = generateToken(user?._id);
-
-        res.json({
-          message: 'refreshToken success',
-          data: accessToken,
-        });
+      const refreshToken = req.cookies.refreshToken;
+      if (!refreshToken) return res.status(401).json("You're not authenticated");
+      const refreshUser = await User.find({}, { _id: 0, 'refreshToken.$': 1 });
+      const listRefresh = refreshUser.map(({ refreshToken }) => refreshToken);
+      if (!listRefresh.includes(refreshToken)) {
+        return res.status(403).json('RefreshToken is not valid');
       }
+      jwt.verify(refreshToken, process.env.SECRET_REFRESH, async (err, user) => {
+        if (err) {
+          return res.status(403).json('RefreshToken is not valid');
+        }
+        const newAccessToken = generateToken(user);
+        const newRefreshToken = generateRefreshToken(user);
+        await User.findByIdAndUpdate(user.id, { refreshToken: newRefreshToken });
+        res.cookie('refreshToken', newRefreshToken, {
+          httpOnly: true,
+          secure: false,
+          path: '/',
+          sameSite: 'strict',
+        });
+        return res.status(200).json({ accessToken: newAccessToken });
+      });
+      // const { token: refreshToken } = req.params;
+
+      // const isHasUser = jwt.verify(refreshToken, process.env.JWT_SECRET);
+
+      // const user = await User.findById(isHasUser?.id);
+      // if (!user || !refreshToken) throw new Error('No refresh token present in db or not matched');
+
+      // if (refreshToken && user) {
+      //   const accessToken = generateToken(user?._id);
+
+      //   res.json({
+      //     message: 'refreshToken success',
+      //     data: accessToken,
+      //   });
+      // }
     } catch (error) {
       res.json({
         message: error.message,

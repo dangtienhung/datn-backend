@@ -60,6 +60,9 @@ const userSchema = new mongoose.Schema(
       // enum: ['admin', 'staff', 'customer', 'shipper'],
       // default: 'customer',
     },
+    refreshToken: {
+      type: String,
+    },
   },
   { timestamps: true, versionKey: false }
 );
