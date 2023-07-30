@@ -62,7 +62,7 @@ export const userController = {
   // register
   register: async (req, res) => {
     try {
-      const { error } = await signupSchema.validate(req.body, { abortEarly: false });
+      const { error } = signupSchema.validate(req.body, { abortEarly: false });
       if (error) {
         const errors = error.details.map((error) => error.message);
         return res.status(400).json({
@@ -70,7 +70,7 @@ export const userController = {
         });
       }
 
-      const findUser = await User.findOne({ email: req.body?.email });
+      const findUser = await User.findOne({ account: req.body?.account });
       if (!findUser) {
         // create user
         const roleUser = await Role.findOne({ name: 'customer' });
@@ -79,7 +79,10 @@ export const userController = {
           ...req.body,
           password: hashedPassword,
           role: roleUser._id,
+          avatar: `https://ui-avatars.com/api/?name=${req.body.username}`,
+          slug: slugify(req.body.username, { lower: true }),
         });
+
         await Role.updateOne({ name: 'customer' }, { $addToSet: { users: user._id } });
 
         if (!roleUser) {
@@ -92,10 +95,9 @@ export const userController = {
           user: {
             _id: user._id,
             username: user.username,
-            email: user.email,
-            phone: user.phone,
+            account: user.account,
             address: user.address,
-            // slug: user.slug,
+            slug: user.slug,
           },
         });
       } else {
@@ -107,6 +109,7 @@ export const userController = {
       });
     }
   },
+
   // login
   login: async (req, res) => {
     try {
@@ -118,7 +121,7 @@ export const userController = {
       }
       const isMatch = await bcrypt.compare(password, findUser.password);
       if (!isMatch) {
-        return res.status(400).json({ message: 'Mật khẩu không khớp' });
+        return res.status(400).json({ message: 'Tài khoản hoặc Mật khẩu không khớp' });
       }
 
       const token = generateToken({ id: findUser?._id, role: findUser.role });
@@ -135,16 +138,33 @@ export const userController = {
         user: {
           _id: findUser?._id,
           username: findUser?.username,
-          // slug: findUser?.slug,
-          email: findUser?.email,
-          phone: findUser?.phone,
+          slug: findUser?.slug,
+          account: findUser?.account,
           address: findUser.address,
+          avatar: findUser.avatar,
           accessToken: token,
           refreshToken,
         },
       });
     } catch (error) {
       return res.status(400).json({ message: error.message });
+    }
+  },
+
+  logOut: async (req, res, next) => {
+    try {
+      const refreshToken = req.cookies.refreshToken;
+      await User.findOneAndUpdate({ refreshToken: refreshToken }, { refreshToken: '' });
+      // req.logout(function (err) {
+      //   if (err) {
+      //     return res.status(400).json({ message: 'fail', err: err });
+      //   }
+      //   return res.status(200).json({ status: true });
+      // });
+      res.clearCookie('refreshToken');
+      return res.status(200).json({ message: 'success', announce: 'Logged Out!' });
+    } catch (error) {
+      next(error);
     }
   },
 

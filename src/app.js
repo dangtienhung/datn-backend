@@ -20,10 +20,10 @@ dotenv.config();
 /* config */
 const app = express();
 app.use(morgan('common'));
-app.use(cors());
+// app.use(cors({ origin: '*' }));
 app.use(cookieParser());
 app.use(express.json());
-// app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(
   session({
     secret: 'secretcode',

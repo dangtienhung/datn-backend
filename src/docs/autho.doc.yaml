@@ -178,12 +178,12 @@ paths:
                       username:
                         type: string
                         description: Tên đăng nhập của người dùng
-                      email:
+                      account:
                         type: string
-                        description: Địa chỉ email của người dùng
-                      phone:
-                        type: string
-                        description: Số điện thoại của người dùng
+                        description: account người dùng
+                      # phone:
+                      #   type: string
+                      #   description: Số điện thoại của người dùng
                       address:
                         type: string
                         description: Địa chỉ của người dùng
@@ -387,7 +387,7 @@ components:
     LoginInput:
       type: object
       properties:
-        email:
+        account:
           type: string
           description: Địa chỉ email
         password:

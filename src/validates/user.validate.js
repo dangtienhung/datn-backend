@@ -6,10 +6,9 @@ export const userValidate = joi.object({
     'string.empty': 'Name is not allowed to be empty',
     'any.required': 'Name is required',
   }),
-  email: joi.string().required().messages({
-    'string.base': 'Email must be a string',
-    'string.empty': 'Email is not allowed to be empty',
-    'any.required': 'Email is required',
+  account: joi.string().required().messages({
+    'string.empty': 'Account is not allowed to be empty',
+    'any.required': 'Account is required',
   }),
   password: joi.string().required().min(6).messages({
     'string.base': 'Password must be a string',
@@ -21,10 +20,10 @@ export const userValidate = joi.object({
     'string.base': 'Address must be a string',
     'string.empty': 'Address is not allowed to be empty',
   }),
-  phone: joi.string().messages({
-    'string.base': 'Phone must be a string',
-    'string.empty': 'Phone is not allowed to be empty',
-  }),
+  // phone: joi.string().messages({
+  //   'string.base': 'Phone must be a string',
+  //   'string.empty': 'Phone is not allowed to be empty',
+  // }),
   products: joi.array().items(joi.string()).messages({
     'string.base': 'Products must be a string',
     'string.empty': 'Products is not allowed to be empty',

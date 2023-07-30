@@ -27,10 +27,13 @@ const userSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
-    email: {
+    account: {
       type: String,
-      // required: true,
     },
+    // email: {
+    //   type: String,
+    //   // required: true,
+    // },
     password: {
       type: String,
       // required: true,
@@ -38,9 +41,9 @@ const userSchema = new mongoose.Schema(
     address: {
       type: String,
     },
-    phone: {
-      type: String,
-    },
+    // phone: {
+    //   type: String,
+    // },
     products: [
       {
         type: mongoose.Schema.Types.ObjectId,
