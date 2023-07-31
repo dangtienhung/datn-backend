@@ -1,6 +1,8 @@
 import express from 'express';
 import passport from 'passport';
 import dotenv from 'dotenv';
+import User from '../models/user.model.js';
+import { generateRefreshToken, generateToken } from '../configs/token.js';
 dotenv.config();
 const PassportRoutes = express.Router();
 
@@ -46,12 +48,37 @@ PassportRoutes.get(
   }
 );
 
-PassportRoutes.get('/getUser', (req, res) => {
-  res.send({ user: req.user });
+PassportRoutes.get('/getUser', async (req, res) => {
+  const user = req.user;
+  if (user) {
+    const token = generateToken({ id: user._id, role: user.role });
+    const refreshToken = generateRefreshToken({ id: user._id, role: user.role });
+    await User.findOneAndUpdate({ _id: user._id }, { refreshToken: refreshToken });
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: false,
+      path: '/',
+      sameSite: 'strict',
+    });
+    return res.json({
+      user: {
+        _id: user?._id,
+        username: user?.username,
+        slug: user?.slug,
+        account: user?.account,
+        address: user.address,
+        avatar: user.avatar,
+        accessToken: token,
+        refreshToken,
+      },
+    });
+  }
+  return res.json({});
 });
 
-PassportRoutes.get('/logout', (req, res) => {
+PassportRoutes.post('/logout', (req, res) => {
   req.logout(function (err) {
+    res.clearCookie('refreshToken');
     if (err) {
       return res.status(400).json({ message: 'fail', err: err });
     }
