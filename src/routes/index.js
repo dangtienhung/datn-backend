@@ -3,10 +3,11 @@ import RoleRoutes from './role.router.js';
 import UserRoutes from './user.routers.js';
 import categoryRoutes from './category.routes.js';
 import express from 'express';
-import orderRoutes from './order.routes.js'
+import orderRoutes from './order.routes.js';
 import productRoutes from './product.routes.js';
 import sizeRoutes from './size.routes.js';
 import toppingRoutes from './topping.routes.js';
+import uploadBanner from './banner.routes.js';
 import uploadRouter from './uploadfiles.routes.js';
 import userRoutes from './auth.routes.js';
 import voucherRoutes from './voucher.routes.js';
@@ -24,7 +25,8 @@ const rootRoutes = [
   uploadRouter,
   RoleRoutes,
   voucherRoutes,
-  orderRoutes
+  orderRoutes,
+  uploadBanner,
 ];
 
 rootRoutes.map((route) => {
