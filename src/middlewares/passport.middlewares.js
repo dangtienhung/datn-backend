@@ -20,7 +20,6 @@ const passportMiddleware = {
       callbackURL: process.env.CALLBACKURLGOOGLE,
     },
     function (accessToken, refreshToken, profile, cb) {
-      // console.log(profile);
       (async () => {
         try {
           const user = await User.findOne({ googleId: profile.id });
@@ -55,10 +54,13 @@ const passportMiddleware = {
         try {
           const user = await User.findOne({ twitterId: profile.id });
           if (!user) {
+            const roleUser = await Role.findOne({ name: 'customer' });
             const newUser = await User.create({
               twitterId: profile.id,
               username: profile.username,
+              avatar: profile.photos[0].value,
               slug: slugify(profile.username, { lower: true }),
+              role: roleUser._id,
             });
             cb(null, newUser);
           }
@@ -76,13 +78,18 @@ const passportMiddleware = {
       callbackURL: process.env.CALLBACKURLGITHUB,
     },
     function (accessToken, refreshToken, profile, cb) {
+      console.log(profile);
       (async () => {
         try {
           const user = await User.findOne({ githubId: profile.id });
           if (!user) {
+            const roleUser = await Role.findOne({ name: 'customer' });
             const newUser = await User.create({
               githubId: profile.id,
               username: profile.username,
+              avatar: profile.photos[0].value,
+              slug: slugify(profile.username, { lower: true }),
+              role: roleUser._id,
             });
             cb(null, newUser);
           }
@@ -105,10 +112,13 @@ const passportMiddleware = {
         try {
           const user = await User.findOne({ facebookId: profile.id });
           if (!user) {
+            const roleUser = await Role.findOne({ name: 'customer' });
             const newUser = await User.create({
               facebookId: profile.id,
               username: profile.displayName,
+              avatar: `https://ui-avatars.com/api/?name=${profile.displayName}`,
               slug: slugify(profile.displayName, { lower: true }),
+              role: roleUser._id,
             });
             cb(null, newUser);
           }

@@ -16,7 +16,7 @@ PassportRoutes.get('/facebook', passport.authenticate('facebook'));
 
 PassportRoutes.get(
   '/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login' }),
+  passport.authenticate('google', { failureRedirect: process.env.LOGINPAGE }),
   function (req, res) {
     res.redirect(process.env.HOMEPAGE);
   }
@@ -24,7 +24,7 @@ PassportRoutes.get(
 
 PassportRoutes.get(
   '/twitter/callback',
-  passport.authenticate('twitter', { failureRedirect: '/login' }),
+  passport.authenticate('twitter', { failureRedirect: process.env.LOGINPAGE }),
   function (req, res) {
     res.redirect(process.env.HOMEPAGE);
   }
@@ -41,7 +41,7 @@ PassportRoutes.get(
 PassportRoutes.get(
   '/facebook/callback',
   passport.authenticate('facebook', {
-    failureRedirect: process.env.HOME,
+    failureRedirect: process.env.LOGINPAGE,
   }),
   function (req, res) {
     res.redirect(process.env.HOMEPAGE);
