@@ -9,7 +9,7 @@ const SizeValidate = joi.object({
     'number.base': 'price must be a number',
     'number.empty': 'price is not allowed to be empty',
   }),
-  productId: joi.string().required().messages({
+  productId: joi.string().messages({
     'string.empty': 'product is not allowed to be empty',
     'any.required': 'product is required',
   }),
