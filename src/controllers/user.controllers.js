@@ -129,7 +129,7 @@ export const userController = {
         user: {
           _id: findUser?._id,
           username: findUser?.username,
-          // slug: findUser?.slug,
+          slug: findUser?.slug,
           email: findUser?.email,
           phone: findUser?.phone,
           address: findUser.address,

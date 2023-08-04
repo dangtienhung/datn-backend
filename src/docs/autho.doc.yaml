@@ -178,12 +178,12 @@ paths:
                       username:
                         type: string
                         description: Tên đăng nhập của người dùng
-                      email:
+                      account:
                         type: string
-                        description: Địa chỉ email của người dùng
-                      phone:
-                        type: string
-                        description: Số điện thoại của người dùng
+                        description: account người dùng
+                      # phone:
+                      #   type: string
+                      #   description: Số điện thoại của người dùng
                       address:
                         type: string
                         description: Địa chỉ của người dùng
@@ -252,18 +252,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /refreshToken/{token}:
+  /refreshToken:
+    # /refreshToken/{token}:
     get:
       summary: Lấy mã thông báo truy cập mới từ mã thông báo làm mới
       tags:
         - Authotication
-      parameters:
-        - in: path
-          name: token
-          schema:
-            type: string
-          required: true
-          description: Mã thông báo làm mới
+      # parameters:
+      #   - in: path
+      #     name: token
+      #     schema:
+      #       type: string
+      #     required: true
+      #     description: Mã thông báo làm mới
       responses:
         200:
           description: Thành công
@@ -386,7 +387,7 @@ components:
     LoginInput:
       type: object
       properties:
-        email:
+        account:
           type: string
           description: Địa chỉ email
         password:

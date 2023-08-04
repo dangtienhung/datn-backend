@@ -22,7 +22,7 @@ router.patch(
 
 router.route('/changeRoleUser/:id/:idRole').put(userController.changeRoleUser);
 // post
-
+router.route('/logout').post(userController.logOut);
 // delete
 router.delete(
   '/users/:id',

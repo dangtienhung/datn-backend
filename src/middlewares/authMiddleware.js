@@ -20,7 +20,7 @@ export const authMiddleware = {
           });
         }
         if (err.name === 'TokenExpiredError') {
-          return res.json({
+          return res.status(403).json({
             message: 'Token hết hạn',
             err,
           });
