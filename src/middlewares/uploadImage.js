@@ -1,7 +1,6 @@
 import cloudinary from '../configs/cloudinary.js';
 
 export const uploadImage = async (req, res, next) => {
-  console.log(req.files);
   const files = req.files;
   if (!Array.isArray(files) || files.length <= 0) {
     return res.status(400).json({ error: 'No files were uploaded' });
@@ -19,6 +18,7 @@ export const uploadImage = async (req, res, next) => {
     const uploadedFiles = results.map((result) => ({
       url: result.secure_url,
       publicId: result.public_id,
+      filename: result.original_filename,
     }));
     return res.json({ urls: uploadedFiles });
   } catch (error) {
@@ -33,7 +33,7 @@ export const deleteImage = async (req, res) => {
     if (result == 'not found') {
       return res.status(404).json({ message: 'fail', error: 'Not found Image to delete' });
     }
-    return res.status(200).json({ message: 'Xóa ảnh thành công', result });
+    return res.status(200).json({ message: 'Xóa ảnh thành công', publicId });
   } catch (error) {
     res.status(500).json({ error: error.message || 'Error deleting image' });
   }

@@ -7,7 +7,7 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    images: [{ url: String, publicId: String }],
+    images: [{ url: String, publicId: String, filename: String }],
     description: {
       type: String,
       require: true,
@@ -16,24 +16,18 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    // price: {
-    //   type: Number,
-    //   require: true,
-    // },
+    price: {
+      type: Number,
+      require: true,
+    },
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Category',
     },
     sizes: [
       {
-        name: {
-          type: String,
-          required: true,
-        },
-        price: {
-          type: Number,
-          required: true,
-        },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Size',
       },
     ],
     toppings: [

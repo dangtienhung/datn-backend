@@ -7,37 +7,44 @@ import productValidate from '../validates/product.validate.js';
 export const ProductController = {
   createProduct: async (req, res, next) => {
     try {
-      const { category } = req.body;
-      const { error } = productValidate.validate(req.body, { abortEarly: false });
+      const Data = req.body;
+      const { category } = Data;
+      const { error } = productValidate.validate(Data, { abortEarly: false });
       if (error) {
         return res
           .status(400)
           .json({ message: 'fail', err: error.details.map((err) => err.message) });
       }
       const existCategory = await Category.findById(category);
+      // console.log(existCategory);
       if (!existCategory) {
         return res.status(404).json({ message: 'fail', err: 'Create Product failed' });
       }
-      const product = await Product.create(req.body);
+      const product = await Product.create(Data);
       if (!product) {
         return res.status(400).json({ message: 'fail', err: 'Create Product failed' });
       }
       /* tạo ra bảng size & giá luôn */
-      const sizes = req.body.sizes;
-      if (sizes.length > 0) {
-        for (let size of sizes) {
-          const sizeItem = {
-            name: size.name,
-            price: size.price,
-            productId: product._id,
-          };
-          await Size.create(sizeItem);
-        }
-      }
+      const { sizes } = Data;
+      // if (sizes.length > 0) {
+      //   for (let size of sizes) {
+      //     const sizeItem = {
+      //       name: size.name,
+      //       price: size.price,
+      //       productId: product._id,
+      //     };
+      //     await Size.create(sizeItem);
+      //   }
+      // }
+      await Size.updateMany(
+        { _id: { $in: sizes } },
+        { $push: { productId: product._id } },
+        { multi: true }
+      );
       /* update category */
       await existCategory.updateOne({ $addToSet: { products: product._id } });
       /* update id product topping array */
-      const toppings = req.body.toppings;
+      const { toppings } = Data;
       if (toppings.length > 0) {
         for (let i = 0; i < toppings.length; i++) {
           await Topping.findByIdAndUpdate(toppings[i], {
@@ -194,6 +201,7 @@ export const ProductController = {
         },
         { new: true }
       );
+      console.log(product);
       /* khi người dùng xóa mềm product đi rồi thì cateogry cũng sẽ tự động cho product out */
       const updateCategory = await Category.findByIdAndUpdate(product.category, {
         $pull: { products: product._id },
@@ -201,6 +209,9 @@ export const ProductController = {
       if (!updateCategory) {
         return res.status(404).json({ message: 'fail', err: 'Delete Product failed' });
       }
+
+      await Size.updateMany({ _id: { $in: product.sizes } }, { $pull: { productId: product._id } });
+
       /* kèm topping cũng sẽ bị xóa đi */
       const toppings = product.toppings;
       if (toppings.length > 0) {
@@ -227,12 +238,20 @@ export const ProductController = {
         },
         { new: true }
       );
+
       const updateCategory = await Category.findByIdAndUpdate(product.category, {
         $addToSet: { products: product._id },
       });
+
       if (!updateCategory) {
         return res.status(404).json({ message: 'fail', err: 'Restore Product failed' });
       }
+
+      await Size.updateMany(
+        { _id: { $in: product.sizes } },
+        { $addToSet: { productId: product._id } }
+      );
+
       /* khi khôi phục lại sản phẩm thì cũng sẽ có các topping đi kèm import vào */
       const toppings = product.toppings;
       if (toppings.length > 0) {
