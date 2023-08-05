@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { signupSchema } from '../validates/auth.js';
 import slugify from 'slugify';
+import { userValidate } from '../validates/user.validate.js';
 
 dotenv.config();
 
@@ -157,12 +158,6 @@ export const userController = {
     try {
       const refreshToken = req.cookies.refreshToken;
       await User.findOneAndUpdate({ refreshToken: refreshToken }, { refreshToken: '' });
-      // req.logout(function (err) {
-      //   if (err) {
-      //     return res.status(400).json({ message: 'fail', err: err });
-      //   }
-      //   return res.status(200).json({ status: true });
-      // });
       res.clearCookie('refreshToken');
       return res.status(200).json({ message: 'success', announce: 'Logged Out!' });
     } catch (error) {
@@ -285,6 +280,44 @@ export const userController = {
       return res.status(200).send({ message: 'success', data: user });
     } catch (error) {
       next(error);
+    }
+  },
+
+  /* create user */
+  createUser: async (req, res) => {
+    try {
+      const body = req.body;
+      /* validate */
+      const { error } = userValidate.validate(body, { abortEarly: false });
+      if (error) {
+        const errors = error.details.map((error) => error.message);
+        return res.status(400).json({
+          message: errors,
+        });
+      }
+      /* check email exists */
+      const emailExit = await User.findOne({ email: body.email });
+      console.log('🚀 ~ file: user.controllers.js:298 ~ createUser: ~ emailExit:', emailExit);
+      if (emailExit) {
+        return res.status(400).json({
+          message: 'Email đã tồn tại',
+        });
+      }
+      /* check username exists */
+      const userNameExits = await User.findOne({ username: body.username });
+      if (userNameExits) {
+        return res.status(400).json({
+          message: 'Username đã tồn tại',
+        });
+      }
+      /* check account exists */
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      console.log(
+        '🚀 ~ file: user.controllers.js:311 ~ createUser: ~ hashedPassword:',
+        hashedPassword
+      );
+    } catch (error) {
+      return res.status(500).json({ message: 'Lỗi server', error: error.message });
     }
   },
 };

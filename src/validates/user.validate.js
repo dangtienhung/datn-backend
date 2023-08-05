@@ -78,3 +78,7 @@ export const userRegisterValidate = joi.object({
     'any.only': 'Confirm password does not match',
   }),
 });
+
+// export const userCreateValidate = joi.object({
+//   username: joi.string().required().min(6).messages({}),
+// })

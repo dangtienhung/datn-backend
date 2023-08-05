@@ -26,8 +26,16 @@ const productSchema = new mongoose.Schema(
     },
     sizes: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Size',
+        // type: mongoose.Schema.Types.ObjectId,
+        // ref: 'Size',
+        name: {
+          type: String,
+          required: true,
+        },
+        price: {
+          type: Number,
+          required: true,
+        },
       },
     ],
     toppings: [
