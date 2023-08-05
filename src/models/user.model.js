@@ -17,16 +17,16 @@ const userSchema = new mongoose.Schema(
     },
     username: {
       type: String,
-      required: true,
-      unique: true,
+      // required: true,
+      // unique: true,
     },
     avatar: {
       type: String,
     },
-    slug: {
-      type: String,
-      unique: true,
-    },
+    // slug: {
+    //   type: String,
+    //   unique: true,
+    // },
     account: {
       type: String,
     },

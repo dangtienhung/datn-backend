@@ -52,10 +52,8 @@ export const authController = {
       /* tạo ra avatar */
       const avatar = `https://ui-avatars.com/api/?name=${body.username}`;
       body.avatar = avatar;
-      const user = await User.create(body).populate({
-        path: 'role',
-        select: '-users',
-      });
+      const user = await User.create(body);
+      console.log('🚀 ~ file: auth.controller.js:59 ~ user ~ user:', user);
       if (!user) {
         return res.status(400).json({ message: 'Create user failed' });
       }
