@@ -113,7 +113,6 @@ export const userController = {
   login: async (req, res) => {
     try {
       const { account, password } = req.body;
-      console.log(req.body);
       // check user exists or not
       const findUser = await User.findOne({ account }).populate('role');
       if (!findUser) {
@@ -121,21 +120,27 @@ export const userController = {
       }
       const isMatch = await bcrypt.compare(password, findUser.password);
       if (!isMatch) {
-        return res.status(400).json({ message: 'Mật khẩu không khớp' });
+        return res.status(400).json({ message: 'Tài khoản hoặc Mật khẩu không khớp' });
       }
 
-      console.log('findUser');
-      const token = generateToken(findUser?._id);
-      const refreshToken = generateRefreshToken(findUser?._id);
+      const token = generateToken({ id: findUser?._id, role: findUser.role });
+      const refreshToken = generateRefreshToken({ id: findUser?._id, role: findUser.role });
+      await findUser.updateOne({ refreshToken: refreshToken });
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: false,
+        path: '/',
+        sameSite: 'strict',
+      });
       return res.json({
         message: 'loign success',
         user: {
           _id: findUser?._id,
           username: findUser?.username,
           slug: findUser?.slug,
-          email: findUser?.email,
-          phone: findUser?.phone,
+          account: findUser?.account,
           address: findUser.address,
+          avatar: findUser.avatar,
           accessToken: token,
           refreshToken,
         },
