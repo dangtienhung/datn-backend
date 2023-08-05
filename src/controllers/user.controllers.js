@@ -116,7 +116,6 @@ export const userController = {
   login: async (req, res) => {
     try {
       const { account, password } = req.body;
-      console.log(req.body);
       // check user exists or not
       const findUser = await User.findOne({ account }).populate('role');
       if (!findUser) {
