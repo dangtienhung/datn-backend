@@ -110,6 +110,7 @@ export const ProductController = {
 
   updateProduct: async (req, res, next) => {
     try {
+      console.log(req.body);
       const { category } = req.body;
       const { error } = productValidate.validate(req.body, { abortEarly: false });
       if (error) {

@@ -20,10 +20,16 @@ const productValidate = joi.object({
   is_active: joi.boolean().default(true),
   images: joi
     .array()
-    .items(joi.object({ url: joi.string(), publicId: joi.string(), filename: joi.string() }))
-    .required({
-      'any.required': 'Images is required',
-    }),
+    .items(
+      joi
+        .object({
+          url: joi.string(),
+          publicId: joi.string(),
+          filename: joi.string(),
+        })
+        .unknown(true)
+    )
+    .min(1),
   sale: joi.number().default(0),
   sizes: joi.array().items(joi.string()).required(),
 });

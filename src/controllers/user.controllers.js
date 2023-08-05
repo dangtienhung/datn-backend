@@ -62,6 +62,7 @@ export const userController = {
   // register
   register: async (req, res) => {
     try {
+      console.log(req.body);
       const { error } = signupSchema.validate(req.body, { abortEarly: false });
       if (error) {
         const errors = error.details.map((error) => error.message);
@@ -113,9 +114,10 @@ export const userController = {
   // login
   login: async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const { account, password } = req.body;
+      console.log(req.body);
       // check user exists or not
-      const findUser = await User.findOne({ email }).populate('role');
+      const findUser = await User.findOne({ account }).populate('role');
       if (!findUser) {
         return res.status(400).json({ message: 'Tài khoản không tồn tại' });
       }
