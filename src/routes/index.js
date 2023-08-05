@@ -1,6 +1,7 @@
 import AuthRouter from './auth.router.js';
 import RoleRoutes from './role.router.js';
 import UserRoutes from './user.routers.js';
+import analyticRoutes from './analytic.routes.js';
 import categoryRoutes from './category.routes.js';
 import express from 'express';
 import orderRoutes from './order.routes.js';
@@ -27,6 +28,7 @@ const rootRoutes = [
   voucherRoutes,
   orderRoutes,
   uploadBanner,
+  analyticRoutes,
 ];
 
 rootRoutes.map((route) => {
