@@ -31,4 +31,7 @@ router.delete(
   userController.deleteUser
 );
 
+/* thêm người dùng */
+router.post('/users', userController.createUser);
+
 export default router;
