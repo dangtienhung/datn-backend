@@ -63,7 +63,8 @@ export const userController = {
   // register
   register: async (req, res) => {
     try {
-      const { error } = await signupSchema.validate(req.body, { abortEarly: false });
+      console.log(req.body);
+      const { error } = signupSchema.validate(req.body, { abortEarly: false });
       if (error) {
         const errors = error.details.map((error) => error.message);
         return res.status(400).json({
@@ -71,7 +72,7 @@ export const userController = {
         });
       }
 
-      const findUser = await User.findOne({ email: req.body?.email });
+      const findUser = await User.findOne({ account: req.body?.account });
       if (!findUser) {
         // create user
         const roleUser = await Role.findOne({ name: 'customer' });
@@ -111,9 +112,10 @@ export const userController = {
   // login
   login: async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const { account, password } = req.body;
+      console.log(req.body);
       // check user exists or not
-      const findUser = await User.findOne({ email });
+      const findUser = await User.findOne({ account }).populate('role');
       if (!findUser) {
         return res.status(400).json({ message: 'Tài khoản không tồn tại' });
       }

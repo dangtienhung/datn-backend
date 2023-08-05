@@ -22,12 +22,14 @@ const productValidate = joi.object({
     .array()
     .items(
       joi
-        .object({ url: joi.string(), publicId: joi.string(), filename: joi.string() })
+        .object({
+          url: joi.string(),
+          publicId: joi.string(),
+          filename: joi.string(),
+        })
         .unknown(true)
     )
-    .required({
-      'any.required': 'Images is required',
-    }),
+    .min(1),
   sale: joi.number().default(0),
   sizes: joi.array().items(joi.string()).required(),
 });
