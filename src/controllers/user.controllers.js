@@ -103,7 +103,7 @@ export const userController = {
       }
     } catch (error) {
       res.status(500).json({
-        message: error,
+        message: error.message,
       });
     }
   },
@@ -139,6 +139,23 @@ export const userController = {
       });
     } catch (error) {
       return res.status(400).json({ message: error.message });
+    }
+  },
+
+  logOut: async (req, res, next) => {
+    try {
+      const refreshToken = req.cookies.refreshToken;
+      await User.findOneAndUpdate({ refreshToken: refreshToken }, { refreshToken: '' });
+      // req.logout(function (err) {
+      //   if (err) {
+      //     return res.status(400).json({ message: 'fail', err: err });
+      //   }
+      //   return res.status(200).json({ status: true });
+      // });
+      res.clearCookie('refreshToken');
+      return res.status(200).json({ message: 'success', announce: 'Logged Out!' });
+    } catch (error) {
+      next(error);
     }
   },
 
