@@ -114,9 +114,9 @@ export const userController = {
   // login
   login: async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const { account, password } = req.body;
       // check user exists or not
-      const findUser = await User.findOne({ email }).populate('role');
+      const findUser = await User.findOne({ account }).populate('role');
       if (!findUser) {
         return res.status(400).json({ message: 'Tài khoản không tồn tại' });
       }
