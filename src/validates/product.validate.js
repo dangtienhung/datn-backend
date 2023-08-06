@@ -31,7 +31,14 @@ const productValidate = joi.object({
     )
     .min(1),
   sale: joi.number().default(0),
-  sizes: joi.array().items(joi.string()).required(),
+  sizes: joi.array().items(
+    joi
+      .object({
+        name: joi.string(),
+        price: joi.number(),
+      })
+      .unknown(true)
+  ),
 });
 
 export default productValidate;

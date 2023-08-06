@@ -8,6 +8,7 @@ export const ProductController = {
   createProduct: async (req, res, next) => {
     try {
       const Data = req.body;
+      // console.log(Data);
       const { category } = Data;
       const { error } = productValidate.validate(Data, { abortEarly: false });
       if (error) {
@@ -24,25 +25,25 @@ export const ProductController = {
       if (!product) {
         return res.status(400).json({ message: 'fail', err: 'Create Product failed' });
       }
+      await existCategory.updateOne({ $addToSet: { products: product._id } });
       /* tạo ra bảng size & giá luôn */
       const { sizes } = Data;
-      // if (sizes.length > 0) {
-      //   for (let size of sizes) {
-      //     const sizeItem = {
-      //       name: size.name,
-      //       price: size.price,
-      //       productId: product._id,
-      //     };
-      //     await Size.create(sizeItem);
-      //   }
-      // }
-      await Size.updateMany(
-        { _id: { $in: sizes } },
-        { $push: { productId: product._id } },
-        { multi: true }
-      );
+      if (sizes.length > 0) {
+        for (let size of sizes) {
+          const sizeItem = {
+            name: size.name,
+            price: size.price,
+            productId: product._id,
+          };
+          await Size.create(sizeItem);
+        }
+      }
+      // await Size.updateMany(
+      //   { _id: { $in: sizes } },
+      //   { $push: { productId: product._id } },
+      //   { multi: true }
+      // );
       /* update category */
-      await existCategory.updateOne({ $addToSet: { products: product._id } });
       /* update id product topping array */
       const { toppings } = Data;
       if (toppings.length > 0) {
