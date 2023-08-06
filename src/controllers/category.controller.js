@@ -60,7 +60,7 @@ export const categoryController = {
     try {
       const { id } = req.params;
       const category = await Category.findById(id).populate('products');
-      return res.status(201).json({ category });
+      return res.status(201).json({ ...category._doc });
     } catch (error) {
       return res.status(400).json({ message: error.message });
     }
