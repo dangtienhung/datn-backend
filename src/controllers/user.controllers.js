@@ -63,7 +63,6 @@ export const userController = {
   // register
   register: async (req, res) => {
     try {
-      console.log(req.body);
       const { error } = signupSchema.validate(req.body, { abortEarly: false });
       if (error) {
         const errors = error.details.map((error) => error.message);

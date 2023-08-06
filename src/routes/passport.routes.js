@@ -18,7 +18,12 @@ PassportRoutes.get(
   '/google/callback',
   passport.authenticate('google', { failureRedirect: process.env.LOGINPAGE }),
   function (req, res) {
-    res.redirect(process.env.HOMEPAGE);
+    const { role } = req.user;
+    if (role.name === 'customer') {
+      res.redirect(process.env.HOMEPAGE);
+    } else if (role.name === 'admin') {
+      res.redirect(process.env.AMINPAGE);
+    }
   }
 );
 
@@ -26,7 +31,12 @@ PassportRoutes.get(
   '/twitter/callback',
   passport.authenticate('twitter', { failureRedirect: process.env.LOGINPAGE }),
   function (req, res) {
-    res.redirect(process.env.HOMEPAGE);
+    const { role } = req.user;
+    if (role.name === 'customer') {
+      res.redirect(process.env.HOMEPAGE);
+    } else if (role.name === 'admin') {
+      res.redirect(process.env.AMINPAGE);
+    }
   }
 );
 
@@ -44,7 +54,12 @@ PassportRoutes.get(
     failureRedirect: process.env.LOGINPAGE,
   }),
   function (req, res) {
-    res.redirect(process.env.HOMEPAGE);
+    const { role } = req.user;
+    if (role.name === 'customer') {
+      res.redirect(process.env.HOMEPAGE);
+    } else if (role.name === 'admin') {
+      res.redirect(process.env.AMINPAGE);
+    }
   }
 );
 

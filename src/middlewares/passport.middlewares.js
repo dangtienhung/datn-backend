@@ -22,7 +22,7 @@ const passportMiddleware = {
     function (accessToken, refreshToken, profile, cb) {
       (async () => {
         try {
-          const user = await User.findOne({ googleId: profile.id });
+          const user = await User.findOne({ googleId: profile.id }).populate('role', '-_id -users');
           if (!user) {
             const roleUser = await Role.findOne({ name: 'customer' });
             const newUser = await User.create({
@@ -33,11 +33,11 @@ const passportMiddleware = {
               role: roleUser._id,
             });
             await Role.updateOne({ name: 'customer' }, { $addToSet: { users: newUser._id } });
-            cb(null, newUser);
+            return cb(null, newUser);
           }
-          cb(null, user);
+          return cb(null, user);
         } catch (error) {
-          cb(error, null);
+          return cb(error, null);
         }
       })();
     }
@@ -62,11 +62,11 @@ const passportMiddleware = {
               slug: slugify(profile.username, { lower: true }),
               role: roleUser._id,
             });
-            cb(null, newUser);
+            return cb(null, newUser);
           }
-          cb(null, user);
+          return cb(null, user);
         } catch (error) {
-          cb(error, null);
+          return cb(error, null);
         }
       })();
     }
@@ -78,7 +78,6 @@ const passportMiddleware = {
       callbackURL: process.env.CALLBACKURLGITHUB,
     },
     function (accessToken, refreshToken, profile, cb) {
-      console.log(profile);
       (async () => {
         try {
           const user = await User.findOne({ githubId: profile.id });
@@ -107,10 +106,12 @@ const passportMiddleware = {
       callbackURL: process.env.CALLBACKURLFACEBOOK,
     },
     function (accessToken, refreshToken, profile, cb) {
-      console.log(profile);
       (async () => {
         try {
-          const user = await User.findOne({ facebookId: profile.id });
+          const user = await User.findOne({ facebookId: profile.id }).populate(
+            'role',
+            '-_id -users'
+          );
           if (!user) {
             const roleUser = await Role.findOne({ name: 'customer' });
             const newUser = await User.create({
@@ -120,11 +121,11 @@ const passportMiddleware = {
               slug: slugify(profile.displayName, { lower: true }),
               role: roleUser._id,
             });
-            cb(null, newUser);
+            return cb(null, newUser);
           }
-          cb(null, user);
+          return cb(null, user);
         } catch (error) {
-          cb(error, null);
+          return cb(error, null);
         }
       })();
     }
