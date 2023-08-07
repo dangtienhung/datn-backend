@@ -11,24 +11,27 @@ export const orderController = {
       if (error) {
         return res.status(400).json({ error: error.message });
       }
+      const items = body.items;
+      /* tính tổng tiền của đơn hàng người dùng vừa đặt */
+      let total = 0;
+      items.forEach((item) => {
+        total += item.quantity * item.price;
+        /* nếu mà sản phẩm có topping */
+        if (item.toppings.length > 0 && item.toppings) {
+          item.toppings.forEach((topping) => {
+            total += topping.price;
+          });
+        }
+      });
       /* kiểm tra xem đã có order nào chưa */
       const orderExits = await Order.findOne({ user: body.user, status: 'pending' });
       if (!orderExits) {
-        const items = body.items;
-        /* tính tổng tiền của đơn hàng người dùng vừa đặt */
-        const total = items.reduce((total, item) => {
-          const price = Number(item.price) * Number(item.quantity);
-          return total + price;
-        }, 0);
         const priceShipping = Number(body.priceShipping) || 0;
         /* tạo đơn hàng mới */
         const order = new Order({
-          user: body.user,
-          items,
-          status: 'pending',
+          ...body,
           total: total + priceShipping,
           priceShipping: body.priceShipping,
-          address: body.address,
           is_active: true,
         });
         /* lưu đơn hàng mới */
@@ -41,48 +44,50 @@ export const orderController = {
       /* khi đã tồn tại order đó rồi */
       for (let item of orderExits.items) {
         /* kiểm tra xem sản phẩm đó đã tồn tại trong order chưa */
-        const productExits = body.items.find((x) => x.product === item.product);
+        const productExits = body.items.find((product) => {
+          return item.product.toString() === product.product.toString();
+        });
         if (productExits) {
-          /* nếu đã tồn tại thì cập nhật lại số lượng và giá tiền */
-          item.quantity = productExits.quantity + item.quantity;
-          item.price = productExits.price + item.price;
-          const total = orderExits.items.reduce((total, item) => {
-            const price = Number(item.price) * Number(item.quantity);
-            return total + price;
-          });
-          const priceShipping = Number(body.priceShipping) || 0;
-          orderExits.total = Number(total) + Number(priceShipping);
-          orderExits.priceShipping = body.priceShipping;
-          orderExits.address = body.address;
-          /* lưu lại order */
-          const orderUpdate = await orderExits.save();
-          if (!orderUpdate) {
-            return res.status(400).json({ error: 'update order failed' });
+          /* nếu sản phẩm tồn tại rồi thì check xem có trùng size không thì làm như nào */
+          if (item.size._id === productExits.size._id) {
+            /* nếu trùng size thì cộng thêm số lượng vào */
+            item.quantity += productExits.quantity;
+          } else {
+            /* nếu không trùng size thì thêm sản phẩm đó vào order */
+            orderExits.items.push({
+              image: productExits.image,
+              product: productExits.product,
+              quantity: productExits.quantity,
+              price: productExits.price,
+              toppings: productExits.toppings,
+              size: productExits.size,
+            });
           }
-          return res.status(200).json({ message: 'update order successfully', order: orderUpdate });
+          /* save lại sản phẩm */
+          console.log(
+            '🚀 ~ file: order.controller.js:113 ~ create: ~ orderExits.items',
+            orderExits.items
+          );
+          return res.status(200).json({ message: 'create order successfully', order: orderExits });
         } else {
           /* nếu chưa tồn tại thì thêm sản phẩm đó vào order */
           orderExits.items.push({
+            image: item.image,
             product: item.product,
             quantity: item.quantity,
             price: item.price,
+            toppings: item.toppings,
+            size: item.size,
           });
         }
-        const total = orderExits.items.reduce((total, item) => {
-          const price = Number(item.price) * Number(item.quantity);
-          return total + price;
-        });
-        const priceShipping = Number(body.priceShipping) || 0;
-        orderExits.total = total + priceShipping;
-        orderExits.priceShipping = body.priceShipping;
-        orderExits.address = body.address;
-        /* lưu lại order */
-        const orderUpdate = await orderExits.save();
-        if (!orderUpdate) {
-          return res.status(400).json({ error: 'update order failed' });
-        }
-        return res.status(200).json({ message: 'update order successfully', order: orderUpdate });
+        // const orderUpdate = await orderExits.save();
+        // if (!orderUpdate) {
+        //   return res.status(400).json({ error: 'update order failed' });
+        // }
+        // return res.status(200).json({ message: 'update order successfully', order: orderUpdate });
       }
+      return res.status(200).json({ message: 'update order successfully' });
+      /* kiểm tra xem sản phẩm đã có trong order chưa */
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
