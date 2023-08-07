@@ -24,70 +24,20 @@ export const orderController = {
         }
       });
       /* kiểm tra xem đã có order nào chưa */
-      const orderExits = await Order.findOne({ user: body.user, status: 'pending' });
-      if (!orderExits) {
-        const priceShipping = Number(body.priceShipping) || 0;
-        /* tạo đơn hàng mới */
-        const order = new Order({
-          ...body,
-          total: total + priceShipping,
-          priceShipping: body.priceShipping,
-          is_active: true,
-        });
-        /* lưu đơn hàng mới */
-        const orderNew = await order.save();
-        if (!orderNew) {
-          return res.status(400).json({ error: 'create order failed' });
-        }
-        return res.status(200).json({ message: 'create order successfully', order: orderNew });
+      const priceShipping = Number(body.priceShipping) || 0;
+      /* tạo đơn hàng mới */
+      const order = new Order({
+        ...body,
+        total: total + priceShipping,
+        priceShipping: body.priceShipping,
+        is_active: true,
+      });
+      /* lưu đơn hàng mới */
+      const orderNew = await order.save();
+      if (!orderNew) {
+        return res.status(400).json({ error: 'create order failed' });
       }
-      /* khi đã tồn tại order đó rồi */
-      for (let item of orderExits.items) {
-        /* kiểm tra xem sản phẩm đó đã tồn tại trong order chưa */
-        const productExits = body.items.find((product) => {
-          return item.product.toString() === product.product.toString();
-        });
-        if (productExits) {
-          /* nếu sản phẩm tồn tại rồi thì check xem có trùng size không thì làm như nào */
-          if (item.size._id === productExits.size._id) {
-            /* nếu trùng size thì cộng thêm số lượng vào */
-            item.quantity += productExits.quantity;
-          } else {
-            /* nếu không trùng size thì thêm sản phẩm đó vào order */
-            orderExits.items.push({
-              image: productExits.image,
-              product: productExits.product,
-              quantity: productExits.quantity,
-              price: productExits.price,
-              toppings: productExits.toppings,
-              size: productExits.size,
-            });
-          }
-          /* save lại sản phẩm */
-          console.log(
-            '🚀 ~ file: order.controller.js:113 ~ create: ~ orderExits.items',
-            orderExits.items
-          );
-          return res.status(200).json({ message: 'create order successfully', order: orderExits });
-        } else {
-          /* nếu chưa tồn tại thì thêm sản phẩm đó vào order */
-          orderExits.items.push({
-            image: item.image,
-            product: item.product,
-            quantity: item.quantity,
-            price: item.price,
-            toppings: item.toppings,
-            size: item.size,
-          });
-        }
-        // const orderUpdate = await orderExits.save();
-        // if (!orderUpdate) {
-        //   return res.status(400).json({ error: 'update order failed' });
-        // }
-        // return res.status(200).json({ message: 'update order successfully', order: orderUpdate });
-      }
-      return res.status(200).json({ message: 'update order successfully' });
-      /* kiểm tra xem sản phẩm đã có trong order chưa */
+      return res.status(200).json({ message: 'create order successfully', order: orderNew });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
@@ -130,7 +80,14 @@ export const orderController = {
           select: '-password -products -order',
           populate: { path: 'role', select: '-users' },
         },
-        { path: 'items.product' },
+        {
+          path: 'items.product',
+          select: '-toppings -sizes -is_deleted -createdAt -updatedAt',
+          populate: {
+            path: 'category',
+            select: '-products -is_deleted -createdAt -updatedAt',
+          },
+        },
       ]);
       if (!order) {
         return res.status(400).json({ error: 'get order by id failed' });
@@ -156,9 +113,6 @@ export const orderController = {
         },
         { path: 'items.product' },
       ]);
-      if (!updateState) {
-        return res.status(400).json({ error: 'update status order failed' });
-      }
       return updateState;
     } catch (error) {
       return res.status(500).json({ error: error.message });
