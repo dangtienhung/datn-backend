@@ -39,17 +39,17 @@ export const ProductController = {
       // // }
       await existCategory.updateOne({ $addToSet: { products: product._id } });
       /* tạo ra bảng size & giá luôn */
-      const { sizes } = Data;
-      if (sizes.length > 0) {
-        for (let size of sizes) {
-          const sizeItem = {
-            name: size.name,
-            price: size.price,
-            productId: product._id,
-          };
-          await Size.create(sizeItem);
-        }
-      }
+      // const { sizes } = Data;
+      // if (sizes.length > 0) {
+      //   for (let size of sizes) {
+      //     const sizeItem = {
+      //       name: size.name,
+      //       price: size.price,
+      //       productId: product._id,
+      //     };
+      //     await Size.create(sizeItem);
+      //   }
+      // }
       // await Size.updateMany(
       //   { _id: { $in: sizes } },
       //   { $push: { productId: product._id } },
