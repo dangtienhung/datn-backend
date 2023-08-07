@@ -53,6 +53,6 @@ const checkoutSchema = new mongoose.Schema(
 
 checkoutSchema.plugin(mongoosePaginate);
 
-const Checkout = mongoose.model('Checkout', checkoutSchema);
+const Checkout = mongoose.model('Payment', checkoutSchema);
 
 export default Checkout;
