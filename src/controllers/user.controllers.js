@@ -81,7 +81,11 @@ export const userController = {
           ...req.body,
           password: hashedPassword,
           role: roleUser._id,
+          address: '',
+          avatar: `https://ui-avatars.com/api/?name=${req.body.username}`,
+          slug: slugify(req.body.username, { lower: true }),
         });
+
         await Role.updateOne({ name: 'customer' }, { $addToSet: { users: user._id } });
 
         if (!roleUser) {
@@ -94,10 +98,9 @@ export const userController = {
           user: {
             _id: user._id,
             username: user.username,
-            email: user.email,
-            phone: user.phone,
+            account: user.account,
             address: user.address,
-            // slug: user.slug,
+            slug: user.slug,
           },
         });
       } else {
@@ -105,7 +108,7 @@ export const userController = {
       }
     } catch (error) {
       res.status(500).json({
-        message: error.message,
+        message: error,
       });
     }
   },
@@ -187,6 +190,7 @@ export const userController = {
   updateUser: async (req, res) => {
     // const { _id } = req.user;
     // check id
+    console.log(req.body);
     try {
       const result = await User.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
@@ -261,6 +265,7 @@ export const userController = {
   createUser: async (req, res) => {
     try {
       const body = req.body;
+      console.log('body', req.body);
       /* validate */
       const { error } = userValidate.validate(body, { abortEarly: false });
       if (error) {
@@ -269,12 +274,12 @@ export const userController = {
           message: errors,
         });
       }
-      /* check email exists */
-      const emailExit = await User.findOne({ email: body.email });
-      console.log('🚀 ~ file: user.controllers.js:298 ~ createUser: ~ emailExit:', emailExit);
-      if (emailExit) {
+      /* check account exists */
+      const accountExit = await User.findOne({ account: body.account });
+      console.log('🚀 ~ file: user.controllers.js:298 ~ createUser: ~ accountExit:', accountExit);
+      if (accountExit) {
         return res.status(400).json({
-          message: 'Email đã tồn tại',
+          message: 'Account đã tồn tại',
         });
       }
       /* check username exists */
@@ -284,12 +289,28 @@ export const userController = {
           message: 'Username đã tồn tại',
         });
       }
+
       /* check account exists */
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
       console.log(
         '🚀 ~ file: user.controllers.js:311 ~ createUser: ~ hashedPassword:',
         hashedPassword
       );
+
+      const user = await User.create({
+        ...req.body,
+        password: hashedPassword,
+        avatar: body.avatar ? body.avatar : `https://ui-avatars.com/api/?name=${req.body.username}`,
+      });
+
+      return res.status(200).json({
+        message: 'Created success',
+        user: {
+          _id: user._id,
+          username: user.username,
+          avatar: user.avatar,
+        },
+      });
     } catch (error) {
       return res.status(500).json({ message: 'Lỗi server', error: error.message });
     }
