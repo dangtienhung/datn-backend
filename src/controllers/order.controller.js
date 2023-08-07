@@ -214,14 +214,13 @@ export const orderController = {
         limit: _limit,
         sort: { createdAt: -1 },
         populate: [
-          { path: 'user', select: '-password -products -order' },
-          { path: 'items.product' },
+          { path: 'user', select: '_id googleId username avatar' },
+          { path: 'items.product', select: '_id name sale' },
         ],
       };
       /* chức năng tìm kiếm đơn hàng */
       let query = { status };
       if (q) {
-        console.log('🚀 ~ file: order.controller.js:265 ~ getOrderByStatus: ~ q:', q);
         const searchQuery = {
           $or: [
             { name: { $regex: q, $options: 'i' } },
