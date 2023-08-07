@@ -91,7 +91,7 @@ export const authController = {
         const token = await authController.generateToken(emailExits);
         /* remove password */
         const { password, ...info } = emailExits._doc;
-        return res.status(200).json({ accessToken: token, data: info });
+        return res.status(200).json({ user: { ...info, accessToken: token } });
       }
     } catch (error) {
       return res.status(500).json({ message: 'Server error' });
