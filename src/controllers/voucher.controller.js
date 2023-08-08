@@ -6,6 +6,7 @@ export const voucherController = {
   create: async (req, res) => {
     try {
       const body = req.body;
+      // console.log(req.body);
       /* validate */
       const { error } = voucherValidate.validate(body, { abortEarly: false });
       if (error) {

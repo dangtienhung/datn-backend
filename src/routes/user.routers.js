@@ -26,7 +26,7 @@ router.route('/logout').post(userController.logOut);
 // delete
 router.delete(
   '/users/:id',
-  authMiddleware.verifyTokenAdmin,
+  // authMiddleware.verifyTokenAdmin,
   //  isAdmin,
   userController.deleteUser
 );

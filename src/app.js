@@ -23,6 +23,7 @@ app.use(morgan('common'));
 // app.use(cors({ origin: '*' }));
 app.use(cookieParser());
 app.use(express.json());
+// app.use(cors({ origin: '*', credentials: true }));
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(
   session({
@@ -44,7 +45,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((id, done) => {
   (async () => {
-    const user = await User.findById(id);
+    const user = await User.findById(id).populate('role');
     return done(null, user);
   })();
 });

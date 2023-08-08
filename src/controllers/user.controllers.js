@@ -80,6 +80,7 @@ export const userController = {
           ...req.body,
           password: hashedPassword,
           role: roleUser._id,
+          address: '',
           avatar: `https://ui-avatars.com/api/?name=${req.body.username}`,
           slug: slugify(req.body.username, { lower: true }),
         });
@@ -92,7 +93,6 @@ export const userController = {
 
         return res.status(201).json({
           message: 'register success',
-
           user: {
             _id: user._id,
             username: user.username,
@@ -110,7 +110,6 @@ export const userController = {
       });
     }
   },
-
   // login
   login: async (req, res) => {
     try {
@@ -143,6 +142,10 @@ export const userController = {
           account: findUser?.account,
           address: findUser.address,
           avatar: findUser.avatar,
+          role: {
+            name: findUser.role.name,
+            status: findUser.role.status,
+          },
           accessToken: token,
           refreshToken,
         },
@@ -165,43 +168,21 @@ export const userController = {
 
   handleRefreshToken: async (req, res) => {
     try {
-      const refreshToken = req.cookies.refreshToken;
-      if (!refreshToken) return res.status(401).json("You're not authenticated");
-      const refreshUser = await User.find({}, { _id: 0, 'refreshToken.$': 1 });
-      const listRefresh = refreshUser.map(({ refreshToken }) => refreshToken);
-      if (!listRefresh.includes(refreshToken)) {
-        return res.status(403).json('RefreshToken is not valid');
-      }
-      jwt.verify(refreshToken, process.env.SECRET_REFRESH, async (err, user) => {
-        if (err) {
-          return res.status(403).json('RefreshToken is not valid');
-        }
-        const newAccessToken = generateToken(user);
-        const newRefreshToken = generateRefreshToken(user);
-        await User.findByIdAndUpdate(user.id, { refreshToken: newRefreshToken });
-        res.cookie('refreshToken', newRefreshToken, {
-          httpOnly: true,
-          secure: false,
-          path: '/',
-          sameSite: 'strict',
+      const { token: refreshToken } = req.params;
+
+      const isHasUser = jwt.verify(refreshToken, process.env.JWT_SECRET);
+
+      const user = await User.findById(isHasUser?.id);
+      if (!user || !refreshToken) throw new Error('No refresh token present in db or not matched');
+
+      if (refreshToken && user) {
+        const accessToken = generateToken(user?._id);
+
+        res.json({
+          message: 'refreshToken success',
+          data: accessToken,
         });
-        return res.status(200).json({ accessToken: newAccessToken });
-      });
-      // const { token: refreshToken } = req.params;
-
-      // const isHasUser = jwt.verify(refreshToken, process.env.JWT_SECRET);
-
-      // const user = await User.findById(isHasUser?.id);
-      // if (!user || !refreshToken) throw new Error('No refresh token present in db or not matched');
-
-      // if (refreshToken && user) {
-      //   const accessToken = generateToken(user?._id);
-
-      //   res.json({
-      //     message: 'refreshToken success',
-      //     data: accessToken,
-      //   });
-      // }
+      }
     } catch (error) {
       res.json({
         message: error.message,
@@ -211,6 +192,7 @@ export const userController = {
   updateUser: async (req, res) => {
     // const { _id } = req.user;
     // check id
+    console.log(req.body);
     try {
       const result = await User.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
@@ -285,6 +267,7 @@ export const userController = {
   createUser: async (req, res) => {
     try {
       const body = req.body;
+      console.log('body', req.body);
       /* validate */
       const { error } = userValidate.validate(body, { abortEarly: false });
       if (error) {
@@ -293,12 +276,12 @@ export const userController = {
           message: errors,
         });
       }
-      /* check email exists */
-      const emailExit = await User.findOne({ email: body.email });
-      console.log('🚀 ~ file: user.controllers.js:298 ~ createUser: ~ emailExit:', emailExit);
-      if (emailExit) {
+      /* check account exists */
+      const accountExit = await User.findOne({ account: body.account });
+      console.log('🚀 ~ file: user.controllers.js:298 ~ createUser: ~ accountExit:', accountExit);
+      if (accountExit) {
         return res.status(400).json({
-          message: 'Email đã tồn tại',
+          message: 'Account đã tồn tại',
         });
       }
       /* check username exists */
@@ -308,12 +291,28 @@ export const userController = {
           message: 'Username đã tồn tại',
         });
       }
+
       /* check account exists */
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
       console.log(
         '🚀 ~ file: user.controllers.js:311 ~ createUser: ~ hashedPassword:',
         hashedPassword
       );
+
+      const user = await User.create({
+        ...req.body,
+        password: hashedPassword,
+        avatar: body.avatar ? body.avatar : `https://ui-avatars.com/api/?name=${req.body.username}`,
+      });
+
+      return res.status(200).json({
+        message: 'Created success',
+        user: {
+          _id: user._id,
+          username: user.username,
+          avatar: user.avatar,
+        },
+      });
     } catch (error) {
       return res.status(500).json({ message: 'Lỗi server', error: error.message });
     }

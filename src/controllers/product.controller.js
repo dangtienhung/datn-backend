@@ -8,7 +8,6 @@ export const ProductController = {
   createProduct: async (req, res, next) => {
     try {
       const Data = req.body;
-      // console.log(Data);
       const { category } = Data;
       const { error } = productValidate.validate(Data, { abortEarly: false });
       if (error) {
