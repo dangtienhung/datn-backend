@@ -92,7 +92,6 @@ export const userController = {
 
         return res.status(201).json({
           message: 'register success',
-
           user: {
             _id: user._id,
             username: user.username,
@@ -143,6 +142,10 @@ export const userController = {
           account: findUser?.account,
           address: findUser.address,
           avatar: findUser.avatar,
+          role: {
+            name: findUser.role.name,
+            status: findUser.role.status,
+          },
           accessToken: token,
           refreshToken,
         },

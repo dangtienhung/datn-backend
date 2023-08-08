@@ -83,6 +83,10 @@ PassportRoutes.get('/getUser', async (req, res) => {
         account: user?.account,
         address: user.address,
         avatar: user.avatar,
+        role: {
+          name: user.role.name,
+          status: user.role.status,
+        },
         accessToken: token,
         refreshToken,
       },

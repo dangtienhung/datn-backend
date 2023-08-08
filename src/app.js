@@ -44,7 +44,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((id, done) => {
   (async () => {
-    const user = await User.findById(id);
+    const user = await User.findById(id).populate('role');
     return done(null, user);
   })();
 });
