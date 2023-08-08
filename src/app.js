@@ -1,19 +1,19 @@
 import * as dotenv from 'dotenv';
 
-import { connectDb } from './configs/index.js';
-
-import cors from 'cors';
-import express from 'express';
-import morgan from 'morgan';
-import session from 'express-session';
-import passport from 'passport';
-import rootRoutes from './routes/index.js';
-import middleSwaggers from './docs/index.js';
 import { errHandler, notFound } from './middlewares/errhandle.js';
-import passportMiddleware from './middlewares/passport.middlewares.js';
+
 import PassportRoutes from './routes/passport.routes.js';
 import User from './models/user.model.js';
+import { connectDb } from './configs/index.js';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import express from 'express';
+import middleSwaggers from './docs/index.js';
+import morgan from 'morgan';
+import passport from 'passport';
+import passportMiddleware from './middlewares/passport.middlewares.js';
+import rootRoutes from './routes/index.js';
+import session from 'express-session';
 
 dotenv.config();
 
@@ -23,6 +23,7 @@ app.use(morgan('common'));
 // app.use(cors({ origin: '*' }));
 app.use(cookieParser());
 app.use(express.json());
+// app.use(cors({ origin: '*', credentials: true }));
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(
   session({

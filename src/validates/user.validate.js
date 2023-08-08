@@ -16,6 +16,7 @@ export const userValidate = joi.object({
     'any.required': 'Password is required',
     'string.min': 'Password must be at least 6 characters',
   }),
+  avatar: joi.string(),
   address: joi.string().messages({
     'string.base': 'Address must be a string',
     'string.empty': 'Address is not allowed to be empty',
@@ -32,7 +33,7 @@ export const userValidate = joi.object({
     'string.base': 'Order must be a string',
     'string.empty': 'Order is not allowed to be empty',
   }),
-  role: joi.string().valid('admin', 'staff', 'customer', 'shipper').default('customer').messages({
+  role: joi.string().default('customer').messages({
     'string.base': 'Role must be a string',
     'string.empty': 'Role is not allowed to be empty',
   }),

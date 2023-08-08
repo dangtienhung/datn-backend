@@ -11,78 +11,33 @@ export const orderController = {
       if (error) {
         return res.status(400).json({ error: error.message });
       }
+      const items = body.items;
+      /* tính tổng tiền của đơn hàng người dùng vừa đặt */
+      let total = 0;
+      items.forEach((item) => {
+        total += item.quantity * item.price;
+        /* nếu mà sản phẩm có topping */
+        if (item.toppings.length > 0 && item.toppings) {
+          item.toppings.forEach((topping) => {
+            total += topping.price;
+          });
+        }
+      });
       /* kiểm tra xem đã có order nào chưa */
-      const orderExits = await Order.findOne({ user: body.user, status: 'pending' });
-      if (!orderExits) {
-        const items = body.items;
-        /* tính tổng tiền của đơn hàng người dùng vừa đặt */
-        const total = items.reduce((total, item) => {
-          const price = Number(item.price) * Number(item.quantity);
-          return total + price;
-        }, 0);
-        const priceShipping = Number(body.priceShipping) || 0;
-        /* tạo đơn hàng mới */
-        const order = new Order({
-          user: body.user,
-          items,
-          status: 'pending',
-          total: total + priceShipping,
-          priceShipping: body.priceShipping,
-          address: body.address,
-          is_active: true,
-        });
-        /* lưu đơn hàng mới */
-        const orderNew = await order.save();
-        if (!orderNew) {
-          return res.status(400).json({ error: 'create order failed' });
-        }
-        return res.status(200).json({ message: 'create order successfully', order: orderNew });
+      const priceShipping = Number(body.priceShipping) || 0;
+      /* tạo đơn hàng mới */
+      const order = new Order({
+        ...body,
+        total: total + priceShipping,
+        priceShipping: body.priceShipping,
+        is_active: true,
+      });
+      /* lưu đơn hàng mới */
+      const orderNew = await order.save();
+      if (!orderNew) {
+        return res.status(400).json({ error: 'create order failed' });
       }
-      /* khi đã tồn tại order đó rồi */
-      for (let item of orderExits.items) {
-        /* kiểm tra xem sản phẩm đó đã tồn tại trong order chưa */
-        const productExits = body.items.find((x) => x.product === item.product);
-        if (productExits) {
-          /* nếu đã tồn tại thì cập nhật lại số lượng và giá tiền */
-          item.quantity = productExits.quantity + item.quantity;
-          item.price = productExits.price + item.price;
-          const total = orderExits.items.reduce((total, item) => {
-            const price = Number(item.price) * Number(item.quantity);
-            return total + price;
-          });
-          const priceShipping = Number(body.priceShipping) || 0;
-          orderExits.total = Number(total) + Number(priceShipping);
-          orderExits.priceShipping = body.priceShipping;
-          orderExits.address = body.address;
-          /* lưu lại order */
-          const orderUpdate = await orderExits.save();
-          if (!orderUpdate) {
-            return res.status(400).json({ error: 'update order failed' });
-          }
-          return res.status(200).json({ message: 'update order successfully', order: orderUpdate });
-        } else {
-          /* nếu chưa tồn tại thì thêm sản phẩm đó vào order */
-          orderExits.items.push({
-            product: item.product,
-            quantity: item.quantity,
-            price: item.price,
-          });
-        }
-        const total = orderExits.items.reduce((total, item) => {
-          const price = Number(item.price) * Number(item.quantity);
-          return total + price;
-        });
-        const priceShipping = Number(body.priceShipping) || 0;
-        orderExits.total = total + priceShipping;
-        orderExits.priceShipping = body.priceShipping;
-        orderExits.address = body.address;
-        /* lưu lại order */
-        const orderUpdate = await orderExits.save();
-        if (!orderUpdate) {
-          return res.status(400).json({ error: 'update order failed' });
-        }
-        return res.status(200).json({ message: 'update order successfully', order: orderUpdate });
-      }
+      return res.status(200).json({ message: 'create order successfully', order: orderNew });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
@@ -125,7 +80,14 @@ export const orderController = {
           select: '-password -products -order',
           populate: { path: 'role', select: '-users' },
         },
-        { path: 'items.product' },
+        {
+          path: 'items.product',
+          select: '-toppings -sizes -is_deleted -createdAt -updatedAt',
+          populate: {
+            path: 'category',
+            select: '-products -is_deleted -createdAt -updatedAt',
+          },
+        },
       ]);
       if (!order) {
         return res.status(400).json({ error: 'get order by id failed' });
@@ -151,9 +113,6 @@ export const orderController = {
         },
         { path: 'items.product' },
       ]);
-      if (!updateState) {
-        return res.status(400).json({ error: 'update status order failed' });
-      }
       return updateState;
     } catch (error) {
       return res.status(500).json({ error: error.message });
@@ -255,14 +214,13 @@ export const orderController = {
         limit: _limit,
         sort: { createdAt: -1 },
         populate: [
-          { path: 'user', select: '-password -products -order' },
-          { path: 'items.product' },
+          { path: 'user', select: '_id googleId username avatar' },
+          { path: 'items.product', select: '_id name sale' },
         ],
       };
       /* chức năng tìm kiếm đơn hàng */
       let query = { status };
       if (q) {
-        console.log('🚀 ~ file: order.controller.js:265 ~ getOrderByStatus: ~ q:', q);
         const searchQuery = {
           $or: [
             { name: { $regex: q, $options: 'i' } },

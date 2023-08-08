@@ -9,10 +9,10 @@ const SizeValidate = joi.object({
     'number.base': 'price must be a number',
     'number.empty': 'price is not allowed to be empty',
   }),
-  // productId: joi.string().required().messages({
-  //   'string.empty': 'product is not allowed to be empty',
-  //   'any.required': 'product is required',
-  // }),
+  productId: joi.string().messages({
+    'string.empty': 'product is not allowed to be empty',
+    'any.required': 'product is required',
+  }),
 });
 
 export default SizeValidate;
