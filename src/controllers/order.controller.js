@@ -1,11 +1,21 @@
 import Order from '../models/order.model.js';
 import { orderValidate } from '../validates/order.validate.js';
+import axios from 'axios';
 
 export const orderController = {
   /* create */
   create: async (req, res) => {
+  
     try {
       const body = req.body;
+      //gửi mail
+      // var message="Mua hàng thành công";
+      // var subject="Payment Success";
+      // var email=body['inforOrderShipping']['email'];
+      // console.log(email)
+      // var link=""
+      // axios.get('https://ketquaday99.com/api/NodeMailer/?email='+email+'&subject='+subject+'&message='+message).then(function (response) {console.log(response);});
+
       /* validate */
       const { error } = orderValidate.validate(body, { abortEarly: false });
       if (error) {
