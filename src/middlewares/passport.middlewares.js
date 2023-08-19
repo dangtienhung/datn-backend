@@ -18,8 +18,9 @@ const passportMiddleware = {
       clientID: process.env.GOOGLEID,
       clientSecret: process.env.SECRETGOOGLEID,
       callbackURL: process.env.CALLBACKURLGOOGLE,
+      passReToCallback: true,
     },
-    function (accessToken, refreshToken, profile, cb) {
+    function (req, accessToken, refreshToken, profile, cb) {
       (async () => {
         try {
           const user = await User.findOne({ googleId: profile.id }).populate('role', '-_id -users');
@@ -30,6 +31,7 @@ const passportMiddleware = {
               username: profile.name.givenName,
               avatar: profile.photos[0].value,
               slug: slugify(profile.name.givenName, { lower: true }),
+              account: profile.emails[0].value,
               role: roleUser._id,
             });
             await Role.updateOne({ name: 'customer' }, { $addToSet: { users: newUser._id } });
@@ -47,7 +49,7 @@ const passportMiddleware = {
       consumerKey: process.env.TWITTERKEY,
       consumerSecret: process.env.SECRETTWITTER,
       callbackURL: process.env.CALLBACKURLTWITTER,
-      proxy: false,
+      // proxy: false,
     },
     function (accessToken, refreshToken, profile, cb) {
       (async () => {
@@ -104,9 +106,11 @@ const passportMiddleware = {
       clientID: process.env.FACEBOOKID,
       clientSecret: process.env.SECRETFACEBOOK,
       callbackURL: process.env.CALLBACKURLFACEBOOK,
+      profileFields: ['id', 'displayName', 'photos'],
     },
-    function (accessToken, refreshToken, profile, cb) {
+    function (req, accessToken, refreshToken, profile, cb) {
       (async () => {
+        console.log(profile);
         try {
           const user = await User.findOne({ facebookId: profile.id }).populate(
             'role',
@@ -117,7 +121,7 @@ const passportMiddleware = {
             const newUser = await User.create({
               facebookId: profile.id,
               username: profile.displayName,
-              avatar: `https://ui-avatars.com/api/?name=${profile.displayName}`,
+              avatar: profile.photos[0].value,
               slug: slugify(profile.displayName, { lower: true }),
               role: roleUser._id,
             });

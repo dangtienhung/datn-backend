@@ -102,7 +102,7 @@ export const userController = {
           },
         });
       } else {
-        throw new Error('User already exists');
+        return res.status(400).json({ message: 'fail', err: 'User already exist!' });
       }
     } catch (error) {
       res.status(500).json({
@@ -124,15 +124,6 @@ export const userController = {
         return res.status(400).json({ message: 'Tài khoản hoặc Mật khẩu không khớp' });
       }
 
-      const token = generateToken({ id: findUser?._id, role: findUser.role });
-      const refreshToken = generateRefreshToken({ id: findUser?._id, role: findUser.role });
-      await findUser.updateOne({ refreshToken: refreshToken });
-      res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: false,
-        path: '/',
-        sameSite: 'strict',
-      });
       return res.json({
         message: 'loign success',
         user: {
@@ -146,12 +137,10 @@ export const userController = {
             name: findUser.role.name,
             status: findUser.role.status,
           },
-          accessToken: token,
-          refreshToken,
         },
       });
     } catch (error) {
-      return res.status(400).json({ message: error.message });
+      return res.status(500).json({ message: error.message });
     }
   },
 
@@ -267,7 +256,6 @@ export const userController = {
   createUser: async (req, res) => {
     try {
       const body = req.body;
-      console.log('body', req.body);
       /* validate */
       const { error } = userValidate.validate(body, { abortEarly: false });
       if (error) {
