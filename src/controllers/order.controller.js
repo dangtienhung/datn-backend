@@ -1,11 +1,10 @@
 import Order from '../models/order.model.js';
 import { orderValidate } from '../validates/order.validate.js';
-import axios from 'axios';
+// import axios from 'axios';
 
 export const orderController = {
   /* create */
   create: async (req, res) => {
-  
     try {
       const body = req.body;
       //gửi mail
