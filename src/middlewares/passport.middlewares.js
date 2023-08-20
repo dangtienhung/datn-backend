@@ -33,6 +33,8 @@ const passportMiddleware = {
               slug: slugify(profile.name.givenName, { lower: true }),
               account: profile.emails[0].value,
               role: roleUser._id,
+              birthday: new Date('2003-1-1'),
+              grade: 0,
             });
             await Role.updateOne({ name: 'customer' }, { $addToSet: { users: newUser._id } });
             return cb(null, newUser);

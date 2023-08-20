@@ -64,6 +64,11 @@ const userSchema = new mongoose.Schema(
       // default: 'customer',
     },
     birthday: { type: Date },
+    grade: { type: Number },
+    gender: {
+      type: String,
+      enum: ['male', 'female', 'other'],
+    },
     refreshToken: {
       type: String,
     },

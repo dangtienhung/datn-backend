@@ -15,7 +15,8 @@ export const signupSchema = Joi.object({
     'string.min': `"password" phải chứa ít nhất {#limit} ký tự`,
     'any.required': `"password" là trường bắt buộc`,
   }),
-  // slug: Joi.string(),
+  birthday: Joi.date().default('1999-01-01'),
+  grade: Joi.number().default(0),
 }).unknown(true);
 export const signInSchema = Joi.object({
   email: Joi.string().email().required().messages({
