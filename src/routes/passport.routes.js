@@ -6,7 +6,7 @@ import { generateRefreshToken, generateToken } from '../configs/token.js';
 dotenv.config();
 const PassportRoutes = express.Router();
 
-PassportRoutes.get('/google', passport.authenticate('google', { scope: ['profile'] }));
+PassportRoutes.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 PassportRoutes.get('/twitter', passport.authenticate('twitter'));
 
@@ -19,10 +19,10 @@ PassportRoutes.get(
   passport.authenticate('google', { failureRedirect: process.env.LOGINPAGE }),
   function (req, res) {
     const { role } = req.user;
-    if (role.name === 'customer') {
+    if (!role.name || role.name === 'customer') {
       res.redirect(process.env.HOMEPAGE);
     } else if (role.name === 'admin') {
-      res.redirect(process.env.AMINPAGE);
+      res.redirect(process.env.ADMINPAGE);
     }
   }
 );
@@ -32,10 +32,10 @@ PassportRoutes.get(
   passport.authenticate('twitter', { failureRedirect: process.env.LOGINPAGE }),
   function (req, res) {
     const { role } = req.user;
-    if (role.name === 'customer') {
+    if (!role.name || role.name === 'customer') {
       res.redirect(process.env.HOMEPAGE);
     } else if (role.name === 'admin') {
-      res.redirect(process.env.AMINPAGE);
+      res.redirect(process.env.ADMINPAGE);
     }
   }
 );
@@ -55,10 +55,10 @@ PassportRoutes.get(
   }),
   function (req, res) {
     const { role } = req.user;
-    if (role.name === 'customer') {
+    if (!role.name || role.name === 'customer') {
       res.redirect(process.env.HOMEPAGE);
     } else if (role.name === 'admin') {
-      res.redirect(process.env.AMINPAGE);
+      res.redirect(process.env.ADMINPAGE);
     }
   }
 );
@@ -83,6 +83,11 @@ PassportRoutes.get('/getUser', async (req, res) => {
         account: user?.account,
         address: user.address,
         avatar: user.avatar,
+        role: {
+          name: user.role.name,
+          status: user.role.status,
+        },
+
         accessToken: token,
         refreshToken,
       },

@@ -21,7 +21,7 @@ const RoleController = {
     }
   },
 
-  getRole: async (req, res) => {
+  getRole: async (req, res, next) => {
     try {
       console.log('EOles');
       const roles = await Role.findById(req.params.id);
@@ -34,7 +34,7 @@ const RoleController = {
     }
   },
 
-  getAllRoles: async (req, res) => {
+  getAllRoles: async (req, res, next) => {
     try {
       const roles = await Role.find({});
       if (!roles) {
