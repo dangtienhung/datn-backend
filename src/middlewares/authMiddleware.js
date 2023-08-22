@@ -10,8 +10,11 @@ export const authMiddleware = {
       try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         // console.log("decoded", decoded);
-        const user = await User.findById(decoded?._id).populate('role');
+        console.log(decoded,":::")
+        const user = await User.findById(decoded?.id).populate('role');
+        console.log(user)
         req.user = user;
+        console.log("middleware user ", req.user)
         next();
       } catch (err) {
         if (err.name === 'JsonWebTokenError') {
