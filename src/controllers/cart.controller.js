@@ -13,22 +13,11 @@ export const cartController = {
           .status(400)
           .json({ message: 'fail', err: error.details.map((err) => err.message) });
       }
-      const { productId, quantity, price, orderToppingId, totalPrice } = req.body;
-      // console.log(req.body)
-      // console.log(_id);
-      // console.log(req.body);
 
       let newCart = await new Cart({
         user: _id,
-        products: [
-          {
-            productId: productId,
-            quantity,
-            price,
-            toppingOrder: orderToppingId,
-          },
-        ],
-        totalPrice,
+        name: req.body.name,
+        items: req.body.items
       }).save();
       res.json({
         message: 'Cart created successfully',
@@ -43,11 +32,27 @@ export const cartController = {
     const { _id } = req.user;
     try {
       const cartAll = await Cart.find({ user: _id })
-        .populate('products.productId')
-        .populate('products.toppingOrder')
+        .populate([
+          // {
+          //   path: 'items.product',
+          //   select: '-is_deleted -is_active -createdAt -updatedAt',
+          //   // select: '_id',
+          // },
+          {
+            path: 'items.toppings',
+            // select: '-isActive -isDeleted -updatedAt -products'
+            select: 'name price _id'
+          },
+          {
+            path: 'items.size',
+            // select: '-is_deleted -is_active -createdAt'
+            select: 'name price _id'
+          }
+        ])
+        .select('-user')
         .exec();
-
-      res.json({
+      // console.log("cartAll::", cartAll)
+      return res.json({
         message: 'Cart all successfully',
         data: cartAll,
       });
