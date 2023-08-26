@@ -8,6 +8,7 @@ export const ProductController = {
   createProduct: async (req, res, next) => {
     try {
       const Data = req.body;
+      // console.log(Data);
       const { category } = Data;
       const { error } = productValidate.validate(Data, { abortEarly: false });
       if (error) {
@@ -16,6 +17,7 @@ export const ProductController = {
           .json({ message: 'fail', err: error.details.map((err) => err.message) });
       }
       const existCategory = await Category.findById(category);
+      // // console.log(existCategory);
       if (!existCategory) {
         return res.status(404).json({ message: 'fail', err: 'Create Product failed' });
       }
@@ -71,9 +73,7 @@ export const ProductController = {
 
   getAllProducts: async (req, res, next) => {
     try {
-      const { _page = 1, limit = 10, q = '', c = '' } = req.query;
-      console.log(q, c);
-      let query = { $and: [{ is_deleted: false }, { is_active: true }] };
+      const { _page = 1, limit = 10, q } = req.query;
       const options = {
         page: _page,
         limit: limit,
@@ -84,40 +84,17 @@ export const ProductController = {
           { path: 'toppings', select: '-products -isDeleted -isActive' },
         ],
       };
-      if (q && !c) {
-        query = {
-          $and: [
-            {
-              $or: [{ name: { $regex: q, $options: 'i' } }],
-            },
-            { is_deleted: false },
-            { is_active: true },
-          ],
-        };
-      } else if (c && !q) {
-        query = {
-          $and: [
-            {
-              $or: [{ category: { _id: c } }],
-            },
-            { is_deleted: false },
-            { is_active: true },
-          ],
-        };
-      } else if (q && c) {
-        query = {
-          $and: [
-            {
-              $or: [{ name: { $regex: q, $options: 'i' } }],
-            },
-            {
-              $or: [{ category: { _id: c } }],
-            },
-            { is_deleted: false },
-            { is_active: true },
-          ],
-        };
-      }
+      const query = q
+        ? {
+            $and: [
+              {
+                $or: [{ name: { $regex: q, $options: 'i' } }],
+              },
+              { is_deleted: false },
+              { is_active: true },
+            ],
+          }
+        : { $and: [{ is_deleted: false }, { is_active: true }] };
       const products = await Product.paginate(query, options);
       if (!products) {
         return res.status(404).json({ message: 'fail', err: 'Not found any size' });

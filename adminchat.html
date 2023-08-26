@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat App</title>
+  <style>
+    #messages{
+      height:500px;
+      border:2px green solid;
+      border-radius: 10px;
+      overflow-y: scroll;
+      width: 90%;
+    }
+    #messages li{
+      list-style: none;
+    }
+   
+    .left str{
+      color:green;
+    }
+    .right str{
+      color:red;
+    }
+    .UserBox{
+      width: 100%;
+      border: 2px green solid;
+      
+    }
+    .UserBox small{
+      color:red;
+      margin-left: 10px;
+    }
+    #listUser{
+      height:500px;
+      border-radius: 10px;
+      width: 90%;
+
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Trang chat admin</h1><br>
+  
+  <div style="display:grid;grid-template-columns:1fr 2fr">
+<center id="listUser">
+<div class="Userbox">
+  Tin nhắn chưa đọc
+</div>
+</center>
+  <center>
+  <ul id="messages">
+
+  </ul>
+  <form id="form" action="">
+    <input id="input" autocomplete="off" /><button>Send</button>
+  </form>
+</center>
+</div>
+
+  <!-- <script src="/socket.io/socket.io.js"></script> -->
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script>
+    const socket = io();
+    const messagesList = document.getElementById('messages');
+    const form = document.getElementById('form');
+    const input = document.getElementById('input');
+  
+
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+
+    fetch("/session").then(response=>response.json())
+    .then(data=>{
+      var username=data.username;
+   
+    console.log(username)
+    const queryUsername=(getParameterByName('username',window.location.href));
+    console.log(queryUsername)
+    socket.emit("UpdateChatSeen", { username:queryUsername });
+
+
+  
+  function setup(username){
+    fetch("/clientChat").then(response=>response.json())
+    .then(data=>{
+      data.forEach(s=>{
+        if(s.username==queryUsername || (s.reciever=='to'+queryUsername)){
+          const li = document.createElement('li');
+          if(s.reciever=="toAdmin"){
+            li.classList.add("right");
+            li.innerHTML = `<str>${s.username}</str>: ${s.text}`;
+          }
+          else{
+            li.classList.add("left");
+            li.innerHTML = `<str>Bạn</str>: ${s.text}`;
+          }
+          document.getElementById('messages').appendChild(li);
+        }
+        // document.getElementById("listUser")
+      })
+    })
+  }
+  function LoadUser(){
+    fetch("/UniUser").then(response=>response.json())
+    .then(data=>{
+     for(i=0;i<data.length;i++){
+        const div = document.createElement('div');
+        div.classList.add("UserBox");
+        div.innerHTML="<a href='?username="+data[i].username+"'><b>"+data[i].username+"</b><small id='"+data[i].username+"'>"+data[i].count+"</small></a>";
+        document.getElementById("listUser").appendChild(div)
+        onsole.log(data[i])
+    }
+  })
+
+  }
+  LoadUser();
+
+
+
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const text = input.value;
+      if (text) {
+        socket.emit("AdminMsg", { text,username:queryUsername });
+        input.value = '';
+      }
+    });
+    setup(username)
+
+  
+    socket.on("AdminMsg", message => {
+      if(message.username==username ||message.to=='toAdmin'){
+
+        const li = document.createElement('li');
+        if(message.to=="toAdmin" ){
+            li.classList.add("left");
+            li.innerHTML = `<str>Bạn</str>: ${message.text}`;
+          }
+          else{
+            li.classList.add("right");
+            li.innerHTML = `<str>${message.username}</str>: ${message.text}`;
+          }
+        messagesList.appendChild(li);
+      }
+    });
+
+    //Cập nhật tin nhắn đang chờ
+    socket.on("UpdateUserListMsg", data => {
+      document.getElementById(data.username).innerHTML=document.getElementById(data.username).innerHTML*1+1;
+    });
+
+
+  
+    })//fetch username
+
+
+  </script>
+</body>
+</html>

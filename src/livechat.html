@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat App</title>
+</head>
+<body>
+  <ul id="messages"></ul>
+  <form id="form" action="">
+    <input id="input" autocomplete="off" /><button>Send</button>
+  </form>
+  <script src="/Users/kous1608/Tài liệu/NODEJS/t1/paymen_tesst_ts/2/socket.io/socket.io.js"></script>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script>
+    const socket = io();
+    const messagesList = document.getElementById('messages');
+    const form = document.getElementById('form');
+    const input = document.getElementById('input');
+    
+    // const username = prompt('Enter your username:');
+    var username="s"
+    socket.emit('join', username);
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const text = input.value;
+      if (text) {
+        socket.emit('chat message', { text });
+        input.value = '';
+      }
+    });
+
+    socket.on('chat message', message => {
+      const li = document.createElement('li');
+      li.textContent = `${message.username}: ${message.text}`;
+      messagesList.appendChild(li);
+    });
+
+    socket.on('user joined', message => {
+      const li = document.createElement('li');
+      li.textContent = message;
+      messagesList.appendChild(li);
+    });
+
+    socket.on('user left', message => {
+      const li = document.createElement('li');
+      li.textContent = message;
+      messagesList.appendChild(li);
+    });
+  </script>
+</body>
+</html>

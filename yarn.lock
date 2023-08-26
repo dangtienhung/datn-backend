@@ -1056,10 +1056,10 @@ mongoose-paginate-v2@^1.7.1:
   resolved "https://registry.npmjs.org/mongoose-paginate-v2/-/mongoose-paginate-v2-1.7.31.tgz"
   integrity sha512-Zz7i/1k7/MJqipzttn9SUenbcW1hC63qBOB7HHBNMfIfg0AOPFT2CdAWpeAJ7BBGEQ4qC1Gu02fIaSeMmXOT0A==
 
-mongoose@^7.3.1:
-  version "7.4.3"
-  resolved "https://registry.npmjs.org/mongoose/-/mongoose-7.4.3.tgz"
-  integrity sha512-eok0lW6mZJHK2vVSWyJb9tUfPMUuRF3h7YC4pU2K2/YSZBlNDUwvKsHgftMOANbokP2Ry+4ylvzAdW4KjkRFjw==
+mongoose@^7.4.4:
+  version "7.4.4"
+  resolved "https://registry.npmjs.org/mongoose/-/mongoose-7.4.4.tgz"
+  integrity sha512-LOOviiEqWOLH4PuBK+jbpm5vjBkdSNBcP/4UCevOJMTl5SXSbCXr68ulEYcthLcN2/xi08452HupKD8BfxNIQw==
   dependencies:
     bson "^5.4.0"
     kareem "2.5.1"
@@ -1556,7 +1556,7 @@ socket.io-parser@~4.2.4:
     "@socket.io/component-emitter" "~3.1.0"
     debug "~4.3.1"
 
-socket.io@^4.7.1:
+socket.io@^4.7.2:
   version "4.7.2"
   resolved "https://registry.npmjs.org/socket.io/-/socket.io-4.7.2.tgz"
   integrity sha512-bvKVS29/I5fl2FGLNHuXlQaUH/BlzX1IN6S+NKLNZpBsPZIDH+90eQmCs2Railn4YUiww4SzUedJ6+uzwFnKLw==
