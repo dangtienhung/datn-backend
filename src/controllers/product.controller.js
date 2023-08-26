@@ -19,41 +19,37 @@ export const ProductController = {
       if (!existCategory) {
         return res.status(404).json({ message: 'fail', err: 'Create Product failed' });
       }
-      const product = await Product.create(Data);
+      /* tạo ra bảng size & giá luôn */
+      const sizeList = [];
+      const { sizes } = Data;
+      if (sizes.length > 0) {
+        for (let size of sizes) {
+          const sizeItem = {
+            name: size.name,
+            price: size.price,
+          };
+          const result = await Size.create(sizeItem);
+          sizeList.push(result._id);
+        }
+      }
+      /* update id product to category */
+      const data = { ...Data, sizes: sizeList };
+      const product = await Product.create(data);
       if (!product) {
         return res.status(400).json({ message: 'fail', err: 'Create Product failed' });
       }
-      // /* tạo ra bảng size & giá luôn */
-      // const { sizes } = Data;
-      // // if (sizes.length > 0) {
-      // //   for (let size of sizes) {
-      // //     const sizeItem = {
-      // //       name: size.name,
-      // //       price: size.price,
-      // //       productId: product._id,
-      // //     };
-      // //     await Size.create(sizeItem);
-      // //   }
-      // // }
-      await existCategory.updateOne({ $addToSet: { products: product._id } });
-      /* tạo ra bảng size & giá luôn */
-      // const { sizes } = Data;
-      // if (sizes.length > 0) {
-      //   for (let size of sizes) {
-      //     const sizeItem = {
-      //       name: size.name,
-      //       price: size.price,
-      //       productId: product._id,
-      //     };
-      //     await Size.create(sizeItem);
-      //   }
-      // }
-      // await Size.updateMany(
-      //   { _id: { $in: sizes } },
-      //   { $push: { productId: product._id } },
-      //   { multi: true }
-      // );
-      /* update category */
+      /* cập id product to category */
+      await Category.findByIdAndUpdate(category, {
+        $addToSet: { products: product._id },
+      }).exec();
+      /* update id product to size */
+      if (sizeList.length > 0) {
+        for (let size of sizeList) {
+          await Size.findByIdAndUpdate(size, {
+            $addToSet: { productId: product._id },
+          });
+        }
+      }
       /* update id product topping array */
       const { toppings } = Data;
       if (toppings.length > 0) {
@@ -80,7 +76,7 @@ export const ProductController = {
         sort: { createdAt: -1 },
         populate: [
           { path: 'category', select: 'name' },
-          { path: 'sizes' },
+          { path: 'sizes', select: '-productId' },
           { path: 'toppings', select: '-products -isDeleted -isActive' },
         ],
       };
@@ -132,7 +128,7 @@ export const ProductController = {
     try {
       const product = await Product.findById(req.params.id).populate([
         { path: 'category', select: 'name' },
-        { path: 'sizes' },
+        { path: 'sizes', select: '-productId' },
         { path: 'toppings', select: '-products' },
       ]);
       if (!product) {
@@ -146,7 +142,8 @@ export const ProductController = {
 
   updateProduct: async (req, res, next) => {
     try {
-      console.log(req.body);
+      const body = req.body;
+      const { id } = req.params;
       const { category } = req.body;
       const { error } = productValidate.validate(req.body, { abortEarly: false });
       if (error) {
@@ -158,38 +155,64 @@ export const ProductController = {
       if (!existCategory) {
         return res.status(404).json({ message: 'fail', err: 'Not found category' });
       }
-      const product = await Product.findById(req.params.id);
-      const CatRefProduct = await Category.findByIdAndUpdate(product.category, {
-        $pull: { products: req.params.id },
+      /* dựa vào id và tìm ra produc có tồn tại hay khong */
+      const productExit = await Product.findById(id);
+      if (!productExit) {
+        return res.status(404).json({ message: 'fail', err: 'Not found Product' });
+      }
+      /* delete size đó luôn */
+      if (productExit.sizes.length > 0) {
+        const sizeList = productExit.sizes;
+        if (sizeList.length > 0) {
+          for (let size of sizeList) {
+            await Size.findByIdAndDelete(size);
+          }
+        }
+      }
+      /* gỡ topping trước đó mà product đã gắn */
+      const toppingList = productExit.toppings;
+      if (toppingList.length > 0) {
+        for (let topping of toppingList) {
+          await Topping.findByIdAndUpdate(topping, {
+            $pull: { products: productExit._id },
+          });
+        }
+      }
+      /* gỡ category ra khỏi product */
+      await Category.findByIdAndUpdate(productExit.category, {
+        $pull: { products: productExit._id },
       });
-      await product.updateOne(req.body, { new: true });
-      if (!CatRefProduct) {
-        return res.status(404).json({ message: 'fail', err: 'Update failed' });
-      }
-
-      /* cập nhật lại topping */
-      const toppings = product.toppings;
-      if (toppings.length > 0) {
-        for (let i = 0; i < toppings.length, i++; ) {
-          await Topping.findByIdAndUpdate(toppings[i], {
-            $pull: { products: product._id },
-          });
+      const { sizes, toppings } = body;
+      /* tạo size */
+      const sizeListNew = [];
+      if (sizes.length > 0) {
+        for (let size of sizes) {
+          const sizeItem = {
+            name: size.name,
+            price: size.price,
+          };
+          const result = await Size.create(sizeItem);
+          sizeListNew.push(result._id);
         }
       }
-      const updateTopping = req.body.toppings;
-      if (updateTopping.length > 0) {
-        for (let i = 0; i < updateTopping.length, i++; ) {
-          await Topping.findByIdAndUpdate(updateTopping[i], {
-            $addToSet: { products: product._id },
-          });
-        }
+      /* update product đó */
+      const data = { ...body, sizes: sizeListNew };
+      console.log('🚀 ~ file: product.controller.js:200 ~ updateProduct: ~ data:', data);
+      const productUpdate = await Product.findByIdAndUpdate({ _id: id }, data, { new: true });
+      if (!productUpdate) {
+        return res.status(404).json({ message: 'fail', err: 'Update Product failed' });
       }
-
-      if (!product) {
-        return res.status(404).json({ message: 'fail', err: 'Not found Product to update' });
+      /* update id product to category */
+      for (let topping of body.toppings) {
+        await Topping.findByIdAndUpdate(topping, {
+          $addToSet: { products: productUpdate._id },
+        });
       }
-      await existCategory.updateOne({ $addToSet: { products: product._id } });
-      return res.status(200).json({ message: 'success', data: product });
+      /* update category */
+      await Category.findByIdAndUpdate(body.category, {
+        $addToSet: { products: productUpdate._id },
+      }).exec();
+      return res.status(200).json({ message: 'success', data: productUpdate });
     } catch (error) {
       next(error);
     }
