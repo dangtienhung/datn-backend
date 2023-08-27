@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat App</title>
+  <style>
+    #messages{
+      height:500px;
+      border:2px green solid;
+      border-radius: 10px;
+      width:50%;
+      overflow-y: scroll;
+
+    }
+    #messages li{
+      list-style: none;
+
+    }
+   
+    .left str{
+      color:green;
+
+    }
+    .left{
+     width:100%;
+     /* border:1px green solid; */
+    }
+    .right str{
+      color:red;
+
+    }
+    .noImg{
+      height:70px;
+      margin: 1px;
+    }
+    
+    #previewContainer {
+     flex-wrap: wrap;
+     width: 50%;
+     padding: 10px;
+     display: none;
+   }
+   #previewContainer img{
+    width: 60px;
+     height: 60px;
+     object-fit: cover;
+     margin: 5px;
+   }
+   
+   .previewImage {
+    height:70px;
+      margin: 1px;
+   }
+  </style>
+</head>
+
+<body>
+  <h1>Trang hỗ trợ thành viên</h1>
+
+  <center>
+  <ul id="messages">
+
+  </ul>
+  <form id="form" action="">
+    <input id="input" autocomplete="off" placeholder="Hãy kèm theo thông tin đơn hàng nếu có" style="width:400px"/><button>Gửi</button>
+    
+  </form>
+  <div id="previewContainer"></div>
+
+  <form id="form3">
+    <input type="file" id="fileInput" multiple>
+    <button>Tải lên tệp</button>
+</form>
+</center>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script>
+    function a(){
+    const fileInput = document.getElementById('fileInput');
+const previewContainer = document.getElementById('previewContainer');
+
+
+
+fileInput.addEventListener('change', handleFileUpload);
+
+function handleFileUpload(event) {
+  previewContainer.style.display="flex";
+previewContainer.style.border="1px green solid";
+  previewContainer.innerHTML = '';
+
+
+  const files = event.target.files;
+  for (const file of files) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const previewImage = document.createElement('img');
+      previewImage.className = 'previewImage';
+      previewImage.src = e.target.result;
+      // console.log(this.result)
+      previewContainer.appendChild(previewImage);
+    };
+    reader.readAsDataURL(file);
+  }
+}
+    }
+    a();
+
+  </script>
+  <script>
+    const socket = io();
+    const messagesList = document.getElementById('messages');
+    const form = document.getElementById('form');
+    const form3 = document.getElementById('form3');
+
+    const input = document.getElementById('input');
+  
+    // console.log(username);
+    var method="";
+    var count=0;
+    fetch("/session").then(response=>response.json())
+    .then(data=>{
+      var username=data.username;
+   
+    console.log(username)
+  
+  function setup(username){
+    fetch("/clientChat").then(response=>response.json())
+    .then(data=>{
+      data.forEach(s=>{
+        if(s.username==username || s.reciever=='to'+username){
+          const li = document.createElement('li');
+          if(s.reciever!="toAdmin"){
+            li.classList.add("right");
+            li.innerHTML = `<str>ADMIN</str>:${s.text}`;
+          }
+          else{
+            li.classList.add("left");
+            li.innerHTML = `<str>Bạn</str>: ${s.text}`;
+          }
+          document.getElementById('messages').appendChild(li);
+        }
+      })
+    })
+  }
+
+
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const text = input.value;
+      if (text) {
+        socket.emit("chatMsg", { text,username });
+        input.value = '';
+      }
+    });
+    form3.addEventListener('submit', e => {
+      e.preventDefault();
+      const text = document.getElementById('previewContainer').innerHTML;
+      if (text!="") {
+        socket.emit("chatMsg", { text,username });
+        document.getElementById('previewContainer').innerHTML="";
+        
+      }
+    });
+    
+    setup(username)
+
+  
+    socket.on("chatMsg", message => {
+      if(message.username==username||message.to=='to'+username){
+
+        const li = document.createElement('li');
+        if(message.to=="toAdmin"){
+            li.classList.add("left");
+            li.innerHTML = `<str>Bạn</str>: ${message.text}`;
+          }
+          else{
+            li.classList.add("right");
+
+            li.innerHTML = `<str>ADMIN</str>:${message.text}`;
+          }
+        messagesList.appendChild(li);
+      }
+    });
+
+
+    // socket.on('user joined', message => {
+    //   const li = document.createElement('li');
+    //   li.textContent = message;
+      
+    //   messagesList.appendChild(li);
+    // });
+
+    })//fetch username
+
+
+  </script>
+</body>
+</html>
