@@ -3,9 +3,17 @@ import mongoosePaginate from 'mongoose-paginate-v2';
 
 const cartSchema = new mongoose.Schema(
   {
-    products: [
+    name: {
+      type: String,
+    },
+    items: [
       {
-        productId: {
+        image: {
+          type: String,
+          required: true,
+
+        },
+        product: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Product",
           required: true,
@@ -18,14 +26,45 @@ const cartSchema = new mongoose.Schema(
           type: Number,
           require: true,
         },
-        toppingOrder: [
+        size: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Size',
+        },
+        toppings: [
           {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Topping',
           },
         ],
+        total: {
+          type: Number,
+          required: true,
+        },
       },
     ],
+    // products: [
+    //   {
+    //     productId: {
+    //       type: mongoose.Schema.Types.ObjectId,
+    //       ref: "Product",
+    //       required: true,
+    //     },
+    //     quantity: {
+    //       type: Number,
+    //       required: true,
+    //     },
+    //     price: {
+    //       type: Number,
+    //       require: true,
+    //     },
+    //     toppingOrder: [
+    //       {
+    //         type: mongoose.Schema.Types.ObjectId,
+    //         ref: 'Topping',
+    //       },
+    //     ],
+    //   },
+    // ],
 
     // totalAfterDiscount: Number,
     user: {
@@ -33,18 +72,6 @@ const cartSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    // quantity: {
-    //   type: Number,
-    //   required: true
-    // },
-    totalPrice: {
-      type: Number,
-      required: true,
-    },
-    // toppingOrder: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "Topping"
-    // },
   },
   {
     timestamps: true,

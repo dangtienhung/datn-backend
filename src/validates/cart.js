@@ -1,13 +1,17 @@
 import joi from 'joi';
 
 export const cartValidate = joi.object({
-  user: joi.string().required(),
-  products: joi.array().items(
+
+  name: joi.string().required(),
+  items: joi.array().items(
     joi.object({
+      image: joi.string().required(),
       product: joi.string().required(),
       quantity: joi.number().required(),
       price: joi.number().required(),
-      toppingOrder: joi.string(),
+      toppings: joi.array().items(joi.string()),
+      size: joi.string().required(),
+      total: joi.number().required()
     })
   ),
 });
