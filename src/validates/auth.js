@@ -16,6 +16,7 @@ export const signupSchema = Joi.object({
     'any.required': `"password" là trường bắt buộc`,
   }),
   // slug: Joi.string(),
+  //
 }).unknown(true);
 export const signInSchema = Joi.object({
   email: Joi.string().email().required().messages({
