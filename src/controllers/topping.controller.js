@@ -4,6 +4,7 @@ import toppingValidate from '../validates/topping.validate.js';
 export const toppingController = {
   createTopping: async (req, res, next) => {
     try {
+      console.log('Hello');
       const { error } = toppingValidate.validate(req.body, { abortEarly: false });
       if (error) {
         return res
