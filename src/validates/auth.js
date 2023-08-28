@@ -1,5 +1,5 @@
 import Joi from 'joi';
-
+// validate
 export const signupSchema = Joi.object({
   username: Joi.string(),
   phone: Joi.string(),
