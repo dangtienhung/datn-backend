@@ -114,8 +114,8 @@ previewContainer.style.border="1px green solid";
     const input = document.getElementById('input');
   
     // console.log(username);
-    var method="";
-    var count=0;
+  
+    
     fetch("/session").then(response=>response.json())
     .then(data=>{
       var username=data.username;
@@ -158,6 +158,7 @@ previewContainer.style.border="1px green solid";
       if (text!="") {
         socket.emit("chatMsg", { text,username });
         document.getElementById('previewContainer').innerHTML="";
+        document.getElementById('fileInput').value="";
         
       }
     });

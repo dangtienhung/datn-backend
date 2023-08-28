@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "concurrently --kill-others \"nodemon   ./src/app.js\" \"nodemon  client_bot.js\""
+    "start": "concurrently --kill-others \"nodemon   ./src/app.js\" \"nodemon  clientBot2.js\""
   },
   "keywords": [],
   "author": "",
