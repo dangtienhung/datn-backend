@@ -41,7 +41,6 @@ export const userController = {
       });
     }
   },
-
   getUser: async (req, res) => {
     try {
       const user = await User.findById(req.user._id).populate([
@@ -72,8 +71,8 @@ export const userController = {
         });
       }
 
-      const user = await User.findOne({ account: req.body?.account });
-      if (!user) {
+      const findUser = await User.findOne({ account: req.body?.account });
+      if (!findUser) {
         // create user
         const roleUser = await Role.findOne({ name: 'customer' });
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -84,9 +83,6 @@ export const userController = {
           address: '',
           avatar: `https://ui-avatars.com/api/?name=${req.body.username}`,
           slug: slugify(req.body.username, { lower: true }),
-          birthday: new Date('1999-01-01'),
-          grade: 0,
-          gender: 'male',
         });
 
         await Role.updateOne({ name: 'customer' }, { $addToSet: { users: user._id } });
@@ -97,6 +93,7 @@ export const userController = {
 
         return res.status(201).json({
           message: 'register success',
+
           user: {
             _id: user._id,
             username: user.username,
@@ -106,7 +103,7 @@ export const userController = {
           },
         });
       } else {
-        return res.status(400).json({ message: 'fail', err: 'User already exist!' });
+        throw new Error('User already exists');
       }
     } catch (error) {
       res.status(500).json({
@@ -119,48 +116,39 @@ export const userController = {
     try {
       const { account, password } = req.body;
       // check user exists or not
-      const user = await User.findOne({ account }).populate('role', '-_id -users');
-      if (!user) {
+      const findUser = await User.findOne({ account }).populate('role');
+      if (!findUser) {
         return res.status(400).json({ message: 'Tài khoản không tồn tại' });
       }
-      const isMatch = await bcrypt.compare(password, user.password);
+      const isMatch = await bcrypt.compare(password, findUser.password);
       if (!isMatch) {
         return res.status(400).json({ message: 'Tài khoản hoặc Mật khẩu không khớp' });
       }
 
-      const token = generateToken({ id: user?._id, role: user.role });
-      const refreshToken = generateRefreshToken({ id: user?._id, role: user.role });
-      await user.updateOne({ refreshToken: refreshToken });
-
+      const token = generateToken({ id: findUser?._id,username: findUser?.username, role: findUser.role });
+      const refreshToken = generateRefreshToken({ id: findUser?._id,username: findUser?.username, role: findUser.role });
+      await findUser.updateOne({ refreshToken: refreshToken });
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
         path: '/',
         sameSite: 'strict',
       });
-
       return res.json({
-        message: 'loign success',
+        message: 'login success',
         user: {
-          _id: user?._id,
-          username: user?.username,
-          slug: user?.slug,
-          account: user?.account,
-          address: user.address,
-          avatar: user.avatar,
-          role: {
-            name: user.role.name,
-            status: user.role.status,
-          },
-          birthday: user.birthday,
-          grade: user.grade,
-          gender: user.gender,
+          _id: findUser?._id,
+          username: findUser?.username,
+          slug: findUser?.slug,
+          account: findUser?.account,
+          address: findUser.address,
+          avatar: findUser.avatar,
           accessToken: token,
           refreshToken,
         },
       });
     } catch (error) {
-      return res.status(500).json({ message: error.message });
+      return res.status(400).json({ message: error.message });
     }
   },
 
@@ -209,8 +197,8 @@ export const userController = {
       if (!result) {
         return res.status(404).json({ message: 'Không tìm thấy thông tin người dùng' });
       }
-      const slug = slugify(result.username, { lower: true });
       /* update slug */
+      const slug = slugify(result.username, { lower: true });
       result.slug = slug;
       /* loại bỏ slug */
       result.password = undefined;
@@ -222,61 +210,6 @@ export const userController = {
       throw new Error(error);
     }
   },
-
-  updateInfor: async (req, res, next) => {
-    try {
-      const { id } = req.params;
-      const user = await User.findById(id);
-      if (!user) {
-        return res.status(400).json({ error: 'Update error' });
-      }
-      const slug = slugify(req.body.username, { lower: true });
-      const token = generateToken({ id: user?._id, role: user.role });
-      const refreshToken = generateRefreshToken({ id: user?._id, role: user.role });
-
-      res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: false,
-        path: '/',
-        sameSite: 'strict',
-      });
-
-      const dataUpdate = {
-        ...req.body,
-        birthday: new Date(req.body.birthday),
-        slug: slug,
-        accessToken: token,
-        refreshToken,
-      };
-      const updateUser = await User.findByIdAndUpdate(id, dataUpdate, { new: true }).populate(
-        'role',
-        '-_id -users'
-      );
-      res.status(200).json({
-        message: 'Update Success',
-        user: {
-          _id: updateUser?._id,
-          username: updateUser?.username,
-          slug: updateUser?.slug,
-          account: updateUser?.account,
-          address: updateUser.address,
-          avatar: updateUser.avatar,
-          role: {
-            name: updateUser.role.name,
-            status: updateUser.role.status,
-          },
-          birthday: updateUser.birthday,
-          grade: updateUser.grade,
-          gender: updateUser.gender,
-          accessToken: token,
-          refreshToken,
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-
   deleteUser: async (req, res) => {
     // const { _id } = req.user;
     try {
@@ -296,7 +229,7 @@ export const userController = {
       // const { _id } = req.user;
       const { password, passwordNew } = req.body;
       const user = await User.findById(req.params.id);
-      if (user && (await user.isPasswordMatched(password))) {
+      if (findUser && (await findUser.isPasswordMatched(password))) {
         // if (password && user) {
         const hashedPassword = await bcrypt.hash(passwordNew, 10);
         user.password = hashedPassword;
@@ -331,6 +264,7 @@ export const userController = {
   createUser: async (req, res) => {
     try {
       const body = req.body;
+      console.log('body', req.body);
       /* validate */
       const { error } = userValidate.validate(body, { abortEarly: false });
       if (error) {

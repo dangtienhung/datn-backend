@@ -37,8 +37,6 @@ export const userValidate = joi.object({
     'string.base': 'Role must be a string',
     'string.empty': 'Role is not allowed to be empty',
   }),
-  birthday: joi.date().default('1999-01-01'),
-  grade: joi.number().default(0),
 });
 
 export const userUpdateValidate = joi.object({});
