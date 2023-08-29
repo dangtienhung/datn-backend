@@ -10,8 +10,8 @@ import sizeRoutes from './size.routes.js';
 import toppingRoutes from './topping.routes.js';
 import uploadBanner from './banner.routes.js';
 import uploadRouter from './uploadfiles.routes.js';
+import userRoutes from './auth.routes.js';
 import voucherRoutes from './voucher.routes.js';
-import cartRouter from './cart.routes.js';
 
 const router = express.Router();
 
@@ -19,6 +19,7 @@ const rootRoutes = [
   categoryRoutes,
   UserRoutes,
   AuthRouter,
+  userRoutes,
   sizeRoutes,
   toppingRoutes,
   productRoutes,
@@ -28,7 +29,6 @@ const rootRoutes = [
   orderRoutes,
   uploadBanner,
   analyticRoutes,
-  cartRouter
 ];
 
 rootRoutes.map((route) => {
