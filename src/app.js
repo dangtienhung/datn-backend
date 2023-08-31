@@ -16,12 +16,12 @@ import passportMiddleware from './middlewares/passport.middlewares.js';
 import rootRoutes from './routes/index.js';
 import session from 'express-session';
 //
-import {userController} from './controllers/user.controllers.js' // chat
-import {authController} from './controllers/auth.controller.js' // chat
+import { userController } from './controllers/user.controllers.js' // chat
+import { authController } from './controllers/auth.controller.js' // chat
 import Users from './models/user.model.js' // chat
- 
+
 //lấy  jwt
-import  jwt  from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 
 
@@ -39,20 +39,20 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 import cookie from 'cookie'
-app.get("/",(req, res) => {
+app.get("/", (req, res) => {
   const cookies = cookie.parse(req.headers.cookie || '');
 
   const refreshTokenCookie = cookies.refreshToken;
   if (refreshTokenCookie) {
 
 
-    
-try {
-  const decoded = jwt.verify(refreshTokenCookie, process.env.SECRET_REFRESH);
-  console.log(decoded);
-} catch (err) {
-  console.error('Invalid token:', err.message);
-}
+
+    try {
+      const decoded = jwt.verify(refreshTokenCookie, process.env.SECRET_REFRESH);
+      console.log(decoded);
+    } catch (err) {
+      console.error('Invalid token:', err.message);
+    }
 
 
 
@@ -61,7 +61,7 @@ try {
 
     // console.log('Refresh Token:', refreshTokenCookie);
 
-    
+
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('Refresh Token: ' + refreshTokenCookie);
   } else {
@@ -120,7 +120,7 @@ connectDb();
 
 /* listen */
 const port = process.env.PORT || 5000;
-app.listen(port, (req,res) => {
+app.listen(port, (req, res) => {
   console.log(`Server is running on port ${port}`);
 });
 
