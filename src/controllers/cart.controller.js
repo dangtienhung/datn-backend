@@ -1,30 +1,132 @@
-import Cart from "../models/carrt.model.js";
+import Cart from "../models/cart.model.js";
 import { cartValidate } from "../validates/cart.js";
 
+function arraysEqual(arr1, arr2) {
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
 
+  for (let i = 0; i < arr1.length; i++) {
+    if (arr1[i] !== arr2[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
 export const cartController = {
   /* create Cart */
   createCart: async (req, res) => {
     const { _id } = req.user;
     try {
       const { error } = cartValidate.validate(req.body, { abortEarly: false });
-      if(error) {
-        return res
-          .status(400)
-          .json({ message: 'fail', err: error.details.map((err) => err.message) });
+      if (error) {
+        return res.status(400).json({
+          message: 'fail',
+          err: error.details.map((err) => err.message),
+        });
       }
 
-      let newCart = await new Cart({
-        user: _id,
-        name: req.body.name,
-        items: req.body.items
-      }).save();
-      res.json({
-        message: 'Cart created successfully',
-        data: newCart,
+      const cart = await Cart.findOne({ user: _id, name: req.body.name }).populate([
+        {
+          path: 'items.toppings',
+          select: 'name price _id',
+        },
+        {
+          path: 'items.size',
+          select: 'name price _id',
+        },
+      ]);
+
+      if (cart) {
+        let cartItemFound = false;
+        let toppingMatch = false;
+
+        for (let i = 0; i < cart.items.length; i++) {
+          for (let j = 0; j < req.body.items.length; j++) {
+            if (cart.items[i].size?._id.toString() === req.body.items[j].size) {
+              console.log('Same size');
+              toppingMatch = true;
+
+              if (
+                req.body.items[j].toppings.length ===
+                cart.items[i].toppings.length
+              ) {
+                for (let k = 0; k < cart.items[i].toppings.length; k++) {
+                  if (
+                    cart.items[i].toppings[k]._id.toString() !==
+                    req.body.items[j].toppings[k]
+                  ) {
+                    toppingMatch = false;
+                    break;
+                  }
+                }
+              } else {
+                toppingMatch = false;
+              }
+
+              if (toppingMatch) {
+                cart.items[i].quantity += req.body.items[j].quantity;
+                cart.items[i].total =
+                  cart.items[i].price * cart.items[i].quantity;
+                cartItemFound = true;
+                break;
+              }
+            }
+          }
+
+          if (cartItemFound) {
+            break;
+          }
+        }
+
+        if (!cartItemFound) {
+          const newItem = req.body.items[0];
+          const existingItem = cart.items.find(
+            (item) =>
+              item.name === newItem.name && item.size?._id.toString() === newItem.size
+          );
+
+          if (existingItem) {
+            const matchingToppings = cart.items.filter(
+              (item) =>
+                item.name === newItem.name &&
+                item.size?._id.toString() === newItem.size &&
+                !arraysEqual(item.toppings, newItem.toppings)
+            );
+
+            if (matchingToppings.length > 0) {
+              cart.items.push(newItem);
+            } else {
+              existingItem.quantity += newItem.quantity;
+              existingItem.total = existingItem.price * existingItem.quantity;
+            }
+          } else {
+            cart.items.push(newItem);
+          }
+        }
+
+        await cart.save();
+        console.log('Data added successfully');
+      } else {
+        await new Cart({
+          user: _id,
+          name: req.body.name,
+          items: req.body.items,
+        }).save();
+        console.log('Data added successfully');
+      }
+
+      return res.status(200).json({
+        message: 'success',
+        data: req.body,
       });
-    } catch (error) {
-      res.status(400).json({ message: error.message });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({
+        message: 'fail',
+        err: 'Server error',
+      });
     }
   },
   /* get all Cart */
@@ -69,8 +171,24 @@ export const cartController = {
         user: _id,
         _id: req.params.id,
       })
-        .populate('products.productId')
-        .populate('products.toppingOrder')
+        .populate([
+          // {
+          //   path: 'items.product',
+          //   select: '-is_deleted -is_active -createdAt -updatedAt',
+          //   // select: '_id',
+          // },
+          {
+            path: 'items.toppings',
+            // select: '-isActive -isDeleted -updatedAt -products'
+            select: 'name price _id'
+          },
+          {
+            path: 'items.size',
+            // select: '-is_deleted -is_active -createdAt'
+            select: 'name price _id'
+          }
+        ])
+        .select('-user')
         .exec();
       res.json({
         message: 'Cart successfully',
@@ -83,32 +201,62 @@ export const cartController = {
   /* update Cart */
   updateCart: async (req, res) => {
     try {
+      // lay id header, id product, quantity,   total
       const { _id } = req.user;
       const {
         quantity: newQuantity,
-        orderToppingId: neworderToppingId,
-        totalPrice: newTotal,
+        id: idProduct,
+        total: newTotal,
       } = req.body;
-      // const isOrderExit = await Topping.find({ _id: orderToppingId })
-      // if (!isOrderExit) return res.status(400).json({ message: "không tìm thấy" })
-      const cartItem = await Cart.findOne({
+
+      const getCart = await Cart.findOne({
         user: _id,
         _id: req.params.id,
       });
-      // console.log(cartItem)
-      cartItem.products[0].quantity = newQuantity ? newQuantity : cartItem.products[0].quantity;
-      cartItem.products[0].toppingOrder = neworderToppingId
-        ? neworderToppingId
-        : cartItem.products[0].toppingOrder;
-      cartItem.totalPrice = newTotal ? newTotal : cartItem.totalPrice;
 
-      cartItem.save();
-      return res.json({
-        message: 'Cart added successfully',
-        productsCart: cartItem,
+      if (getCart) {
+        const cartItem = getCart.items.find((item) =>
+          item?._id == idProduct);
+
+        if (cartItem) {
+          if (newQuantity == 0) {
+            getCart.items = getCart.items.filter((item) => item._id != idProduct);
+            console.log("xóa")
+          }
+          else {
+            cartItem.quantity = newQuantity;
+            cartItem.total = cartItem.price * cartItem.quantity;
+          }
+          await getCart.save();
+
+          // console.log('Cart item updated successfully');
+        } else {
+          // console.log("k tìm thấy id_cart ietm")
+          return res.status(400).json({
+            message: 'fail',
+            err: 'Cart item not found',
+          });
+        }
+      } else {
+        return res.status(400).json({
+          message: 'fail',
+          err: 'Cart not found',
+        });
+      }
+
+      // Check if all items are removed from the cart
+      const hasItems = getCart.items.length > 0;
+
+      if (!hasItems) {
+        await Cart.findByIdAndRemove(getCart._id);
+        console.log('Cart deleted successfully');
+      }
+      return res.status(200).json({
+        message: 'success',
+
       });
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.status(500).json({ message: error.message });
     }
   },
   /* delete Cart */

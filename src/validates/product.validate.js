@@ -43,14 +43,14 @@ const productValidate = joi.object({
     .messages({
       'any.required': 'Sizes is required',
     }),
-  sizes: joi.array().items(
-    joi
-      .object({
-        name: joi.string(),
-        price: joi.number(),
-      })
-      .unknown(true)
-  ),
+  // sizes: joi.array().items(
+  //   joi
+  //     .object({
+  //       name: joi.string(),
+  //       price: joi.number(),
+  //     })
+  //     .unknown(true)
+  // ),
 });
 
 export default productValidate;

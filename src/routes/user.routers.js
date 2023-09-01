@@ -20,8 +20,6 @@ router.patch(
   userController.updatePassword
 );
 
-router.patch('/updateInfor/:id', userController.updateInfor);
-
 router.route('/changeRoleUser/:id/:idRole').put(userController.changeRoleUser);
 // post
 router.route('/logout').post(userController.logOut);
