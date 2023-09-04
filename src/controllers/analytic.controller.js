@@ -4,8 +4,31 @@ export const analyticController = {
   /* đếm số lượng voucher hiện có */
   countVoucher: async (req, res) => {
     try {
-      const count = await Voucher.countDocuments();
-      console.log('🚀 ~ file: analytic.controller.js:8 ~ countVoucher: ~ count:', count);
+      const countVouchers = await Voucher.countDocuments(); /* lấy hết voucher đang có */
+      const countVoucherActive = await Voucher.countDocuments({ isActive: true });
+      const countVoucherInActive = await Voucher.countDocuments({ isActive: false });
+      console.log('🚀 ~ file: analytic.controller.js:8 ~ countVoucher: ~ count:', {
+        countVouchers,
+        countVoucherActive,
+        countVoucherInActive,
+      });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
+  /* đếm số lượng voucher đã hết hạn */
+  /* đếm số lượng voucher còn hạn sử dụng */
+  countVoucherExpiration: async (req, res) => {
+    try {
+      const currentDate = new Date();
+      const result = await Voucher.find({
+        isActive: true,
+        endDate: { $gte: currentDate }, // Chỉ lấy các voucher chưa hết hạn
+      });
+      console.log(
+        '🚀 ~ file: analytic.controller.js:28 ~ countVoucherExpiration: ~ result:',
+        result
+      );
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
