@@ -33,6 +33,10 @@ export const analyticController = {
       return res.status(500).json({ message: error.message });
     }
   },
+  /* đếm số lượng voucher đã sử dụng */
+  /* đếm số lượng voucher chưa sử dụng */
+  /* đếm số lượng voucher đã hết hạn */
+  /* đếm số lượng voucher còn hạn sử dụng */
   /* đếm số lượng voucher đã hết hạn trong ngày */
   /* đếm số lượng voucher đã hết hạn trong tuần */
   /* đếm số lượng voucher đã hết hạn trong tháng */
