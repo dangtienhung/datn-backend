@@ -116,7 +116,8 @@ export const userController = {
     try {
       const { account, password } = req.body;
       // check user exists or not
-      const findUser = await User.findOne({ account }).populate('role');
+      const findUser = await User.findOne({ account }).populate('role', '-users');
+      console.log(findUser);
       if (!findUser) {
         return res.status(400).json({ message: 'Tài khoản không tồn tại' });
       }
@@ -125,8 +126,16 @@ export const userController = {
         return res.status(400).json({ message: 'Tài khoản hoặc Mật khẩu không khớp' });
       }
 
-      const token = generateToken({ id: findUser?._id,username: findUser?.username, role: findUser.role });
-      const refreshToken = generateRefreshToken({ id: findUser?._id,username: findUser?.username, role: findUser.role });
+      const token = generateToken({
+        id: findUser?._id,
+        username: findUser?.username,
+        role: findUser.role,
+      });
+      const refreshToken = generateRefreshToken({
+        id: findUser?._id,
+        username: findUser?.username,
+        role: findUser.role,
+      });
       await findUser.updateOne({ refreshToken: refreshToken });
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
@@ -145,6 +154,10 @@ export const userController = {
           avatar: findUser.avatar,
           accessToken: token,
           refreshToken,
+          role: {
+            name: findUser.role.name,
+            status: findUser.role.status,
+          },
         },
       });
     } catch (error) {
@@ -201,7 +214,7 @@ export const userController = {
       const slug = slugify(result.username, { lower: true });
       result.slug = slug;
       /* loại bỏ slug */
-      result.password = undefined;
+      // result.password = undefined;
       res.json({
         message: 'update success',
         user: result,
