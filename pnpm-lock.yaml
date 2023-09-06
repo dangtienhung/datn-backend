@@ -7,7 +7,11 @@ settings:
 dependencies:
   axios:
     specifier: ^1.4.0
+<<<<<<< HEAD
     version: 1.5.0
+=======
+    version: 1.4.0
+>>>>>>> ba3395d96fceb1ddeb747be06678ce323fa893dd
   bcrypt:
     specifier: ^5.1.0
     version: 5.1.0
@@ -20,6 +24,9 @@ dependencies:
   cloudinary:
     specifier: ^1.37.3
     version: 1.37.3
+  cookie:
+    specifier: ^0.5.0
+    version: 0.5.0
   cookie-parser:
     specifier: ^1.4.6
     version: 1.4.6
@@ -52,7 +59,11 @@ dependencies:
     version: 5.8.1
   mongoose:
     specifier: ^7.4.4
+<<<<<<< HEAD
     version: 7.5.0
+=======
+    version: 7.4.4
+>>>>>>> ba3395d96fceb1ddeb747be06678ce323fa893dd
   mongoose-paginate-v2:
     specifier: ^1.7.1
     version: 1.7.1
@@ -295,8 +306,13 @@ packages:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
     dev: false
 
+<<<<<<< HEAD
   /axios@1.5.0:
     resolution: {integrity: sha512-D4DdjDo5CY50Qms0qGQTTw6Q44jl7zRwY7bthds06pUGfChBCTcQs+N743eFWGEd6pRTMd6A+I87aWyFV5wiZQ==}
+=======
+  /axios@1.4.0:
+    resolution: {integrity: sha512-S4XCWMEmzvo64T9GfvQDOXgYRDJ/wsSZc7Jvdgx5u1sd0JwsuPLqb3SYmusag+edF6ziyMensPVqLTSc1PiSEA==}
+>>>>>>> ba3395d96fceb1ddeb747be06678ce323fa893dd
     dependencies:
       follow-redirects: 1.15.2
       form-data: 4.0.0
@@ -1150,6 +1166,44 @@ packages:
       whatwg-url: 11.0.0
     dev: false
 
+<<<<<<< HEAD
+  /mongodb@5.8.1:
+    resolution: {integrity: sha512-wKyh4kZvm6NrCPH8AxyzXm3JBoEf4Xulo0aUWh3hCgwgYJxyQ1KLST86ZZaSWdj6/kxYUA3+YZuyADCE61CMSg==}
+    engines: {node: '>=14.20.1'}
+    peerDependencies:
+      '@aws-sdk/credential-providers': ^3.188.0
+      '@mongodb-js/zstd': ^1.0.0
+      kerberos: ^1.0.0 || ^2.0.0
+=======
+  /mongodb@5.7.0:
+    resolution: {integrity: sha512-zm82Bq33QbqtxDf58fLWBwTjARK3NSvKYjyz997KSy6hpat0prjeX/kxjbPVyZY60XYPDNETaHkHJI2UCzSLuw==}
+    engines: {node: '>=14.20.1'}
+    peerDependencies:
+      '@aws-sdk/credential-providers': ^3.201.0
+      '@mongodb-js/zstd': ^1.1.0
+      kerberos: ^2.0.1
+>>>>>>> ba3395d96fceb1ddeb747be06678ce323fa893dd
+      mongodb-client-encryption: '>=2.3.0 <3'
+      snappy: ^7.2.2
+    peerDependenciesMeta:
+      '@aws-sdk/credential-providers':
+        optional: true
+      '@mongodb-js/zstd':
+        optional: true
+      kerberos:
+        optional: true
+      mongodb-client-encryption:
+        optional: true
+      snappy:
+        optional: true
+    dependencies:
+      bson: 5.4.0
+      mongodb-connection-string-url: 2.6.0
+      socks: 2.7.1
+    optionalDependencies:
+      '@mongodb-js/saslprep': 1.1.0
+    dev: false
+
   /mongodb@5.8.1:
     resolution: {integrity: sha512-wKyh4kZvm6NrCPH8AxyzXm3JBoEf4Xulo0aUWh3hCgwgYJxyQ1KLST86ZZaSWdj6/kxYUA3+YZuyADCE61CMSg==}
     engines: {node: '>=14.20.1'}
@@ -1183,13 +1237,22 @@ packages:
     engines: {node: '>=4.0.0'}
     dev: false
 
+<<<<<<< HEAD
   /mongoose@7.5.0:
     resolution: {integrity: sha512-FpOWOb0AJuaVcplmEyIJ2eCbVGe4gOoniPD+pmft5BrGrNrsFcnYXlERdXtBApGHMHPwD7WbxTyhCbUNr72F3Q==}
+=======
+  /mongoose@7.4.4:
+    resolution: {integrity: sha512-LOOviiEqWOLH4PuBK+jbpm5vjBkdSNBcP/4UCevOJMTl5SXSbCXr68ulEYcthLcN2/xi08452HupKD8BfxNIQw==}
+>>>>>>> ba3395d96fceb1ddeb747be06678ce323fa893dd
     engines: {node: '>=14.20.1'}
     dependencies:
       bson: 5.4.0
       kareem: 2.5.1
+<<<<<<< HEAD
       mongodb: 5.8.1
+=======
+      mongodb: 5.7.0
+>>>>>>> ba3395d96fceb1ddeb747be06678ce323fa893dd
       mpath: 0.9.0
       mquery: 5.0.0
       ms: 2.1.3
