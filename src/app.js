@@ -16,15 +16,12 @@ import passportMiddleware from './middlewares/passport.middlewares.js';
 import rootRoutes from './routes/index.js';
 import session from 'express-session';
 //
-import { userController } from './controllers/user.controllers.js' // chat
-import { authController } from './controllers/auth.controller.js' // chat
-import Users from './models/user.model.js' // chat
+import { userController } from './controllers/user.controllers.js'; // chat
+import { authController } from './controllers/auth.controller.js'; // chat
+import Users from './models/user.model.js'; // chat
 
 //lấy  jwt
 import jwt from 'jsonwebtoken';
-
-
-
 
 dotenv.config();
 
@@ -38,15 +35,12 @@ const __dirname = path.dirname(__filename);
 //
 
 const app = express();
-import cookie from 'cookie'
-app.get("/", (req, res) => {
+import cookie from 'cookie';
+app.get('/', (req, res) => {
   const cookies = cookie.parse(req.headers.cookie || '');
 
   const refreshTokenCookie = cookies.refreshToken;
   if (refreshTokenCookie) {
-
-
-
     try {
       const decoded = jwt.verify(refreshTokenCookie, process.env.SECRET_REFRESH);
       console.log(decoded);
@@ -54,13 +48,7 @@ app.get("/", (req, res) => {
       console.error('Invalid token:', err.message);
     }
 
-
-
-
-
-
     // console.log('Refresh Token:', refreshTokenCookie);
-
 
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('Refresh Token: ' + refreshTokenCookie);
@@ -97,7 +85,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((id, done) => {
   (async () => {
-    const user = await User.findById(id);
+    const user = await User.findById(id).populate('role', '-users');
     return done(null, user);
   })();
 });
@@ -124,12 +112,6 @@ app.listen(port, (req, res) => {
   console.log(`Server is running on port ${port}`);
 });
 
-
-
-
-
-
-
 //Chat
 
 import http from 'http';
@@ -139,16 +121,15 @@ import mongoose from 'mongoose';
 const server = http.createServer(app);
 const io = new SocketIo(server);
 
-
 const Message = mongoose.model('Message', {
   text: String,
   username: String,
 });
 
-io.on('connection', socket => {
+io.on('connection', (socket) => {
   console.log('User connected');
 
-  socket.on('join', username => {
+  socket.on('join', (username) => {
     socket.username = username;
     console.log(`${username} joined`);
 
@@ -156,7 +137,7 @@ io.on('connection', socket => {
     io.emit('user joined', `${username} joined the chat`);
   });
 
-  socket.on('chat message', async message => {
+  socket.on('chat message', async (message) => {
     console.log('Message:', message);
 
     // Lưu tin nhắn vào MongoDB
@@ -173,6 +154,3 @@ io.on('connection', socket => {
     io.emit('user left', `${socket.username} left the chat`);
   });
 });
-
-
-
