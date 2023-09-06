@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "concurrently --kill-others \"nodemon   ./src/app.js\" \"nodemon  clientBot2.js\""
+    "start": "nodemon ./src/app.js",
+    "dev": "nodemon ./clientBot2.js",
+    "start:dev": "concurrently \"npm start\" \"npm run dev\""
   },
   "keywords": [],
   "author": "",
@@ -17,6 +19,7 @@
     "bcryptjs": "^2.4.3",
     "chalk": "^5.3.0",
     "cloudinary": "^1.37.3",
+    "cookie": "^0.5.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
