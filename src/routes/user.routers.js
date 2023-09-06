@@ -13,14 +13,13 @@ router.get(
 router.get('/users/:id', authMiddleware.verifyToken, userController.getUser);
 
 // update
+router.patch('/updateInfor/:id', userController.updateInfor);
 router.patch('/users/:id', authMiddleware.verifyToken, userController.updateUser);
 router.patch(
   '/user/updatePassword',
   authMiddleware.verifyTokenAdmin,
   userController.updatePassword
 );
-
-router.patch('/updateInfor/:id', userController.updateInfor);
 
 router.route('/changeRoleUser/:id/:idRole').put(userController.changeRoleUser);
 // post

@@ -15,7 +15,7 @@ export const SizeController = {
         return res.status(400).json({ message: 'fail', err: 'create size failed' });
       }
 
-      return res.status(200).json({ message: 'succes', data: size });
+      return res.status(200).json({ message: 'success', data: size });
     } catch (error) {
       next(error);
     }

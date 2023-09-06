@@ -18,9 +18,8 @@ const passportMiddleware = {
       clientID: process.env.GOOGLEID,
       clientSecret: process.env.SECRETGOOGLEID,
       callbackURL: process.env.CALLBACKURLGOOGLE,
-      passReToCallback: true,
     },
-    function (req, accessToken, refreshToken, profile, cb) {
+    function (accessToken, refreshToken, profile, cb) {
       (async () => {
         try {
           const user = await User.findOne({ googleId: profile.id }).populate('role', '-_id -users');
@@ -33,8 +32,8 @@ const passportMiddleware = {
               slug: slugify(profile.name.givenName, { lower: true }),
               account: profile.emails[0].value,
               role: roleUser._id,
-              birthday: new Date('2003-1-1'),
-              grade: 0,
+              gender: 'male',
+              birthday: new Date('1999-01-01'),
             });
             await Role.updateOne({ name: 'customer' }, { $addToSet: { users: newUser._id } });
             return cb(null, newUser);
@@ -51,7 +50,7 @@ const passportMiddleware = {
       consumerKey: process.env.TWITTERKEY,
       consumerSecret: process.env.SECRETTWITTER,
       callbackURL: process.env.CALLBACKURLTWITTER,
-      // proxy: false,
+      proxy: false,
     },
     function (accessToken, refreshToken, profile, cb) {
       (async () => {
@@ -108,11 +107,9 @@ const passportMiddleware = {
       clientID: process.env.FACEBOOKID,
       clientSecret: process.env.SECRETFACEBOOK,
       callbackURL: process.env.CALLBACKURLFACEBOOK,
-      profileFields: ['id', 'displayName', 'photos'],
     },
-    function (req, accessToken, refreshToken, profile, cb) {
+    function (accessToken, refreshToken, profile, cb) {
       (async () => {
-        console.log(profile);
         try {
           const user = await User.findOne({ facebookId: profile.id }).populate(
             'role',
@@ -123,7 +120,7 @@ const passportMiddleware = {
             const newUser = await User.create({
               facebookId: profile.id,
               username: profile.displayName,
-              avatar: profile.photos[0].value,
+              avatar: `https://ui-avatars.com/api/?name=${profile.displayName}`,
               slug: slugify(profile.displayName, { lower: true }),
               role: roleUser._id,
             });

@@ -19,10 +19,10 @@ PassportRoutes.get(
   passport.authenticate('google', { failureRedirect: process.env.LOGINPAGE }),
   function (req, res) {
     const { role } = req.user;
-    if (!role.name || role.name === 'customer') {
+    if (role.name === 'customer') {
       res.redirect(process.env.HOMEPAGE);
     } else if (role.name === 'admin') {
-      res.redirect(process.env.ADMINPAGE);
+      res.redirect(process.env.AMINPAGE);
     }
   }
 );
@@ -32,10 +32,10 @@ PassportRoutes.get(
   passport.authenticate('twitter', { failureRedirect: process.env.LOGINPAGE }),
   function (req, res) {
     const { role } = req.user;
-    if (!role.name || role.name === 'customer') {
+    if (role.name === 'customer') {
       res.redirect(process.env.HOMEPAGE);
     } else if (role.name === 'admin') {
-      res.redirect(process.env.ADMINPAGE);
+      res.redirect(process.env.AMINPAGE);
     }
   }
 );
@@ -55,16 +55,17 @@ PassportRoutes.get(
   }),
   function (req, res) {
     const { role } = req.user;
-    if (!role.name || role.name === 'customer') {
+    if (role.name === 'customer') {
       res.redirect(process.env.HOMEPAGE);
     } else if (role.name === 'admin') {
-      res.redirect(process.env.ADMINPAGE);
+      res.redirect(process.env.AMINPAGE);
     }
   }
 );
 
 PassportRoutes.get('/getUser', async (req, res) => {
   const user = req.user;
+  console.log(user);
   if (user) {
     const token = generateToken({ id: user._id, role: user.role });
     const refreshToken = generateRefreshToken({ id: user._id, role: user.role });
@@ -87,6 +88,8 @@ PassportRoutes.get('/getUser', async (req, res) => {
           name: user.role.name,
           status: user.role.status,
         },
+        gender: user.gender,
+        birthday: user.birthday,
         accessToken: token,
         refreshToken,
       },
