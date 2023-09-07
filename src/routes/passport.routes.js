@@ -6,7 +6,7 @@ import { generateRefreshToken, generateToken } from '../configs/token.js';
 dotenv.config();
 const PassportRoutes = express.Router();
 
-PassportRoutes.get('/google', passport.authenticate('google', { scope: ['profile'] }));
+PassportRoutes.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 PassportRoutes.get('/twitter', passport.authenticate('twitter'));
 
@@ -65,6 +65,7 @@ PassportRoutes.get(
 
 PassportRoutes.get('/getUser', async (req, res) => {
   const user = req.user;
+  console.log(user);
   if (user) {
     const token = generateToken({ id: user._id, role: user.role });
     const refreshToken = generateRefreshToken({ id: user._id, role: user.role });
@@ -83,6 +84,12 @@ PassportRoutes.get('/getUser', async (req, res) => {
         account: user?.account,
         address: user.address,
         avatar: user.avatar,
+        role: {
+          name: user.role.name,
+          status: user.role.status,
+        },
+        gender: user.gender,
+        birthday: user.birthday,
         accessToken: token,
         refreshToken,
       },

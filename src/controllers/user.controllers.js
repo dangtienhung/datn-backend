@@ -83,6 +83,8 @@ export const userController = {
           address: '',
           avatar: `https://ui-avatars.com/api/?name=${req.body.username}`,
           slug: slugify(req.body.username, { lower: true }),
+          gender: 'male',
+          birthday: new Date('1999-01-01'),
         });
 
         await Role.updateOne({ name: 'customer' }, { $addToSet: { users: user._id } });
@@ -116,7 +118,8 @@ export const userController = {
     try {
       const { account, password } = req.body;
       // check user exists or not
-      const findUser = await User.findOne({ account }).populate('role');
+      const findUser = await User.findOne({ account }).populate('role', '-users');
+      console.log(findUser);
       if (!findUser) {
         return res.status(400).json({ message: 'Tài khoản không tồn tại' });
       }
@@ -125,8 +128,16 @@ export const userController = {
         return res.status(400).json({ message: 'Tài khoản hoặc Mật khẩu không khớp' });
       }
 
-      const token = generateToken({ id: findUser?._id,username: findUser?.username, role: findUser.role });
-      const refreshToken = generateRefreshToken({ id: findUser?._id,username: findUser?.username, role: findUser.role });
+      const token = generateToken({
+        id: findUser?._id,
+        username: findUser?.username,
+        role: findUser.role,
+      });
+      const refreshToken = generateRefreshToken({
+        id: findUser?._id,
+        username: findUser?.username,
+        role: findUser.role,
+      });
       await findUser.updateOne({ refreshToken: refreshToken });
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
@@ -145,6 +156,12 @@ export const userController = {
           avatar: findUser.avatar,
           accessToken: token,
           refreshToken,
+          role: {
+            name: findUser.role.name,
+            status: findUser.role.status,
+          },
+          birthday: findUser.birthday,
+          gender: findUser.gender,
         },
       });
     } catch (error) {
@@ -201,7 +218,7 @@ export const userController = {
       const slug = slugify(result.username, { lower: true });
       result.slug = slug;
       /* loại bỏ slug */
-      result.password = undefined;
+      // result.password = undefined;
       res.json({
         message: 'update success',
         user: result,
@@ -210,6 +227,61 @@ export const userController = {
       throw new Error(error);
     }
   },
+
+  updateInfor: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(400).json({ error: 'Update error' });
+      }
+      const slug = slugify(req.body.username, { lower: true });
+      const token = generateToken({ id: user?._id, role: user.role });
+      const refreshToken = generateRefreshToken({ id: user?._id, role: user.role });
+
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: false,
+        path: '/',
+        sameSite: 'strict',
+      });
+
+      const dataUpdate = {
+        ...req.body,
+        birthday: new Date(req.body.birthday),
+        slug: slug,
+        accessToken: token,
+        refreshToken,
+      };
+      const updateUser = await User.findByIdAndUpdate(id, dataUpdate, { new: true }).populate(
+        'role',
+        '-_id -users'
+      );
+      res.status(200).json({
+        message: 'Update Success',
+        user: {
+          _id: updateUser?._id,
+          username: updateUser?.username,
+          slug: updateUser?.slug,
+          account: updateUser?.account,
+          address: updateUser.address,
+          avatar: updateUser.avatar,
+          role: {
+            name: updateUser.role.name,
+            status: updateUser.role.status,
+          },
+          birthday: updateUser.birthday,
+          grade: updateUser.grade,
+          gender: updateUser.gender,
+          accessToken: token,
+          refreshToken,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   deleteUser: async (req, res) => {
     // const { _id } = req.user;
     try {

@@ -13,6 +13,7 @@ router.get(
 router.get('/users/:id', authMiddleware.verifyToken, userController.getUser);
 
 // update
+router.patch('/updateInfor/:id', userController.updateInfor);
 router.patch('/users/:id', authMiddleware.verifyToken, userController.updateUser);
 router.patch(
   '/user/updatePassword',
