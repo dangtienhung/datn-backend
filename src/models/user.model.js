@@ -23,10 +23,10 @@ const userSchema = new mongoose.Schema(
     avatar: {
       type: String,
     },
-    // slug: {
-    //   type: String,
-    //   unique: true,
-    // },
+    slug: {
+      type: String,
+      unique: true,
+    },
     account: {
       type: String,
     },
@@ -62,6 +62,12 @@ const userSchema = new mongoose.Schema(
       // type: String,
       // enum: ['admin', 'staff', 'customer', 'shipper'],
       // default: 'customer',
+    },
+    birthday: { type: Date },
+    grade: { type: Number },
+    gender: {
+      type: String,
+      enum: ['male', 'female', 'other'],
     },
     refreshToken: {
       type: String,
