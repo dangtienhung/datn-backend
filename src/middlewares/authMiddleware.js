@@ -9,7 +9,7 @@ export const authMiddleware = {
       try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         // console.log("decoded", decoded);
-        const user = await User.findById(decoded?._id).populate('role');
+        const user = await User.findById(decoded?.id).populate('role');
         req.user = user;
         next();
       } catch (err) {
