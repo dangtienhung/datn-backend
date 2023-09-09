@@ -50,7 +50,7 @@ export const categoryController = {
           }
         : { is_deleted: false };
       const categories = await Category.paginate(query, options);
-      return res.status(201).json({ ...categories });
+      return res.status(200).json({ ...categories });
     } catch (error) {
       return res.status(400).json({ message: error.message });
     }
