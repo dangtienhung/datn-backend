@@ -5,10 +5,10 @@ import axios from 'axios';
 export const orderController = {
   /* create */
   create: async (req, res) => {
-  
+
     try {
       const body = req.body;
-      console.log(body['inforOrderShipping']['shippingNote']); 
+      console.log(body['inforOrderShipping']['shippingNote']);
       console.log(body['inforOrderShipping']['c'])
       //gửi mail
       // var message="Mua hàng thành công";
@@ -165,7 +165,26 @@ export const orderController = {
   canceledOrder: async (req, res) => {
     try {
       const { id } = req.params;
-      const orderCanceled = await orderController.updateStatus(id, 'canceled');
+      if (res.body.reasonCancelOrder == "") {
+        return res.status(500).json({ error: "Đề nghị bạn cho lý do hủy đơn" });
+      }
+     
+      const orderCanceled = await Order.findByIdAndUpdate(
+        id,
+        {
+          status: 'canceled',
+          reasonCancelOrder: reasonCancelOrder
+        },
+        { new: true }
+      ).populate([
+        {
+          path: 'user',
+          select: '-password -products -order',
+          populate: { path: 'role', select: '-users' },
+        },
+        { path: 'items.product' },
+      ]);
+     
       if (!orderCanceled) {
         return res.status(400).json({ error: 'canceled order failed' });
       }
