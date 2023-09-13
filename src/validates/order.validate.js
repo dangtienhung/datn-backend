@@ -28,7 +28,7 @@ export const orderValidate = joi.object({
   noteOrder: joi.string(),
   total: joi.number(),
   priceShipping: joi.number().default(0),
-  paymentMethodId: joi.string().valid('cod', 'momo', 'zalopay').default('cod'),
+  paymentMethodId: joi.string().valid('cod', 'momo', 'zalopay','vnpay').default('cod'),
   inforOrderShipping: joi
     .object({
       name: joi.string().required(),
