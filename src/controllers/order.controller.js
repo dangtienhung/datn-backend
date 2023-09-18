@@ -165,10 +165,11 @@ export const orderController = {
   canceledOrder: async (req, res) => {
     try {
       const { id } = req.params;
-      if (res.body.reasonCancelOrder == "") {
+      const { reasonCancelOrder } = req.body
+      if (reasonCancelOrder == "") {
         return res.status(500).json({ error: "Đề nghị bạn cho lý do hủy đơn" });
       }
-     
+
       const orderCanceled = await Order.findByIdAndUpdate(
         id,
         {
@@ -184,7 +185,7 @@ export const orderController = {
         },
         { path: 'items.product' },
       ]);
-     
+
       if (!orderCanceled) {
         return res.status(400).json({ error: 'canceled order failed' });
       }
