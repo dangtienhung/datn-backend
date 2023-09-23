@@ -6,8 +6,8 @@ const roleSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    // enum: ['admin', 'staff', 'customer', 'shipper'],
-    // default: 'customer',
+    enum: ['admin', 'staff', 'customer', 'shipper'],
+    default: 'customer',
   },
   status: {
     type: String,
