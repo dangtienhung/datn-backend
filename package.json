@@ -8,14 +8,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon ./src/app.js",
     "dev": "nodemon ./clientBot2.js",
-    "start:dev": "concurrently \"npm start\" \"npm run dev\""
+    "all": "concurrently \"npm start\" \"npm run dev\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.4.0",
-    "bcrypt": "^5.1.0",
+    "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "chalk": "^5.3.0",
     "cloudinary": "^1.37.3",
