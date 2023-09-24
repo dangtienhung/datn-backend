@@ -1,15 +1,14 @@
 import Order from '../models/order.model.js';
-import { orderValidate } from '../validates/order.validate.js';
 import axios from 'axios';
+import { orderValidate } from '../validates/order.validate.js';
 
 export const orderController = {
   /* create */
   create: async (req, res) => {
-  
     try {
       const body = req.body;
-      console.log(body['inforOrderShipping']['shippingNote']); 
-      console.log(body['inforOrderShipping']['c'])
+      console.log(body['inforOrderShipping']['shippingNote']);
+      console.log(body['inforOrderShipping']['c']);
       //gửi mail
       // var message="Mua hàng thành công";
       // var subject="Payment Success";
@@ -165,7 +164,27 @@ export const orderController = {
   canceledOrder: async (req, res) => {
     try {
       const { id } = req.params;
-      const orderCanceled = await orderController.updateStatus(id, 'canceled');
+      const { reasonCancelOrder } = req.body;
+      if (reasonCancelOrder == '') {
+        return res.status(500).json({ error: 'Đề nghị bạn cho lý do hủy đơn' });
+      }
+
+      const orderCanceled = await Order.findByIdAndUpdate(
+        id,
+        {
+          status: 'canceled',
+          reasonCancelOrder: reasonCancelOrder,
+        },
+        { new: true }
+      ).populate([
+        {
+          path: 'user',
+          select: '-password -products -order',
+          populate: { path: 'role', select: '-users' },
+        },
+        { path: 'items.product' },
+      ]);
+
       if (!orderCanceled) {
         return res.status(400).json({ error: 'canceled order failed' });
       }
@@ -296,6 +315,28 @@ export const orderController = {
   getAllOrderPending: async (req, res) => {
     try {
       return orderController.getOrderByStatus(req, res, 'pending');
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  },
+
+  /* lấy ra đơn hàng theo user id */
+  getAllOrderByUserId: async (req, res) => {
+    try {
+      const { _page = 1, _limit = 10, q } = req.query;
+      const { id } = req.params;
+      const options = {
+        page: _page,
+        limit: _limit,
+        sort: { createdAt: -1 },
+        populate: [{ path: 'user', select: 'username avatar account' }],
+      };
+      const query = q ? { name: { $regex: q, $options: 'i' } } : {};
+      const orders = await Order.paginate({ user: id, ...query }, options);
+      if (!orders) {
+        return res.status(400).json({ error: 'get all order by user id failed' });
+      }
+      return res.status(200).json({ ...orders });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
