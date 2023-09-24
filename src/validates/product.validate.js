@@ -30,7 +30,10 @@ const productValidate = joi.object({
         .unknown(true)
     )
     .min(1),
-  sale: joi.number().default(0),
+  sale: joi.object({
+    value: joi.number().required(),
+    isPercent: joi.boolean().default(false),
+  }),
   sizes: joi
     .array()
     .items(
