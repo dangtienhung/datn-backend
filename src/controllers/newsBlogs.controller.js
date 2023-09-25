@@ -1,5 +1,5 @@
 import joi from 'joi';
-import newBlogModel from '../models/newsBlogs.model';
+import newBlogModel from '../models/newsBlogs.model.js';
 
 // Định nghĩa schema sử dụng Joi để kiểm tra dữ liệu đầu vào
 const newsBlogSchema = joi.object({
@@ -29,7 +29,7 @@ const newBlogsController = {
 
     try {
       const data = await newBlogModel.paginate({}, options);
-
+      console.log(data);
       if (data.docs.length === 0) {
         // Kiểm tra xem có dữ liệu không
         return res.status(200).json({
