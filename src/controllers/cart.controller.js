@@ -1,5 +1,5 @@
-import Cart from "../models/cart.model.js";
-import { cartValidate } from "../validates/cart.js";
+import Cart from '../models/cart.model.js';
+import { cartValidate } from '../validates/cart.js';
 
 function arraysEqual(arr1, arr2) {
   if (arr1.length !== arr2.length) {
@@ -17,8 +17,8 @@ function arraysEqual(arr1, arr2) {
 export const cartController = {
   /* create Cart */
   createCart: async (req, res) => {
-    const { _id } = req.user;
     try {
+      const { _id } = req.user;
       const { error } = cartValidate.validate(req.body, { abortEarly: false });
       if (error) {
         return res.status(400).json({
@@ -48,15 +48,9 @@ export const cartController = {
               console.log('Same size');
               toppingMatch = true;
 
-              if (
-                req.body.items[j].toppings.length ===
-                cart.items[i].toppings.length
-              ) {
+              if (req.body.items[j].toppings.length === cart.items[i].toppings.length) {
                 for (let k = 0; k < cart.items[i].toppings.length; k++) {
-                  if (
-                    cart.items[i].toppings[k]._id.toString() !==
-                    req.body.items[j].toppings[k]
-                  ) {
+                  if (cart.items[i].toppings[k]._id.toString() !== req.body.items[j].toppings[k]) {
                     toppingMatch = false;
                     break;
                   }
@@ -67,8 +61,7 @@ export const cartController = {
 
               if (toppingMatch) {
                 cart.items[i].quantity += req.body.items[j].quantity;
-                cart.items[i].total =
-                  cart.items[i].price * cart.items[i].quantity;
+                cart.items[i].total = cart.items[i].price * cart.items[i].quantity;
                 cartItemFound = true;
                 break;
               }
@@ -83,8 +76,7 @@ export const cartController = {
         if (!cartItemFound) {
           const newItem = req.body.items[0];
           const existingItem = cart.items.find(
-            (item) =>
-              item.name === newItem.name && item.size?._id.toString() === newItem.size
+            (item) => item.name === newItem.name && item.size?._id.toString() === newItem.size
           );
 
           if (existingItem) {
@@ -131,8 +123,8 @@ export const cartController = {
   },
   /* get all Cart */
   getAllCart: async (req, res) => {
-    const { _id } = req.user;
     try {
+      const { _id } = req.user;
       const cartAll = await Cart.find({ user: _id })
         .populate([
           // {
@@ -143,13 +135,13 @@ export const cartController = {
           {
             path: 'items.toppings',
             // select: '-isActive -isDeleted -updatedAt -products'
-            select: 'name price _id'
+            select: 'name price _id',
           },
           {
             path: 'items.size',
             // select: '-is_deleted -is_active -createdAt'
-            select: 'name price _id'
-          }
+            select: 'name price _id',
+          },
         ])
         .select('-user')
         .exec();
@@ -180,13 +172,13 @@ export const cartController = {
           {
             path: 'items.toppings',
             // select: '-isActive -isDeleted -updatedAt -products'
-            select: 'name price _id'
+            select: 'name price _id',
           },
           {
             path: 'items.size',
             // select: '-is_deleted -is_active -createdAt'
-            select: 'name price _id'
-          }
+            select: 'name price _id',
+          },
         ])
         .select('-user')
         .exec();
@@ -203,11 +195,7 @@ export const cartController = {
     try {
       // lay id header, id product, quantity,   total
       const { _id } = req.user;
-      const {
-        quantity: newQuantity,
-        id: idProduct,
-        total: newTotal,
-      } = req.body;
+      const { quantity: newQuantity, id: idProduct, total: newTotal } = req.body;
 
       const getCart = await Cart.findOne({
         user: _id,
@@ -215,15 +203,13 @@ export const cartController = {
       });
 
       if (getCart) {
-        const cartItem = getCart.items.find((item) =>
-          item?._id == idProduct);
+        const cartItem = getCart.items.find((item) => item?._id == idProduct);
 
         if (cartItem) {
           if (newQuantity == 0) {
             getCart.items = getCart.items.filter((item) => item._id != idProduct);
-            console.log("xóa")
-          }
-          else {
+            console.log('xóa');
+          } else {
             cartItem.quantity = newQuantity;
             cartItem.total = cartItem.price * cartItem.quantity;
           }
@@ -253,7 +239,6 @@ export const cartController = {
       }
       return res.status(200).json({
         message: 'success',
-
       });
     } catch (error) {
       res.status(500).json({ message: error.message });
