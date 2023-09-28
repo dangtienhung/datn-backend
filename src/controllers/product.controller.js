@@ -81,8 +81,8 @@ export const ProductController = {
         sort: { createdAt: -1 },
         populate: [
           { path: 'category', select: 'name' },
-          { path: 'sizes', select: '-productId' },
-          { path: 'toppings', select: '-products -isDeleted -isActive' },
+          { path: 'sizes', select: 'name price' },
+          { path: 'toppings', select: 'name price' },
         ],
       };
       if (q && !c) {
