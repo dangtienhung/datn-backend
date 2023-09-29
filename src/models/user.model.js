@@ -17,15 +17,9 @@ const userSchema = new mongoose.Schema(
     },
     username: {
       type: String,
-      // required: true,
-      // unique: true,
     },
     avatar: {
       type: String,
-    },
-    slug: {
-      type: String,
-      unique: true,
     },
     account: {
       type: String,
@@ -44,12 +38,6 @@ const userSchema = new mongoose.Schema(
     // phone: {
     //   type: String,
     // },
-    products: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
-      },
-    ],
     order: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -63,8 +51,7 @@ const userSchema = new mongoose.Schema(
       // enum: ['admin', 'staff', 'customer', 'shipper'],
       // default: 'customer',
     },
-    birthday: { type: Date },
-    grade: { type: Number },
+    grade: { type: Number, default: 0 },
     gender: {
       type: String,
       enum: ['male', 'female', 'other'],

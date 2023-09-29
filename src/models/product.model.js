@@ -19,10 +19,6 @@ const productSchema = new mongoose.Schema(
         default: false,
       },
     },
-    // price: {
-    //   type: Number,
-    //   require: true,
-    // },
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Category',
@@ -31,14 +27,6 @@ const productSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Size',
-        // name: {
-        //   type: String,
-        //   required: true,
-        // },
-        // price: {
-        //   type: Number,
-        //   required: true,
-        // },
       },
     ],
     toppings: [
