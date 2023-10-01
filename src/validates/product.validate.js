@@ -30,7 +30,8 @@ const productValidate = joi.object({
     value: joi.number().required(),
     isPercent: joi.boolean().default(false),
   }),
-  sizes: joi
+  sizes: joi.array().items(joi.string()).required(),
+  customsizes: joi
     .array()
     .items(
       joi.object({
@@ -42,6 +43,14 @@ const productValidate = joi.object({
     .messages({
       'any.required': 'Sizes is required',
     }),
+  // sizes: joi.array().items(
+  //   joi
+  //     .object({
+  //       name: joi.string(),
+  //       price: joi.number(),
+  //     })
+  //     .unknown(true)
+  // ),
 });
 
 export default productValidate;
