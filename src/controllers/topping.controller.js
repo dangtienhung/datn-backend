@@ -4,7 +4,6 @@ import toppingValidate from '../validates/topping.validate.js';
 export const toppingController = {
   createTopping: async (req, res, next) => {
     try {
-      console.log('Hello');
       const { error } = toppingValidate.validate(req.body, { abortEarly: false });
       if (error) {
         return res
@@ -12,6 +11,7 @@ export const toppingController = {
           .json({ message: 'fail', err: error.details.map((err) => err.message) });
       }
       const topping = await Topping.create(req.body);
+      console.log('🚀 ~ file: topping.controller.js:15 ~ createTopping: ~ topping:', topping);
       if (!topping) {
         return res.status(400).json({ message: 'fail', err: 'create topping failed' });
       }
