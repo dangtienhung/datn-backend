@@ -29,6 +29,12 @@ const productSchema = new mongoose.Schema(
         ref: 'Size',
       },
     ],
+    customsizes: [
+      {
+        name: String,
+        price: Number,
+      },
+    ],
     toppings: [
       {
         type: mongoose.Schema.Types.ObjectId,

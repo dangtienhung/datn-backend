@@ -9,7 +9,7 @@ dependencies:
     specifier: ^1.4.0
     version: 1.5.0
   bcrypt:
-    specifier: ^5.1.0
+    specifier: ^5.1.1
     version: 5.1.1
   bcryptjs:
     specifier: ^2.4.3
