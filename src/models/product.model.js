@@ -13,29 +13,20 @@ const productSchema = new mongoose.Schema(
       require: true,
     },
     sale: {
-      type: Number,
-      default: 0,
+      value: Number,
+      isPercent: {
+        type: Boolean,
+        default: false,
+      },
     },
-    // price: {
-    //   type: Number,
-    //   require: true,
-    // },
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Category',
     },
     sizes: [
       {
-        // type: mongoose.Schema.Types.ObjectId,
-        // ref: 'Size',
-        name: {
-          type: String,
-          required: true,
-        },
-        price: {
-          type: Number,
-          required: true,
-        },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Size',
       },
     ],
     toppings: [

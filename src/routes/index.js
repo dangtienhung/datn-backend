@@ -13,6 +13,7 @@ import uploadRouter from './uploadfiles.routes.js';
 import userRoutes from './auth.routes.js';
 import voucherRoutes from './voucher.routes.js';
 import cartRouter from './cart.routes.js';
+import newBlogRouter from './newsBlogs.routes.js';
 
 const router = express.Router();
 
@@ -30,7 +31,8 @@ const rootRoutes = [
   orderRoutes,
   uploadBanner,
   analyticRoutes,
-  cartRouter
+  cartRouter,
+  newBlogRouter,
 ];
 
 rootRoutes.map((route) => {

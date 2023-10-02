@@ -48,10 +48,13 @@ const Message = mongoose.model('Message', {
   timestamp: { type: Date, default: Date.now },
 });
 //
-mongoose.connect('mongodb://localhost:27017/be_du_an_tot_nghiep', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(
+  'mongodb+srv://hungdang02042003:jVp9aHU2eqE747nE@du-an-framework2-milk-t.ntg5d7s.mongodb.net/?retryWrites=true&w=majority',
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }
+);
 
 app.get('/session', async (req, res) => {
   const cookies = cookie.parse(req.headers.cookie || '');
@@ -276,6 +279,6 @@ io.on('connection', async (socket) => {
   });
 });
 
-server.listen(4000, (req, res) => {
+server.listen(4001, (req, res) => {
   console.log(chalk.bgCyanBright(chalk.yellow('Bot 2 start success !')));
 });

@@ -15,11 +15,7 @@ router.get(
   authMiddleware.verifyTokenAdmin,
   userController.getAllRoleUser
 );
-router.put(
-  '/user/role/:idUser',
-  authMiddleware.verifyTokenAdmin,
-  userController.isActiveUser
-);
+router.put('/user/role/:idUser', authMiddleware.verifyTokenAdmin, userController.isActiveUser);
 router.get('/users/:id', authMiddleware.verifyToken, userController.getUser);
 
 // update

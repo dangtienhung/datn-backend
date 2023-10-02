@@ -81,8 +81,8 @@ export const ProductController = {
         sort: { createdAt: -1 },
         populate: [
           { path: 'category', select: 'name' },
-          { path: 'sizes', select: '-productId' },
-          { path: 'toppings', select: '-products -isDeleted -isActive' },
+          { path: 'sizes', select: 'name price' },
+          { path: 'toppings', select: 'name price' },
         ],
       };
       if (q && !c) {
@@ -133,7 +133,7 @@ export const ProductController = {
     try {
       const product = await Product.findById(req.params.id).populate([
         { path: 'category', select: 'name' },
-        { path: 'sizes' },
+        { path: 'sizes', select: 'name price' },
         { path: 'toppings', select: '-products' },
       ]);
       if (!product) {
@@ -147,7 +147,6 @@ export const ProductController = {
 
   updateProduct: async (req, res, next) => {
     try {
-      console.log(req.body);
       const { category } = req.body;
       const { error } = productValidate.validate(req.body, { abortEarly: false });
       if (error) {
