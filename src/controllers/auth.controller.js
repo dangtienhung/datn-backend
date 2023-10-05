@@ -68,16 +68,18 @@ export const authController = {
   login: async (req, res) => {
     try {
       const body = req.body;
+      console.log('🚀 ~ file: auth.controller.js:71 ~ login: ~ body:', body);
       /* validate */
       const { error } = userLoginValidate.validate(body, { abortEarly: false });
       if (error) {
         return res.status(400).json({ message: error.message });
       }
       /* check email */
-      const emailExits = await User.findOne({ email: body.email }).populate({
-        path: 'role',
-        select: '-users',
-      });
+      const emailExits = await User.findOne({ email: body.email }).populate(
+        { path: 'role', select: '-users' },
+        { path: 'address', select: 'name phone address' }
+      );
+      console.log('🚀 ~ file: auth.controller.js:81 ~ login: ~ emailExits:', emailExits);
       if (!emailExits) {
         return res.status(400).json({ message: 'Email does not exist' });
       }

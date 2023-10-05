@@ -34,6 +34,7 @@ const productValidate = joi.object({
     value: joi.number().required(),
     isPercent: joi.boolean().default(false),
   }),
+  sizes: joi.array().items(joi.string()).required(),
   // sizes: joi
   //   .array()
   //   .items(
