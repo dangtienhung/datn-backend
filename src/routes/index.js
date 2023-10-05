@@ -13,7 +13,6 @@ import sizeRoutes from './size.routes.js';
 import toppingRoutes from './topping.routes.js';
 import uploadBanner from './banner.routes.js';
 import uploadRouter from './uploadfiles.routes.js';
-import userRoutes from './auth.routes.js';
 import voucherRoutes from './voucher.routes.js';
 
 const router = express.Router();
@@ -22,7 +21,6 @@ const rootRoutes = [
   categoryRoutes,
   UserRoutes,
   AuthRouter,
-  userRoutes,
   sizeRoutes,
   toppingRoutes,
   productRoutes,

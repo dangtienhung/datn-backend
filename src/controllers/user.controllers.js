@@ -63,6 +63,7 @@ export const userController = {
   // register
   register: async (req, res) => {
     try {
+      console.log(req.body);
       const { error } = signupSchema.validate(req.body, { abortEarly: false });
       if (error) {
         const errors = error.details.map((error) => error.message);
@@ -72,26 +73,29 @@ export const userController = {
       }
 
       const findUser = await User.findOne({ account: req.body?.account });
+      console.log(findUser);
       if (!findUser) {
         // create user
-        const roleUser = await Role.findOne({ name: 'customer' });
+        // const roleUser = await Role.findOne({ name: 'customer' });
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const user = await User.create({
-          ...req.body,
+          // ...req.body,
+          username: req.body.username,
+          account: req.body.account,
           password: hashedPassword,
-          role: roleUser._id,
-          address: '',
+          // role: 'customer',
+          // address: '',
           avatar: `https://ui-avatars.com/api/?name=${req.body.username}`,
-          slug: slugify(req.body.username, { lower: true }),
+          // slug: slugify(req.body.username, { lower: true }),
           gender: 'male',
           birthday: new Date('1999-01-01'),
         });
 
-        await Role.updateOne({ name: 'customer' }, { $addToSet: { users: user._id } });
+        // await Role.updateOne({ name: 'customer' }, { $addToSet: { users: user._id } });
 
-        if (!roleUser) {
-          return res.status(400).json({ message: 'fail', err: 'Register fail' });
-        }
+        // if (!roleUser) {
+        //   return res.status(400).json({ message: 'fail', err: 'Register fail' });
+        // }
 
         return res.status(201).json({
           message: 'register success',
@@ -158,10 +162,7 @@ export const userController = {
           avatar: findUser.avatar,
           accessToken: token,
           refreshToken,
-          role: {
-            name: findUser.role.name,
-            status: findUser.role.status,
-          },
+          role: findUser.role,
           birthday: findUser.birthday,
           gender: findUser.gender,
         },
@@ -255,10 +256,7 @@ export const userController = {
         accessToken: token,
         refreshToken,
       };
-      const updateUser = await User.findByIdAndUpdate(id, dataUpdate, { new: true }).populate(
-        'role',
-        '-_id -users'
-      );
+      const updateUser = await User.findByIdAndUpdate(id, dataUpdate, { new: true });
       res.status(200).json({
         message: 'Update Success',
         user: {
@@ -268,10 +266,7 @@ export const userController = {
           account: updateUser?.account,
           address: updateUser.address,
           avatar: updateUser.avatar,
-          role: {
-            name: updateUser.role.name,
-            status: updateUser.role.status,
-          },
+          role: updateUser.role,
           birthday: updateUser.birthday,
           grade: updateUser.grade,
           gender: updateUser.gender,
