@@ -34,18 +34,18 @@ const productValidate = joi.object({
     value: joi.number().required(),
     isPercent: joi.boolean().default(false),
   }),
-  sizes: joi
-    .array()
-    .items(
-      joi.object({
-        name: joi.string().required(),
-        price: joi.number().required(),
-      })
-    )
-    .required()
-    .messages({
-      'any.required': 'Sizes is required',
-    }),
+  // sizes: joi
+  //   .array()
+  //   .items(
+  //     joi.object({
+  //       name: joi.string().required(),
+  //       price: joi.number().required(),
+  //     })
+  //   )
+  //   .required()
+  //   .messages({
+  //     'any.required': 'Sizes is required',
+  //   }),
   // sizes: joi.array().items(
   //   joi
   //     .object({
@@ -54,6 +54,7 @@ const productValidate = joi.object({
   //     })
   //     .unknown(true)
   // ),
+  sizes: joi.array().items(joi.string()).required(),
 });
 
 export default productValidate;
