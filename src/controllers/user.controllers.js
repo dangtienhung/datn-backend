@@ -63,6 +63,7 @@ export const userController = {
   // register
   register: async (req, res) => {
     try {
+      console.log(req.body);
       const { error } = signupSchema.validate(req.body, { abortEarly: false });
       if (error) {
         const errors = error.details.map((error) => error.message);
@@ -72,26 +73,29 @@ export const userController = {
       }
 
       const findUser = await User.findOne({ account: req.body?.account });
+      console.log(findUser);
       if (!findUser) {
         // create user
-        const roleUser = await Role.findOne({ name: 'customer' });
+        // const roleUser = await Role.findOne({ name: 'customer' });
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const user = await User.create({
-          ...req.body,
+          // ...req.body,
+          username: req.body.username,
+          account: req.body.account,
           password: hashedPassword,
-          role: roleUser._id,
-          address: '',
+          // role: 'customer',
+          // address: '',
           avatar: `https://ui-avatars.com/api/?name=${req.body.username}`,
-          slug: slugify(req.body.username, { lower: true }),
+          // slug: slugify(req.body.username, { lower: true }),
           gender: 'male',
           birthday: new Date('1999-01-01'),
         });
 
-        await Role.updateOne({ name: 'customer' }, { $addToSet: { users: user._id } });
+        // await Role.updateOne({ name: 'customer' }, { $addToSet: { users: user._id } });
 
-        if (!roleUser) {
-          return res.status(400).json({ message: 'fail', err: 'Register fail' });
-        }
+        // if (!roleUser) {
+        //   return res.status(400).json({ message: 'fail', err: 'Register fail' });
+        // }
 
         return res.status(201).json({
           message: 'register success',
@@ -156,10 +160,7 @@ export const userController = {
           avatar: findUser.avatar,
           accessToken: token,
           refreshToken,
-          role: {
-            name: findUser.role.name,
-            status: findUser.role.status,
-          },
+          role: findUser.role,
           birthday: findUser.birthday,
           gender: findUser.gender,
         },
@@ -253,10 +254,7 @@ export const userController = {
         accessToken: token,
         refreshToken,
       };
-      const updateUser = await User.findByIdAndUpdate(id, dataUpdate, { new: true }).populate(
-        'role',
-        '-_id -users'
-      );
+      const updateUser = await User.findByIdAndUpdate(id, dataUpdate, { new: true });
       res.status(200).json({
         message: 'Update Success',
         user: {
@@ -266,10 +264,7 @@ export const userController = {
           account: updateUser?.account,
           address: updateUser.address,
           avatar: updateUser.avatar,
-          role: {
-            name: updateUser.role.name,
-            status: updateUser.role.status,
-          },
+          role: updateUser.role,
           birthday: updateUser.birthday,
           grade: updateUser.grade,
           gender: updateUser.gender,
@@ -319,21 +314,19 @@ export const userController = {
     try {
       const { id, idRole } = req.params;
       const user = await User.findById(id);
-      const oldRole = await Role.findByIdAndUpdate(user.role,
-        { $pull: { users: id } });
+      const oldRole = await Role.findByIdAndUpdate(user.role, { $pull: { users: id } });
       await user.updateOne({ role: idRole });
-      const newRole = await Role.findByIdAndUpdate(idRole,
-        { $addToSet: { users: id } });
+      const newRole = await Role.findByIdAndUpdate(idRole, { $addToSet: { users: id } });
 
       if (!user || !oldRole || !newRole) {
         return res.status(404).send({
           message: 'fail',
-          err: 'Change Role Failed'
+          err: 'Change Role Failed',
         });
       }
       return res.status(200).send({
         message: 'success',
-        data: user
+        data: user,
       });
     } catch (error) {
       next(error);
@@ -344,29 +337,34 @@ export const userController = {
       const { idUser } = req.params;
       const user = await User.findById(idUser);
       // const oldRole = await Role.findByIdAndUpdate(user.role, { $pull: { users: idUser } });
-      const newRole = await Role.findByIdAndUpdate(user.role, { status: req.body.status }, {
-        new: true
-      }).populate([
+      const newRole = await Role.findByIdAndUpdate(
+        user.role,
+        { status: req.body.status },
+        {
+          new: true,
+        }
+      ).populate([
         {
           path: 'users',
           select: '-password -refreshToken -slug -products -order',
           populate: { path: 'role', select: '-users' },
         },
-
-      ]);;
+      ]);
       // console.log(newRole);
       if (!idUser || !user || !req.body.status) {
         return res.status(400).send({
           message: 'fail',
-          err: 'Change Status account Failed'
+          err: 'Change Status account Failed',
         });
       }
       return res.status(200).send({
         message: 'success',
-        data: newRole
+        data: newRole,
       });
     } catch (error) {
-      return res.status(400).send({ message: 'fail', err: `Change Status account Failed: ${error}` });
+      return res
+        .status(400)
+        .send({ message: 'fail', err: `Change Status account Failed: ${error}` });
     }
   },
   // get role user
@@ -376,30 +374,27 @@ export const userController = {
       if (!roleName) {
         return res.status(400).send({ message: 'fail', err: 'Role name not found' });
       }
-      console.log(roleName)
-      // const role = await Role.find()   
+      console.log(roleName);
+      // const role = await Role.find()
       const { _page = 1, _limit = 10, q } = req.query;
       const options = {
         page: _page,
         limit: _limit,
         sort: { createdAt: -1 },
-        populate: [
-          { path: 'users', select: "-password -refreshToken -slug " },
-        ],
+        populate: [{ path: 'users', select: '-password -refreshToken -slug ' }],
       };
       const userRole = await Role.paginate({ name: roleName }, options);
 
       // console.log(userRole);
       return res.status(200).send({
         message: 'success',
-        data: userRole
+        data: userRole,
       });
     } catch (error) {
       res.status(400).send({
         message: 'fail',
-        err: `errorl ${error}`
+        err: `errorl ${error}`,
       });
-
     }
   },
 

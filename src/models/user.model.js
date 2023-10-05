@@ -45,11 +45,11 @@ const userSchema = new mongoose.Schema(
       },
     ],
     role: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Role',
-      // type: String,
-      // enum: ['admin', 'staff', 'customer', 'shipper'],
-      // default: 'customer',
+      // type: mongoose.Schema.Types.ObjectId,
+      // ref: 'Role',
+      type: String,
+      enum: ['admin', 'staff', 'customer', 'shipper'],
+      default: 'customer',
     },
     grade: { type: Number, default: 0 },
     gender: {
