@@ -10,10 +10,6 @@ const productValidate = joi.object({
     'string.empty': 'Description is not allowed to be empty',
     'any.required': 'Description is required',
   }),
-  // price: joi.number().required({
-  //   'number.base': 'Price must be a string',
-  //   'any.required:': 'Price is required',
-  // }),
   category: joi.string().required(),
   toppings: joi.array().items(joi.string()).required(),
   is_deleted: joi.boolean().default(false),
@@ -35,18 +31,12 @@ const productValidate = joi.object({
     isPercent: joi.boolean().default(false),
   }),
   sizes: joi.array().items(joi.string()).required(),
-  // sizes: joi
-  //   .array()
-  //   .items(
-  //     joi.object({
-  //       name: joi.string().required(),
-  //       price: joi.number().required(),
-  //     })
-  //   )
-  //   .required()
-  //   .messages({
-  //     'any.required': 'Sizes is required',
-  //   }),
+  customsizes: joi.array().items(
+    joi.object({
+      name: joi.string(),
+      price: joi.number().default(0),
+    })
+  ),
   // sizes: joi.array().items(
   //   joi
   //     .object({
