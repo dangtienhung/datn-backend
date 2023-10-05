@@ -122,8 +122,10 @@ export const userController = {
     try {
       const { account, password } = req.body;
       // check user exists or not
-      const findUser = await User.findOne({ account }).populate('role', '-users');
-      console.log(findUser);
+      const findUser = await User.findOne({ account }).populate([
+        { path: 'role', select: '-users' },
+        { path: 'address', select: 'name address phone' },
+      ]);
       if (!findUser) {
         return res.status(400).json({ message: 'Tài khoản không tồn tại' });
       }

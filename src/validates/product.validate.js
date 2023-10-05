@@ -45,6 +45,7 @@ const productValidate = joi.object({
   //     })
   //     .unknown(true)
   // ),
+  sizes: joi.array().items(joi.string()).required(),
 });
 
 export default productValidate;

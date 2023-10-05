@@ -32,12 +32,15 @@ const userSchema = new mongoose.Schema(
       type: String,
       // required: true,
     },
-    address: {
+    address: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Address',
+      },
+    ],
+    phone: {
       type: String,
     },
-    // phone: {
-    //   type: String,
-    // },
     order: [
       {
         type: mongoose.Schema.Types.ObjectId,
