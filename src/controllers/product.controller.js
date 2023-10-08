@@ -304,4 +304,87 @@ export const ProductController = {
       next(error);
     }
   },
+
+  /* lấy ra tất cả sản phẩm không tính is_delete hay is_active */
+  getAllProductsStore: async (req, res, next) => {
+    try {
+      const { _page = 1, limit = 10, query = '' } = req.query;
+      const options = {
+        page: _page,
+        limit: limit,
+        sort: { createdAt: -1 },
+        populate: [
+          { path: 'category', select: 'name' },
+          { path: 'sizes', select: 'name price' },
+          { path: 'toppings', select: 'name price' },
+        ],
+      };
+      if (query) {
+        console.log(
+          '🚀 ~ file: product.controller.js:347 ~ getAllProductsDeletedTrue: ~ query:',
+          query
+        );
+        const products = await Product.paginate(
+          {
+            $or: [
+              { name: { $regex: query, $options: 'i' } },
+              { description: { $regex: query, $options: 'i' } },
+            ],
+          },
+          options
+        );
+        return res.status(200).json({ ...products });
+      }
+      const products = await Product.paginate({}, options);
+      if (!products) {
+        return res.status(404).json({ message: 'fail', err: 'Not found any size' });
+      }
+      return res.status(200).json({ ...products });
+    } catch (error) {
+      return res.status(500).json({ message: 'fail', err: error });
+    }
+  },
+
+  /* get all products is_delete = true/ is_active = true */
+  getAllProductsDeletedTrueActiveTrue: async (req, res) => {
+    try {
+      const { _page = 1, limit = 10, query = '' } = req.query;
+      const options = {
+        page: _page,
+        limit: limit,
+        sort: { createdAt: -1 },
+        populate: [
+          { path: 'category', select: 'name' },
+          { path: 'sizes', select: 'name price' },
+          { path: 'toppings', select: 'name price' },
+        ],
+      };
+      if (query) {
+        console.log(
+          '🚀 ~ file: product.controller.js:347 ~ getAllProductsDeletedTrue: ~ query:',
+          query
+        );
+        const products = await Product.paginate(
+          {
+            $or: [
+              { name: { $regex: query, $options: 'i' } },
+              { description: { $regex: query, $options: 'i' } },
+            ],
+          },
+          options
+        );
+        return res.status(200).json({ ...products });
+      }
+      const products = await Product.paginate(
+        { $and: [{ is_deleted: true }, { is_active: true }] },
+        options
+      );
+      if (!products) {
+        return res.status(404).json({ message: 'fail', err: 'Not found any size' });
+      }
+      return res.status(200).json({ ...products });
+    } catch (error) {
+      return res.status(500).json({ message: 'fail', err: error });
+    }
+  },
 };
