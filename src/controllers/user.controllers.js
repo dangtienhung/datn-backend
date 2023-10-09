@@ -21,7 +21,7 @@ export const userController = {
       sort: {
         [_sort]: _order === 'desc' ? -1 : 1,
       },
-      populate: [{ path: 'role', select: '-users' }, { path: 'order' }, { path: 'products' }],
+      populate: [{ path: 'order' }, { path: 'products' }],
     };
     try {
       const users = await User.paginate({}, options);
@@ -44,7 +44,6 @@ export const userController = {
   getUser: async (req, res) => {
     try {
       const user = await User.findById(req.user._id).populate([
-        { path: 'role', select: '-users' },
         { path: 'order' },
         { path: 'products' },
       ]);
@@ -63,7 +62,7 @@ export const userController = {
   // register
   register: async (req, res) => {
     try {
-      console.log(req.body);
+      // console.log(req.body);
       const { error } = signupSchema.validate(req.body, { abortEarly: false });
       if (error) {
         const errors = error.details.map((error) => error.message);
@@ -73,29 +72,19 @@ export const userController = {
       }
 
       const findUser = await User.findOne({ account: req.body?.account });
-      console.log(findUser);
+      // console.log(findUser);
       if (!findUser) {
         // create user
-        // const roleUser = await Role.findOne({ name: 'customer' });
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const user = await User.create({
-          // ...req.body,
           username: req.body.username,
           account: req.body.account,
           password: hashedPassword,
           // role: 'customer',
-          // address: '',
           avatar: `https://ui-avatars.com/api/?name=${req.body.username}`,
-          // slug: slugify(req.body.username, { lower: true }),
           gender: 'male',
           birthday: new Date('1999-01-01'),
         });
-
-        // await Role.updateOne({ name: 'customer' }, { $addToSet: { users: user._id } });
-
-        // if (!roleUser) {
-        //   return res.status(400).json({ message: 'fail', err: 'Register fail' });
-        // }
 
         return res.status(201).json({
           message: 'register success',
@@ -123,7 +112,6 @@ export const userController = {
       const { account, password } = req.body;
       // check user exists or not
       const findUser = await User.findOne({ account }).populate([
-        { path: 'role', select: '-users' },
         { path: 'address', select: 'name address phone' },
       ]);
       if (!findUser) {
@@ -283,7 +271,7 @@ export const userController = {
     // const { _id } = req.user;
     try {
       const userDelete = await User.findByIdAndDelete(req.params.id);
-      await Role.findByIdAndUpdate(userDelete.role, { $pull: { users: userDelete._id } });
+      // await Role.findByIdAndUpdate(userDelete.role, { $pull: { users: userDelete._id } });
       res.json({
         message: 'User deleted successfully',
         user: userDelete,
@@ -314,13 +302,11 @@ export const userController = {
 
   changeRoleUser: async (req, res, next) => {
     try {
-      const { id, idRole } = req.params;
+      const { id, role } = req.params;
       const user = await User.findById(id);
-      const oldRole = await Role.findByIdAndUpdate(user.role, { $pull: { users: id } });
-      await user.updateOne({ role: idRole });
-      const newRole = await Role.findByIdAndUpdate(idRole, { $addToSet: { users: id } });
+      await user.updateOne({ role: role });
 
-      if (!user || !oldRole || !newRole) {
+      if (!user || !role) {
         return res.status(404).send({
           message: 'fail',
           err: 'Change Role Failed',
@@ -334,6 +320,7 @@ export const userController = {
       next(error);
     }
   },
+
   isActiveUser: async (req, res) => {
     try {
       const { idUser } = req.params;

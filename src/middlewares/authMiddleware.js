@@ -9,7 +9,7 @@ export const authMiddleware = {
       try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         // console.log("decoded", decoded);
-        const user = await User.findById(decoded?.id).populate('role');
+        const user = await User.findById(decoded?.id);
         req.user = user;
         next();
       } catch (err) {
@@ -45,7 +45,7 @@ export const authMiddleware = {
   },
   verifyTokenAdmin: async (req, res, next) => {
     authMiddleware.verifyToken(req, res, () => {
-      if (req.user.role.name === 'admin' && req.user.role.status === 'active') {
+      if (req.user.role === 'admin') {
         next();
       } else {
         return res.status(403).json("You're not allowed to this task!!");
