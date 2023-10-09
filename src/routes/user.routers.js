@@ -15,11 +15,7 @@ router.get(
   authMiddleware.verifyTokenAdmin,
   userController.getAllRoleUser
 );
-router.put(
-  '/user/role/:idUser',
-  authMiddleware.verifyTokenAdmin,
-  userController.isActiveUser
-);
+router.put('/user/role/:idUser', authMiddleware.verifyTokenAdmin, userController.isActiveUser);
 router.get('/users/:id', authMiddleware.verifyToken, userController.getUser);
 
 // update
@@ -31,7 +27,7 @@ router.patch(
   userController.updatePassword
 );
 
-router.route('/changeRoleUser/:id/:idRole').put(userController.changeRoleUser);
+router.route('/changeRoleUser/:id/:role').put(userController.changeRoleUser);
 // post
 router.route('/logout').post(userController.logOut);
 // delete
