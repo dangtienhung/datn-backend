@@ -386,6 +386,7 @@ axios
     manager.train();
   })
   .catch((error) => {
+    //bat loi o day
     console.error('Lỗi khi truy vấn API:', error);
   });
 manager.save();
