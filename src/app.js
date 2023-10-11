@@ -3,39 +3,44 @@ import * as dotenv from 'dotenv';
 import { errHandler, notFound } from './middlewares/errhandle.js';
 
 import PassportRoutes from './routes/passport.routes.js';
+import { Server as SocketIo } from 'socket.io';
 import User from './models/user.model.js';
+import Users from './models/user.model.js'; // chat
+import { authController } from './controllers/auth.controller.js'; // chat
 import { connectDb } from './configs/index.js';
+import cookie from 'cookie';
 import cookieParser from 'cookie-parser';
-
 import cors from 'cors';
 import express from 'express';
+import { fileURLToPath } from 'url';
+import http from 'http';
+import jwt from 'jsonwebtoken';
 import middleSwaggers from './docs/index.js';
+import mongoose from 'mongoose';
 import morgan from 'morgan';
 import passport from 'passport';
 import passportMiddleware from './middlewares/passport.middlewares.js';
+import path from 'path';
 import rootRoutes from './routes/index.js';
 import session from 'express-session';
-//
 import { userController } from './controllers/user.controllers.js'; // chat
-import { authController } from './controllers/auth.controller.js'; // chat
-import Users from './models/user.model.js'; // chat
+
+//
 
 //lấy  jwt
-import jwt from 'jsonwebtoken';
 
 dotenv.config();
 
 /* config */
 
 //Setup dirname
-import path from 'path';
-import { fileURLToPath } from 'url';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 //
 
 const app = express();
-import cookie from 'cookie';
+
 app.get('/', (req, res) => {
   const cookies = cookie.parse(req.headers.cookie || '');
 
@@ -105,6 +110,13 @@ app.use(notFound);
 app.use(errHandler);
 /* connectDb */
 connectDb();
+// mongoose
+//     .connect(
+//       // 'mongodb+srv://hungdang02042003:jVp9aHU2eqE747nE@du-an-framework2-milk-t.ntg5d7s.mongodb.net/?retryWrites=true&w=majority'
+//       'mongodb://127.0.0.1:27017/be_du_an_tot_nghiep'
+//     )
+//     .then(() => console.log('Database connected!'))
+//     .catch((err) => console.log(err));
 
 /* listen */
 const port = process.env.PORT || 5000;
@@ -113,10 +125,6 @@ app.listen(port, (req, res) => {
 });
 
 //Chat
-
-import http from 'http';
-import { Server as SocketIo } from 'socket.io';
-import mongoose from 'mongoose';
 
 const server = http.createServer(app);
 const io = new SocketIo(server);

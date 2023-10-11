@@ -22,16 +22,15 @@ const passportMiddleware = {
     function (accessToken, refreshToken, profile, cb) {
       (async () => {
         try {
-          const user = await User.findOne({ googleId: profile.id }).populate('role', '-_id -users');
+          const user = await User.findOne({ googleId: profile.id });
           if (!user) {
-            const roleUser = await Role.findOne({ name: 'customer' });
             const newUser = await User.create({
               googleId: profile.id,
               username: profile.name.givenName,
               avatar: profile.photos[0].value,
               slug: slugify(profile.name.givenName, { lower: true }),
               account: profile.emails[0].value,
-              role: roleUser._id,
+              role: 'customer',
               gender: 'male',
               birthday: new Date('1999-01-01'),
             });

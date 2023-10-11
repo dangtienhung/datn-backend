@@ -6,15 +6,6 @@ const userSchema = new mongoose.Schema(
     googleId: {
       type: String,
     },
-    twitterId: {
-      type: String,
-    },
-    githubId: {
-      type: String,
-    },
-    facebookId: {
-      type: String,
-    },
     username: {
       type: String,
     },
@@ -32,12 +23,15 @@ const userSchema = new mongoose.Schema(
       type: String,
       // required: true,
     },
-    address: {
+    address: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Address',
+      },
+    ],
+    phone: {
       type: String,
     },
-    // phone: {
-    //   type: String,
-    // },
     order: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -45,11 +39,11 @@ const userSchema = new mongoose.Schema(
       },
     ],
     role: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Role',
-      // type: String,
-      // enum: ['admin', 'staff', 'customer', 'shipper'],
-      // default: 'customer',
+      // type: mongoose.Schema.Types.ObjectId,
+      // ref: 'Role',
+      type: String,
+      enum: ['admin', 'staff', 'customer', 'shipper'],
+      default: 'customer',
     },
     grade: { type: Number, default: 0 },
     gender: {

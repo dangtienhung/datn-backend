@@ -8,10 +8,6 @@ const categorySchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    slug: {
-      type: String,
-      unique: true,
-    },
     products: [
       {
         type: mongoose.Schema.Types.ObjectId,

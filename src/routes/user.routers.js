@@ -27,7 +27,7 @@ router.patch(
   userController.updatePassword
 );
 
-router.route('/changeRoleUser/:id/:idRole').put(userController.changeRoleUser);
+router.route('/changeRoleUser/:id/:role').put(userController.changeRoleUser);
 // post
 router.route('/logout').post(userController.logOut);
 // delete
