@@ -15,6 +15,8 @@ manager.train().then(async () => {
   app.get('/bot', async (req, res) => {
     let response = await manager.process('vi', req.query.message);
     res.json(response);
+
+    //success
     // res.send(response.answer || 'Xin lỗi , thông tin không có sẵn , vui lòng chuyển sang câu hỏi khác');
   });
   // console.log( await manager.process('vi',"hello"));
