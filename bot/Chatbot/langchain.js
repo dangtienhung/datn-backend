@@ -348,6 +348,7 @@ axios
         'Giá hiện tại là' + value.price + 'vnđ nhé'
       );
 
+      //train don ao
       // khi đơn hàng không tồn tại
       manager.addDocument(
         'vi',
