@@ -315,6 +315,8 @@ manager.addDocument('vi', 'Shop có bao nhiêu topping ạ ', 'isToppingF');
 manager.addDocument('vi', 'Shop có topping gì thế', 'isToppingF');
 manager.addDocument('vi', 'Topping topping [q=topping]', 'isToppingF');
 
+//call axios o day
+
 axios
   .get('http://localhost:3000/toppings')
   .then((response) => {
