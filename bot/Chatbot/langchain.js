@@ -10,6 +10,8 @@ const data =
 const hash = crypto.createHash("md5").update(data).digest("hex");
 console.log(hash);
 
+// traning o day
+
 //Câu mở đầu
 manager.addDocument(
   "vi",
