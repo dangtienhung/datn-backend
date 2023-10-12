@@ -37,6 +37,7 @@ dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+//file name html
 //
 
 const app = express();
@@ -66,9 +67,11 @@ app.get('/', (req, res) => {
 //
 app.use(morgan('common'));
 // app.use(cors({ origin: '*' }));
+
 app.use(cookieParser());
 app.use(express.json());
 // app.use(cors({ origin: '*', credentials: true }));
+
 app.use(cors({ origin: ['http://localhost:5173', 'http://localhost:3000'], credentials: true }));
 app.use(
   session({

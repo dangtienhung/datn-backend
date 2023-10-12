@@ -12,7 +12,7 @@ router.get(
 );
 router.get(
   '/users/roles/:roleName',
-  authMiddleware.verifyTokenAdmin,
+  // authMiddleware.verifyTokenAdmin,
   userController.getAllRoleUser
 );
 router.put('/user/role/:idUser', authMiddleware.verifyTokenAdmin, userController.isActiveUser);
