@@ -27,11 +27,7 @@ import { userController } from './controllers/user.controllers.js'; // chat
 
 //
 
-
-
-
 //lấy  jwt
-
 
 dotenv.config();
 
@@ -39,9 +35,9 @@ dotenv.config();
 
 //Setup dirname
 
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+//file name html
 //
 
 const app = express();
@@ -71,9 +67,11 @@ app.get('/', (req, res) => {
 //
 app.use(morgan('common'));
 // app.use(cors({ origin: '*' }));
+
 app.use(cookieParser());
 app.use(express.json());
 // app.use(cors({ origin: '*', credentials: true }));
+
 app.use(cors({ origin: ['http://localhost:5173', 'http://localhost:3000'], credentials: true }));
 app.use(
   session({
@@ -114,14 +112,14 @@ app.use('/auth', PassportRoutes);
 app.use(notFound);
 app.use(errHandler);
 /* connectDb */
-// connectDb();
-mongoose
-    .connect(
+connectDb();
+// mongoose
+    // .connect(
       // 'mongodb+srv://hungdang02042003:jVp9aHU2eqE747nE@du-an-framework2-milk-t.ntg5d7s.mongodb.net/?retryWrites=true&w=majority'
-      'mongodb://127.0.0.1:27017/be_du_an_tot_nghiep'
-    )
-    .then(() => console.log('Database connected!'))
-    .catch((err) => console.log(err));
+    //   'mongodb://127.0.0.1:27017/be_du_an_tot_nghiep'
+    // )
+    // .then(() => console.log('Database connected!'))
+    // .catch((err) => console.log(err));
 
 /* listen */
 const port = process.env.PORT || 5000;
@@ -130,10 +128,6 @@ app.listen(port, (req, res) => {
 });
 
 //Chat
-
-
-
-
 
 const server = http.createServer(app);
 const io = new SocketIo(server);
