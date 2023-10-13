@@ -7,6 +7,6 @@ export const categoryValidate = new joi.object({
     'string.min': 'Name length must be at least 3 characters long',
     'any.required': 'Name is required',
   }),
-  slug: joi.string(),
+  // slug: joi.string(),
   products: joi.array().items(joi.string()),
 });

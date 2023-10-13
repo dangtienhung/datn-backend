@@ -329,7 +329,10 @@ export const orderController = {
         page: _page,
         limit: _limit,
         sort: { createdAt: -1 },
-        populate: [{ path: 'user', select: 'username avatar account' }],
+        populate: [
+          { path: 'user', select: 'username avatar account' },
+          { path: 'items.product', select: 'name' },
+        ],
       };
       const query = q ? { name: { $regex: q, $options: 'i' } } : {};
       const orders = await Order.paginate({ user: id, ...query }, options);

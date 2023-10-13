@@ -21,7 +21,7 @@ export const userController = {
       sort: {
         [_sort]: _order === 'desc' ? -1 : 1,
       },
-      populate: [{ path: 'order' }, { path: 'products' }],
+      populate: [{ path: 'order' }],
     };
     try {
       const users = await User.paginate({}, options);
@@ -325,11 +325,11 @@ export const userController = {
     try {
       const { idUser } = req.params;
 
-
-      const newRole = await User.findOneAndUpdate({ _id: idUser },
+      const newRole = await User.findOneAndUpdate(
+        { _id: idUser },
         { status: req.body.status },
         { new: true }
-      )
+      );
 
       if (!idUser || !req.body.status) {
         return res.status(400).send({
@@ -361,11 +361,9 @@ export const userController = {
         page: _page,
         limit: _limit,
         sort: { createdAt: -1 },
-
       };
 
       const userRole = await User.paginate({ role: roleName }, options);
-
 
       return res.status(200).send({
         message: 'success',
@@ -419,6 +417,7 @@ export const userController = {
         ...req.body,
         password: hashedPassword,
         avatar: body.avatar ? body.avatar : `https://ui-avatars.com/api/?name=${req.body.username}`,
+        gender: body.gender,
       });
 
       return res.status(200).json({
@@ -427,6 +426,7 @@ export const userController = {
           _id: user._id,
           username: user.username,
           avatar: user.avatar,
+          gender: user.gender,
         },
       });
     } catch (error) {
