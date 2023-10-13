@@ -39,6 +39,7 @@ export const userValidate = joi.object({
   }),
   birthday: joi.date().default('1999-01-01'),
   grade: joi.number().default(0),
+  gender: joi.string().default('other'),
 });
 
 export const userUpdateValidate = joi.object({});

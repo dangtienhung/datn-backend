@@ -13,10 +13,11 @@ export const categoryController = {
       if (error) {
         return res.status(400).json({ message: error.message });
       }
-      /* create slug */
+      // /* create slug */
       const slug = slugify(body.name, { lower: true });
+      console.log(slug);
       body.slug = slug;
-      /* create */
+      // /* create */
       const category = await Category.create(body);
       if (!category) {
         return res.status(400).json({ message: 'Create category failed' });
@@ -55,6 +56,36 @@ export const categoryController = {
       return res.status(400).json({ message: error.message });
     }
   },
+  /*get status is_deleted = true */
+  getAllCategoryDeleted: async (req, res) => {
+    try {
+      const { _page = 1, _limit = 10, q } = req.query;
+      const options = {
+        page: _page,
+        limit: _limit,
+        sort: { createdAt: -1 },
+        populate: { path: 'products' },
+      };
+      const query = q
+        ? {
+            $and: [
+              {
+                $or: [
+                  { name: { $regex: q, $options: 'i' } },
+                  { slug: { $regex: q, $options: 'i' } },
+                  { is_deleted: true },
+                ],
+              },
+            ],
+          }
+        : { is_deleted: true };
+      const categories = await Category.paginate(query, options);
+      return res.status(200).json({ ...categories });
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+  },
+
   /* get One */
   getOne: async (req, res) => {
     try {
