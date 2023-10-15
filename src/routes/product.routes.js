@@ -1,5 +1,6 @@
-import express from 'express';
 import { ProductController } from '../controllers/product.controller.js';
+import express from 'express';
+
 const productRoutes = express.Router();
 productRoutes.route('/products').get(ProductController.getAllProducts);
 productRoutes.route('/product').post(ProductController.createProduct);
@@ -10,4 +11,12 @@ productRoutes
   .put(ProductController.updateProduct);
 productRoutes.route('/deleteFakeProduct/:id').put(ProductController.deleteFakeProduct);
 productRoutes.route('/restoreProduct/:id').put(ProductController.restoreProduct);
+productRoutes.get(`/products/all`, ProductController.getAllProductsStore);
+productRoutes.get(
+  `/products/allDeleteTrueActiveTrue`,
+  ProductController.getAllProductsDeletedTrueActiveTrue
+);
+
+productRoutes.get('/products/in-active', ProductController.getAllProductInActive);
+
 export default productRoutes;
