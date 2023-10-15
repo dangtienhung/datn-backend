@@ -69,6 +69,7 @@ export const ProductController = {
     }
   },
 
+  /* lấy ra các sản phẩm đang hoạt động */
   getAllProducts: async (req, res, next) => {
     try {
       const { _page = 1, limit = 10, q = '', c = '' } = req.query;
@@ -127,6 +128,7 @@ export const ProductController = {
     }
   },
 
+  /* lấy ra 1 sản phẩm */
   getProduct: async (req, res, next) => {
     try {
       const product = await Product.findById(req.params.id).populate([
@@ -143,6 +145,7 @@ export const ProductController = {
     }
   },
 
+  /* cập nhật sản phẩm */
   updateProduct: async (req, res, next) => {
     try {
       const { category } = req.body;
@@ -193,6 +196,7 @@ export const ProductController = {
     }
   },
 
+  /* xóa cứng */
   deleteRealProduct: async (req, res, next) => {
     try {
       const product = await Product.findByIdAndDelete(req.params.id);
@@ -227,6 +231,8 @@ export const ProductController = {
       next(error);
     }
   },
+
+  /* xóa mềm */
   deleteFakeProduct: async (req, res, next) => {
     try {
       const product = await Product.findByIdAndUpdate(
@@ -264,6 +270,8 @@ export const ProductController = {
       next(error);
     }
   },
+
+  /* khôi phục sản phẩm */
   restoreProduct: async (req, res, next) => {
     try {
       const product = await Product.findByIdAndUpdate(
@@ -345,7 +353,7 @@ export const ProductController = {
     }
   },
 
-  /* get all products is_delete = true/ is_active = true */
+  /* get all products is_delete = true */
   getAllProductsDeletedTrueActiveTrue: async (req, res) => {
     try {
       const { _page = 1, limit = 10, query = '' } = req.query;
@@ -360,10 +368,42 @@ export const ProductController = {
         ],
       };
       if (query) {
-        console.log(
-          '🚀 ~ file: product.controller.js:347 ~ getAllProductsDeletedTrue: ~ query:',
-          query
+        const products = await Product.paginate(
+          {
+            $or: [
+              { name: { $regex: query, $options: 'i' } },
+              { description: { $regex: query, $options: 'i' } },
+            ],
+          },
+          options
         );
+        return res.status(200).json({ ...products });
+      }
+      const products = await Product.paginate({ $and: [{ is_deleted: true }] }, options);
+      if (!products) {
+        return res.status(404).json({ message: 'fail', err: 'Not found any size' });
+      }
+      return res.status(200).json({ ...products });
+    } catch (error) {
+      return res.status(500).json({ message: 'fail', err: error });
+    }
+  },
+
+  /* lấy ra các sản phẩm is_delete = false/ is_active là false */
+  getAllProductInActive: async (req, res) => {
+    try {
+      const { _page = 1, limit = 10, query = '' } = req.query;
+      const options = {
+        page: _page,
+        limit: limit,
+        sort: { createdAt: -1 },
+        populate: [
+          { path: 'category', select: 'name' },
+          { path: 'sizes', select: 'name price' },
+          { path: 'toppings', select: 'name price' },
+        ],
+      };
+      if (query) {
         const products = await Product.paginate(
           {
             $or: [
@@ -376,7 +416,7 @@ export const ProductController = {
         return res.status(200).json({ ...products });
       }
       const products = await Product.paginate(
-        { $and: [{ is_deleted: true }, { is_active: true }] },
+        { $and: [{ is_deleted: false }, { is_active: false }] },
         options
       );
       if (!products) {

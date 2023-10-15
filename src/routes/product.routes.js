@@ -17,4 +17,6 @@ productRoutes.get(
   ProductController.getAllProductsDeletedTrueActiveTrue
 );
 
+productRoutes.get('/products/in-active', ProductController.getAllProductInActive);
+
 export default productRoutes;
