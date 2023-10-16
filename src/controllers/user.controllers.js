@@ -21,7 +21,7 @@ export const userController = {
       sort: {
         [_sort]: _order === 'desc' ? -1 : 1,
       },
-      populate: [{ path: 'order' }, { path: 'products' }],
+      populate: [{ path: 'order' }],
     };
     try {
       const users = await User.paginate({}, options);
@@ -62,7 +62,7 @@ export const userController = {
   // register
   register: async (req, res) => {
     try {
-      // console.log(req.body);
+      console.log(req.body);
       const { error } = signupSchema.validate(req.body, { abortEarly: false });
       if (error) {
         const errors = error.details.map((error) => error.message);
@@ -94,7 +94,6 @@ export const userController = {
             username: user.username,
             account: user.account,
             address: user.address,
-            slug: user.slug,
           },
         });
       } else {
@@ -324,28 +323,20 @@ export const userController = {
   isActiveUser: async (req, res) => {
     try {
       const { idUser } = req.params;
-      const user = await User.findById(idUser);
-      // const oldRole = await Role.findByIdAndUpdate(user.role, { $pull: { users: idUser } });
-      const newRole = await Role.findByIdAndUpdate(
-        user.role,
+
+      const newRole = await User.findOneAndUpdate(
+        { _id: idUser },
         { status: req.body.status },
-        {
-          new: true,
-        }
-      ).populate([
-        {
-          path: 'users',
-          select: '-password -refreshToken -slug -products -order',
-          populate: { path: 'role', select: '-users' },
-        },
-      ]);
-      // console.log(newRole);
-      if (!idUser || !user || !req.body.status) {
+        { new: true }
+      );
+
+      if (!idUser || !req.body.status) {
         return res.status(400).send({
           message: 'fail',
           err: 'Change Status account Failed',
         });
       }
+      newRole.password = undefined;
       return res.status(200).send({
         message: 'success',
         data: newRole,
@@ -363,18 +354,16 @@ export const userController = {
       if (!roleName) {
         return res.status(400).send({ message: 'fail', err: 'Role name not found' });
       }
-      console.log(roleName);
-      // const role = await Role.find()
+
       const { _page = 1, _limit = 10, q } = req.query;
       const options = {
         page: _page,
         limit: _limit,
         sort: { createdAt: -1 },
-        populate: [{ path: 'users', select: '-password -refreshToken -slug ' }],
       };
-      const userRole = await Role.paginate({ name: roleName }, options);
 
-      // console.log(userRole);
+      const userRole = await User.paginate({ role: roleName }, options);
+
       return res.status(200).send({
         message: 'success',
         data: userRole,
@@ -427,6 +416,7 @@ export const userController = {
         ...req.body,
         password: hashedPassword,
         avatar: body.avatar ? body.avatar : `https://ui-avatars.com/api/?name=${req.body.username}`,
+        gender: body.gender,
       });
 
       return res.status(200).json({
@@ -435,6 +425,7 @@ export const userController = {
           _id: user._id,
           username: user.username,
           avatar: user.avatar,
+          gender: user.gender,
         },
       });
     } catch (error) {

@@ -7,12 +7,12 @@ const router = express.Router();
 router.get(
   '/users',
   // isAdmin,
-  authMiddleware.verifyToken,
+  // authMiddleware.verifyToken,
   userController.getAllUser
 );
 router.get(
   '/users/roles/:roleName',
-  authMiddleware.verifyTokenAdmin,
+  // authMiddleware.verifyTokenAdmin,
   userController.getAllRoleUser
 );
 router.put('/user/role/:idUser', authMiddleware.verifyTokenAdmin, userController.isActiveUser);
@@ -20,7 +20,11 @@ router.get('/users/:id', authMiddleware.verifyToken, userController.getUser);
 
 // update
 router.patch('/updateInfor/:id', userController.updateInfor);
-router.patch('/users/:id', authMiddleware.verifyToken, userController.updateUser);
+router.patch(
+  '/users/:id',
+  //  authMiddleware.verifyToken,
+  userController.updateUser
+);
 router.patch(
   '/user/updatePassword',
   authMiddleware.verifyTokenAdmin,

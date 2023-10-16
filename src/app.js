@@ -37,6 +37,7 @@ dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+//file name html
 //
 
 const app = express();
@@ -94,9 +95,6 @@ passport.deserializeUser((id, done) => {
 
 /* OAuth2 */
 passport.use(passportMiddleware.GoogleAuth);
-passport.use(passportMiddleware.GithubAuth);
-passport.use(passportMiddleware.TwitterAuth);
-passport.use(passportMiddleware.FacebookAuth);
 
 /* routes */
 app.use('/api-docs', middleSwaggers);
@@ -106,14 +104,14 @@ app.use('/auth', PassportRoutes);
 app.use(notFound);
 app.use(errHandler);
 /* connectDb */
-// connectDb();
-mongoose
-  .connect(
-    // 'mongodb+srv://hungdang02042003:jVp9aHU2eqE747nE@du-an-framework2-milk-t.ntg5d7s.mongodb.net/?retryWrites=true&w=majority'
-    'mongodb://127.0.0.1:27017/be_du_an_tot_nghiep'
-  )
-  .then(() => console.log('Database connected!'))
-  .catch((err) => console.log(err));
+connectDb();
+// mongoose
+// .connect(
+// 'mongodb+srv://hungdang02042003:jVp9aHU2eqE747nE@du-an-framework2-milk-t.ntg5d7s.mongodb.net/?retryWrites=true&w=majority'
+//   'mongodb://127.0.0.1:27017/be_du_an_tot_nghiep'
+// )
+// .then(() => console.log('Database connected!'))
+// .catch((err) => console.log(err));
 
 /* listen */
 const port = process.env.PORT || 5000;
