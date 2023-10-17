@@ -6,7 +6,19 @@ export const voucherController = {
   create: async (req, res) => {
     try {
       const body = req.body;
-      // console.log(req.body);
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' + new Date().getTime();
+
+      function generateRandomString() {
+        let result = '';
+        for (let i = 0; i < 15; i++) {
+          const randomIndex = Math.floor(Math.random() * characters.length);
+          result += characters.charAt(randomIndex);
+        }
+        return result
+      }
+
+
+
       /* validate */
       const { error } = voucherValidate.validate(body, { abortEarly: false });
       if (error) {
@@ -14,7 +26,7 @@ export const voucherController = {
         return res.status(400).json({ message: errors });
       }
       /* create */
-      const voucher = await Voucher.create(body);
+      const voucher = await Voucher.create({ ...body, code: generateRandomString() });
       if (voucher) {
         return res.status(201).json({ data: voucher });
       }

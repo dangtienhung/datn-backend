@@ -1,10 +1,10 @@
 import joi from 'joi';
 
 export const voucherValidate = joi.object({
-  code: joi.string().required().messages({
-    'any.required': 'code is required',
-    'string.empty': 'code is not allowed to be empty',
-    'string.unique': 'code is unique',
+  title: joi.string().required().messages({
+    'any.required': 'title is required',
+    'string.empty': 'title is not allowed to be empty',
+    'string.unique': 'title is unique',
   }),
   discount: joi.number().required(),
   sale: joi.number().required(),

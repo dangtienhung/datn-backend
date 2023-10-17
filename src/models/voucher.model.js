@@ -7,6 +7,7 @@ moment().format();
 const voucherSchema = new mongoose.Schema(
   {
     code: { type: String, required: true, unique: true },
+    title: { type: String, required: true, unique: true },
     discount: { type: Number, require: true },
     sale: { type: Number, require: true },
     startDate: { type: Date, default: Date.now },
