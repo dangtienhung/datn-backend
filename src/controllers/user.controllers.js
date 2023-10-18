@@ -45,10 +45,10 @@ export const userController = {
     try {
       const user = await User.findById(req.user._id).populate([
         { path: 'order' },
-        { path: 'products' },
+        // { path: 'products' },
       ]);
       if (!user) {
-        return res.status(404).json({ message: 'Không tìm thấy thông tin người dùng' });
+        return res.status(500).json({ message: 'Không tìm thấy thông tin người dùng' });
       }
       user.password = undefined;
       return res.status(200).json({
