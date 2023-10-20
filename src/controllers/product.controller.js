@@ -69,6 +69,76 @@ export const ProductController = {
     }
   },
 
+  createProductV2: async (req, res, next) => {
+    try {
+      const sizeIdArray = [];
+      const body = req.body;
+      const sizeArray = body.size;
+      /* kiểm tra xem size thêm vào có trùng với size mặc định hay không */
+      const sizeDefault = body.sizeDefault;
+      for (let index = 0; index < sizeDefault.length; index++) {
+        const element = await Size.findById(sizeDefault[index]);
+        /*
+          so sánh xem tên element size default đó trùng với tên size người dùng đẩy lên thì lấy size mới người dùng thêm
+          chứ không lấy size mặc định nữa, loại bỏ id size default đó ra khỏi mảng sizeDefault
+        */
+        for (let i = 0; i < sizeArray.length; i++) {
+          if (element.name === sizeArray[i].name) {
+            sizeDefault.splice(index, 1);
+          }
+        }
+      }
+      /* tạo ra size này */
+      for (const sizeItem of sizeArray) {
+        const sizeCreate = await Size.create(sizeItem);
+        if (!sizeCreate) {
+          return res.status(400).json({ message: 'fail', err: 'Create Size failed' });
+        }
+        sizeIdArray.push(sizeCreate._id);
+      }
+      /* tạo ra product này */
+      const dataSizeArray = [...sizeIdArray, ...body.sizeDefault];
+      const productData = {
+        name: body.name,
+        description: body.description,
+        category: body.category,
+        sizes: dataSizeArray,
+        toppings: body.toppings,
+        images: body.images,
+        sale: body.sale,
+      };
+      const product = await Product.create(productData);
+      if (!product) {
+        return res.status(400).json({ message: 'fail', err: 'Create Product failed' });
+      }
+      /* update category */
+      await Category.findByIdAndUpdate(body.category, {
+        $addToSet: { products: product._id },
+      });
+      /* update topping */
+      const { toppings } = body;
+      if (toppings.length > 0) {
+        for (let i = 0; i < toppings.length; i++) {
+          await Topping.findByIdAndUpdate(toppings[i], {
+            $addToSet: { products: product._id },
+          });
+        }
+      }
+      /* update size */
+      const { sizes } = productData;
+      if (sizes.length > 0) {
+        for (let i = 0; i < sizes.length; i++) {
+          await Size.findByIdAndUpdate(sizes[i], {
+            $addToSet: { productId: product._id },
+          });
+        }
+      }
+      return res.status(200).json({ message: 'succes', data: product });
+    } catch (error) {
+      return res.status(500).json({ message: 'fail', err: error });
+    }
+  },
+
   /* lấy ra các sản phẩm đang hoạt động */
   getAllProducts: async (req, res, next) => {
     try {
