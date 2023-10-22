@@ -1,8 +1,7 @@
 const { NlpManager } = require('node-nlp');
-const manager = new NlpManager({ languages: ['vi'] }); //
+const manager = require('./more.js');
 //
 const axios = require('axios');
-const mongoose = require('mongoose');
 const crypto = require('crypto');
 
 const data =
@@ -390,4 +389,5 @@ axios
     console.error('Lỗi khi truy vấn API:', error);
   });
 manager.save();
+
 module.exports = manager;
