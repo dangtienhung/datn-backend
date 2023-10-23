@@ -19,5 +19,6 @@ uploadBanner.get('/banners', bannerController.getAll);
 
 uploadBanner.get('/banners-is-active', bannerController.getAllIsActive);
 // {{host}}/banners-is-active?status=true
+uploadBanner.put('/banner/:id', bannerController.updateIsActive);
 
 export default uploadBanner;
