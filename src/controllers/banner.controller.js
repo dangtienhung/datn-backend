@@ -46,4 +46,22 @@ export const bannerController = {
       return res.status(500).json({ msg: error.message });
     }
   },
+  /* update is_active */
+  updateIsActive: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const banner = await Banner.findById(id);
+      if (!banner) {
+        return res.status(400).json({ msg: 'Banner not found' });
+      }
+      const bannerUpdate = await Banner.findByIdAndUpdate(
+        id,
+        { is_active: !banner.is_active },
+        { new: true }
+      );
+      return res.status(200).json({ bannerUpdate });
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  },
 };
