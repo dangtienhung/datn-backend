@@ -110,6 +110,6 @@ io.on('connection', (socket) => {
     io.emit('ChatMessage', 'Đặt hàng thành công ! Shop cảm ơn bạn đã đặt hàng nè  ');
   });
 });
-server.listen(3000, () => {
+server.listen(3009, () => {
   console.log('Server đang lắng nghe trên cổng 3000');
 });
