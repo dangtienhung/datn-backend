@@ -37,4 +37,13 @@ export const bannerController = {
       return res.status(500).json({ msg: error.message });
     }
   },
+  getAllIsActive: async (req, res) => {
+    try {
+      const status = req.query.status;
+      const banners = await Banner.find({ is_active: status });
+      return res.status(200).json({ banners });
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  },
 };

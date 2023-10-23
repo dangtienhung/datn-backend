@@ -1,0 +1,1000 @@
+{
+  "settings": {
+    "languages": [
+      "vi"
+    ],
+    "tag": "nlp",
+    "threshold": 0.5,
+    "autoLoad": true,
+    "autoSave": true,
+    "modelFileName": "model.nlp",
+    "executeActionsBeforeAnswers": false,
+    "calculateSentiment": true
+  },
+  "nluManager": {
+    "settings": {
+      "tag": "nlu-manager"
+    },
+    "locales": [
+      "vi"
+    ],
+    "languageNames": {},
+    "domainManagers": {
+      "vi": {
+        "settings": {
+          "locale": "vi",
+          "trainByDomain": false,
+          "tag": "domain-manager-vi",
+          "nluByDomain": {
+            "default": {
+              "className": "NeuralNlu",
+              "settings": {}
+            }
+          },
+          "useStemDict": true
+        },
+        "stemDict": {
+          "chao,shop45c48cce2e2d7fbdea1afc51c7c6ad26": {
+            "intent": "greeting",
+            "domain": "default"
+          },
+          "shop8f14e45fceea167a5a36dedd4bea2543": {
+            "intent": "greeting",
+            "domain": "default"
+          },
+          "hello,shop": {
+            "intent": "greeting",
+            "domain": "default"
+          },
+          "hi,shop": {
+            "intent": "greeting",
+            "domain": "default"
+          },
+          "1679091c5a880faf6fb5e6087eb1b2dc,a,chao,co,khong,ship,shop": {
+            "intent": "AboutShip",
+            "domain": "default"
+          },
+          "ko,oicfcd208495d565ef66e7dff9f98764da,ship,shop": {
+            "intent": "AboutShip",
+            "domain": "default"
+          },
+          "ai,co,khonga87ff679a2f3e71d9181a67b7542122c,online": {
+            "intent": "NeedHelp",
+            "domain": "default"
+          },
+          "can,giup,toi,đo1679091c5a880faf6fb5e6087eb1b2dc": {
+            "intent": "NeedHelp",
+            "domain": "default"
+          },
+          "ac4ca4238a0b923820dcc509a6f75849b,cam,e,on,shop": {
+            "intent": "thanks",
+            "domain": "default"
+          },
+          "nhed3d9446802a44259755d38e6d163e820,shop,tks": {
+            "intent": "thanks",
+            "domain": "default"
+          },
+          "a,cam,nhieu,on,shop,thanks": {
+            "intent": "thanks",
+            "domain": "default"
+          },
+          "ban,gi,hien,pham,san,shop,tai,the": {
+            "intent": "Products",
+            "domain": "default"
+          },
+          "con,gi,pham,san,shop,the": {
+            "intent": "Products",
+            "domain": "default"
+          },
+          "an,ban,co,gi,mon,shop,the": {
+            "intent": "Products",
+            "domain": "default"
+          },
+          "bo,ke,pham,san,ten,toan": {
+            "intent": "Products",
+            "domain": "default"
+          },
+          "a,bao,co,nhieu,shop,topping": {
+            "intent": "isToppingF",
+            "domain": "default"
+          },
+          "co,gi,shop,the,topping": {
+            "intent": "isToppingF",
+            "domain": "default"
+          },
+          "q=topping,topping": {
+            "intent": "isToppingF",
+            "domain": "default"
+          }
+        },
+        "intentDict": {
+          "greeting": "default",
+          "AboutShip": "default",
+          "NeedHelp": "default",
+          "thanks": "default",
+          "Products": "default",
+          "isToppingF": "default"
+        },
+        "sentences": [
+          {
+            "domain": "default",
+            "utterance": "Chào shop45c48cce2e2d7fbdea1afc51c7c6ad26",
+            "intent": "greeting"
+          },
+          {
+            "domain": "default",
+            "utterance": "shop8f14e45fceea167a5a36dedd4bea2543",
+            "intent": "greeting"
+          },
+          {
+            "domain": "default",
+            "utterance": "hello shop",
+            "intent": "greeting"
+          },
+          {
+            "domain": "default",
+            "utterance": "hi shop",
+            "intent": "greeting"
+          },
+          {
+            "domain": "default",
+            "utterance": "Chào shop, shop có ship không ạ 1679091c5a880faf6fb5e6087eb1b2dc",
+            "intent": "AboutShip"
+          },
+          {
+            "domain": "default",
+            "utterance": "ship ko shop ơicfcd208495d565ef66e7dff9f98764da",
+            "intent": "AboutShip"
+          },
+          {
+            "domain": "default",
+            "utterance": "Có ai online khônga87ff679a2f3e71d9181a67b7542122c",
+            "intent": "NeedHelp"
+          },
+          {
+            "domain": "default",
+            "utterance": "Tôi cần giúp đỡ1679091c5a880faf6fb5e6087eb1b2dc",
+            "intent": "NeedHelp"
+          },
+          {
+            "domain": "default",
+            "utterance": "E cảm ơn shop ạc4ca4238a0b923820dcc509a6f75849b",
+            "intent": "thanks"
+          },
+          {
+            "domain": "default",
+            "utterance": "tks shop nhéd3d9446802a44259755d38e6d163e820",
+            "intent": "thanks"
+          },
+          {
+            "domain": "default",
+            "utterance": "Cảm ơn , thanks nhiều shop ạ",
+            "intent": "thanks"
+          },
+          {
+            "domain": "default",
+            "utterance": "Hiện tại shop bán sản phẩm gì thế",
+            "intent": "Products"
+          },
+          {
+            "domain": "default",
+            "utterance": "Shop còn sản phẩm gì thế",
+            "intent": "Products"
+          },
+          {
+            "domain": "default",
+            "utterance": "Shop có bán món ăn gì thế",
+            "intent": "Products"
+          },
+          {
+            "domain": "default",
+            "utterance": "Kể tên toàn bộ sản phẩm",
+            "intent": "Products"
+          },
+          {
+            "domain": "default",
+            "utterance": "Shop có bao nhiêu topping ạ ",
+            "intent": "isToppingF"
+          },
+          {
+            "domain": "default",
+            "utterance": "Shop có topping gì thế",
+            "intent": "isToppingF"
+          },
+          {
+            "domain": "default",
+            "utterance": "Topping topping [q=topping]",
+            "intent": "isToppingF"
+          }
+        ],
+        "domains": {
+          "master_domain": {
+            "settings": {
+              "locale": "vi",
+              "tag": "nlu-vi",
+              "keepStopwords": true,
+              "nonefeatureValue": 1,
+              "nonedeltaMultiplier": 1.2,
+              "spellCheck": false,
+              "spellCheckDistance": 1,
+              "filterZeros": true,
+              "log": true
+            },
+            "features": {
+              "chao": 1,
+              "shop45c48cce2e2d7fbdea1afc51c7c6ad26": 1,
+              "shop8f14e45fceea167a5a36dedd4bea2543": 1,
+              "hello": 1,
+              "shop": 1,
+              "hi": 1,
+              "co": 1,
+              "ship": 1,
+              "khong": 1,
+              "a": 1,
+              "1679091c5a880faf6fb5e6087eb1b2dc": 1,
+              "ko": 1,
+              "oicfcd208495d565ef66e7dff9f98764da": 1,
+              "ai": 1,
+              "online": 1,
+              "khonga87ff679a2f3e71d9181a67b7542122c": 1,
+              "toi": 1,
+              "can": 1,
+              "giup": 1,
+              "đo1679091c5a880faf6fb5e6087eb1b2dc": 1,
+              "e": 1,
+              "cam": 1,
+              "on": 1,
+              "ac4ca4238a0b923820dcc509a6f75849b": 1,
+              "tks": 1,
+              "nhed3d9446802a44259755d38e6d163e820": 1,
+              "thanks": 1,
+              "nhieu": 1,
+              "hien": 1,
+              "tai": 1,
+              "ban": 1,
+              "san": 1,
+              "pham": 1,
+              "gi": 1,
+              "the": 1,
+              "con": 1,
+              "mon": 1,
+              "an": 1,
+              "ke": 1,
+              "ten": 1,
+              "toan": 1,
+              "bo": 1,
+              "bao": 1,
+              "topping": 1,
+              "q=topping": 1
+            },
+            "intents": {
+              "greeting": 1,
+              "AboutShip": 1,
+              "NeedHelp": 1,
+              "thanks": 1,
+              "Products": 1,
+              "isToppingF": 1
+            },
+            "intentFeatures": {
+              "greeting": {
+                "chao": 1,
+                "shop45c48cce2e2d7fbdea1afc51c7c6ad26": 1,
+                "shop8f14e45fceea167a5a36dedd4bea2543": 1,
+                "hello": 1,
+                "shop": 1,
+                "hi": 1
+              },
+              "AboutShip": {
+                "chao": 1,
+                "shop": 1,
+                "co": 1,
+                "ship": 1,
+                "khong": 1,
+                "a": 1,
+                "1679091c5a880faf6fb5e6087eb1b2dc": 1,
+                "ko": 1,
+                "oicfcd208495d565ef66e7dff9f98764da": 1
+              },
+              "NeedHelp": {
+                "co": 1,
+                "ai": 1,
+                "online": 1,
+                "khonga87ff679a2f3e71d9181a67b7542122c": 1,
+                "toi": 1,
+                "can": 1,
+                "giup": 1,
+                "đo1679091c5a880faf6fb5e6087eb1b2dc": 1
+              },
+              "thanks": {
+                "e": 1,
+                "cam": 1,
+                "on": 1,
+                "shop": 1,
+                "ac4ca4238a0b923820dcc509a6f75849b": 1,
+                "tks": 1,
+                "nhed3d9446802a44259755d38e6d163e820": 1,
+                "thanks": 1,
+                "nhieu": 1,
+                "a": 1
+              },
+              "Products": {
+                "hien": 1,
+                "tai": 1,
+                "shop": 1,
+                "ban": 1,
+                "san": 1,
+                "pham": 1,
+                "gi": 1,
+                "the": 1,
+                "con": 1,
+                "co": 1,
+                "mon": 1,
+                "an": 1,
+                "ke": 1,
+                "ten": 1,
+                "toan": 1,
+                "bo": 1
+              },
+              "isToppingF": {
+                "shop": 1,
+                "co": 1,
+                "bao": 1,
+                "nhieu": 1,
+                "topping": 1,
+                "a": 1,
+                "gi": 1,
+                "the": 1,
+                "q=topping": 1
+              }
+            },
+            "featuresToIntent": {
+              "chao": [
+                "greeting",
+                "AboutShip"
+              ],
+              "shop45c48cce2e2d7fbdea1afc51c7c6ad26": [
+                "greeting"
+              ],
+              "shop8f14e45fceea167a5a36dedd4bea2543": [
+                "greeting"
+              ],
+              "hello": [
+                "greeting"
+              ],
+              "shop": [
+                "greeting",
+                "AboutShip",
+                "thanks",
+                "Products",
+                "isToppingF"
+              ],
+              "hi": [
+                "greeting"
+              ],
+              "co": [
+                "AboutShip",
+                "NeedHelp",
+                "Products",
+                "isToppingF"
+              ],
+              "ship": [
+                "AboutShip"
+              ],
+              "khong": [
+                "AboutShip"
+              ],
+              "a": [
+                "AboutShip",
+                "thanks",
+                "isToppingF"
+              ],
+              "1679091c5a880faf6fb5e6087eb1b2dc": [
+                "AboutShip"
+              ],
+              "ko": [
+                "AboutShip"
+              ],
+              "oicfcd208495d565ef66e7dff9f98764da": [
+                "AboutShip"
+              ],
+              "ai": [
+                "NeedHelp"
+              ],
+              "online": [
+                "NeedHelp"
+              ],
+              "khonga87ff679a2f3e71d9181a67b7542122c": [
+                "NeedHelp"
+              ],
+              "toi": [
+                "NeedHelp"
+              ],
+              "can": [
+                "NeedHelp"
+              ],
+              "giup": [
+                "NeedHelp"
+              ],
+              "đo1679091c5a880faf6fb5e6087eb1b2dc": [
+                "NeedHelp"
+              ],
+              "e": [
+                "thanks"
+              ],
+              "cam": [
+                "thanks"
+              ],
+              "on": [
+                "thanks"
+              ],
+              "ac4ca4238a0b923820dcc509a6f75849b": [
+                "thanks"
+              ],
+              "tks": [
+                "thanks"
+              ],
+              "nhed3d9446802a44259755d38e6d163e820": [
+                "thanks"
+              ],
+              "thanks": [
+                "thanks"
+              ],
+              "nhieu": [
+                "thanks",
+                "isToppingF"
+              ],
+              "hien": [
+                "Products"
+              ],
+              "tai": [
+                "Products"
+              ],
+              "ban": [
+                "Products"
+              ],
+              "san": [
+                "Products"
+              ],
+              "pham": [
+                "Products"
+              ],
+              "gi": [
+                "Products",
+                "isToppingF"
+              ],
+              "the": [
+                "Products",
+                "isToppingF"
+              ],
+              "con": [
+                "Products"
+              ],
+              "mon": [
+                "Products"
+              ],
+              "an": [
+                "Products"
+              ],
+              "ke": [
+                "Products"
+              ],
+              "ten": [
+                "Products"
+              ],
+              "toan": [
+                "Products"
+              ],
+              "bo": [
+                "Products"
+              ],
+              "bao": [
+                "isToppingF"
+              ],
+              "topping": [
+                "isToppingF"
+              ],
+              "q=topping": [
+                "isToppingF"
+              ]
+            },
+            "neuralNetwork": {
+              "settings": {
+                "locale": "vi",
+                "tag": "nlu-vi",
+                "keepStopwords": true,
+                "nonefeatureValue": 1,
+                "nonedeltaMultiplier": 1.2,
+                "spellCheck": false,
+                "spellCheckDistance": 1,
+                "filterZeros": true,
+                "log": true
+              },
+              "features": [
+                "chao",
+                "shop45c48cce2e2d7fbdea1afc51c7c6ad26",
+                "shop8f14e45fceea167a5a36dedd4bea2543",
+                "hello",
+                "shop",
+                "hi",
+                "co",
+                "ship",
+                "khong",
+                "a",
+                "1679091c5a880faf6fb5e6087eb1b2dc",
+                "ko",
+                "oicfcd208495d565ef66e7dff9f98764da",
+                "ai",
+                "online",
+                "khonga87ff679a2f3e71d9181a67b7542122c",
+                "toi",
+                "can",
+                "giup",
+                "đo1679091c5a880faf6fb5e6087eb1b2dc",
+                "e",
+                "cam",
+                "on",
+                "ac4ca4238a0b923820dcc509a6f75849b",
+                "tks",
+                "nhed3d9446802a44259755d38e6d163e820",
+                "thanks",
+                "nhieu",
+                "hien",
+                "tai",
+                "ban",
+                "san",
+                "pham",
+                "gi",
+                "the",
+                "con",
+                "mon",
+                "an",
+                "ke",
+                "ten",
+                "toan",
+                "bo",
+                "bao",
+                "topping",
+                "q=topping"
+              ],
+              "intents": [
+                "greeting",
+                "AboutShip",
+                "NeedHelp",
+                "thanks",
+                "Products",
+                "isToppingF"
+              ],
+              "perceptrons": [
+                [
+                  3.799105644226074,
+                  5.269513130187988,
+                  8.308756828308105,
+                  6.623940944671631,
+                  2.132479667663574,
+                  6.476878643035889,
+                  -2.8470733165740967,
+                  -3.4643447399139404,
+                  -1.4687316417694092,
+                  -2.1040031909942627,
+                  -1.4687316417694092,
+                  -1.9931732416152954,
+                  -1.9931732416152954,
+                  -0.8309099674224854,
+                  -0.8309099674224854,
+                  -0.8309099674224854,
+                  -1.3327785730361938,
+                  -1.3327785730361938,
+                  -1.3327785730361938,
+                  -1.3327785730361938,
+                  -1.6320265531539917,
+                  -2.1202762126922607,
+                  -2.1202762126922607,
+                  -1.6320265531539917,
+                  -3.6381642818450928,
+                  -3.6381642818450928,
+                  -0.48492950201034546,
+                  -0.6330664157867432,
+                  -0.3726443648338318,
+                  -0.3726443648338318,
+                  -0.7262629270553589,
+                  -1.7049520015716553,
+                  -1.7049520015716553,
+                  -1.6201025247573853,
+                  -1.6201025247573853,
+                  -0.8193138241767883,
+                  -0.3232438862323761,
+                  -0.3232438862323761,
+                  -0.4795650243759155,
+                  -0.4795650243759155,
+                  -0.4795650243759155,
+                  -0.4795650243759155,
+                  -0.13722698390483856,
+                  -2.666810989379883,
+                  -2.447777509689331,
+                  5.322434505766773
+                ],
+                [
+                  1.2832673788070679,
+                  -1.0028574466705322,
+                  -0.07271436601877213,
+                  -0.8162707686424255,
+                  1.0821630954742432,
+                  -0.7962685227394104,
+                  0.6289746761322021,
+                  6.014795303344727,
+                  2.287327766418457,
+                  0.970361590385437,
+                  2.287327766418457,
+                  3.7266452312469482,
+                  3.7266452312469482,
+                  -0.30708640813827515,
+                  -0.30708640813827515,
+                  -0.30708640813827515,
+                  -0.12131324410438538,
+                  -0.12131324410438538,
+                  -0.12131324410438538,
+                  -0.12131324410438538,
+                  -0.2815708518028259,
+                  -0.7891389727592468,
+                  -0.7891389727592468,
+                  -0.2815708518028259,
+                  -0.6466930508613586,
+                  -0.6466930508613586,
+                  -0.4002407193183899,
+                  -1.2420756816864014,
+                  -0.1463325321674347,
+                  -0.1463325321674347,
+                  -0.4936365485191345,
+                  -0.3818892538547516,
+                  -0.3818892538547516,
+                  -0.8845793604850769,
+                  -0.8845793604850769,
+                  -0.15394872426986694,
+                  -0.26544150710105896,
+                  -0.26544150710105896,
+                  -0.0008219302981160581,
+                  -0.0008219302981160581,
+                  -0.0008219302981160581,
+                  -0.0008219302981160581,
+                  -0.7494320869445801,
+                  -0.9421181678771973,
+                  -0.009187035262584686,
+                  -0.26890575922679927
+                ],
+                [
+                  -0.8297207355499268,
+                  -0.5715343952178955,
+                  -1.1437628269195557,
+                  -0.03118656948208809,
+                  -1.7910550832748413,
+                  -0.023991063237190247,
+                  2.401231288909912,
+                  -0.24883311986923218,
+                  -0.23912736773490906,
+                  -0.6795015931129456,
+                  -0.23912736773490906,
+                  -0.006876899395138025,
+                  -0.006876899395138025,
+                  3.5386874675750732,
+                  3.5386874675750732,
+                  3.5386874675750732,
+                  3.254704236984253,
+                  3.254704236984253,
+                  3.254704236984253,
+                  3.254704236984253,
+                  -0.11917336285114288,
+                  -0.20802974700927734,
+                  -0.20802974700927734,
+                  -0.11917336285114288,
+                  -0.16484546661376953,
+                  -0.16484546661376953,
+                  -0.054118189960718155,
+                  -0.4033363163471222,
+                  -0.048537321388721466,
+                  -0.048537321388721466,
+                  -0.36359721422195435,
+                  -0.39621973037719727,
+                  -0.39621973037719727,
+                  -0.6559808254241943,
+                  -0.6559808254241943,
+                  -0.0346812978386879,
+                  -0.28659069538116455,
+                  -0.28659069538116455,
+                  -0.26347556710243225,
+                  -0.26347556710243225,
+                  -0.26347556710243225,
+                  -0.26347556710243225,
+                  -0.31552383303642273,
+                  -1.0089956521987915,
+                  -0.4422385096549988,
+                  1.2585359084774548
+                ],
+                [
+                  -0.6275688409805298,
+                  -0.22580568492412567,
+                  -0.5057268738746643,
+                  -2.2688488960266113,
+                  1.9112993478775024,
+                  -2.213299036026001,
+                  -1.970405101776123,
+                  -1.172175407409668,
+                  -0.30140888690948486,
+                  0.5705505609512329,
+                  -0.30140888690948486,
+                  -0.766308069229126,
+                  -0.766308069229126,
+                  0,
+                  0,
+                  0,
+                  -0.14486628770828247,
+                  -0.14486628770828247,
+                  -0.14486628770828247,
+                  -0.14486628770828247,
+                  1.8814458847045898,
+                  4.084522247314453,
+                  4.084522247314453,
+                  1.8814458847045898,
+                  5.904927730560303,
+                  5.904927730560303,
+                  2.201524257659912,
+                  0.9764946699142456,
+                  -0.24315610527992249,
+                  -0.24315610527992249,
+                  -0.5400614738464355,
+                  -0.7344385981559753,
+                  -0.7344385981559753,
+                  -1.101744532585144,
+                  -1.101744532585144,
+                  -0.3033950626850128,
+                  -0.19471792876720428,
+                  -0.19471792876720428,
+                  -0.02116617001593113,
+                  -0.02116617001593113,
+                  -0.02116617001593113,
+                  -0.02116617001593113,
+                  -1.150102138519287,
+                  -1.3477898836135864,
+                  -0.056883927434682846,
+                  0.45111465876627493
+                ],
+                [
+                  -0.388550341129303,
+                  -0.1717929095029831,
+                  -0.32989054918289185,
+                  -0.46179428696632385,
+                  -0.1658177673816681,
+                  -0.40711286664009094,
+                  -0.5765589475631714,
+                  -0.4185701310634613,
+                  -0.15492171049118042,
+                  -0.6088390350341797,
+                  -0.15492171049118042,
+                  -0.2020881474018097,
+                  -0.2020881474018097,
+                  -0.08799976110458374,
+                  -0.08799976110458374,
+                  -0.08799976110458374,
+                  -0.1220833957195282,
+                  -0.1220833957195282,
+                  -0.1220833957195282,
+                  -0.1220833957195282,
+                  -0.17842905223369598,
+                  -0.22221097350120544,
+                  -0.22221097350120544,
+                  -0.17842905223369598,
+                  -0.2198086678981781,
+                  -0.2198086678981781,
+                  -0.020645245909690857,
+                  -0.354773610830307,
+                  -0.34395360946655273,
+                  -0.34395360946655273,
+                  3.194542646408081,
+                  3.665205717086792,
+                  3.665205717086792,
+                  2.179321050643921,
+                  2.179321050643921,
+                  2.3500425815582275,
+                  3.5408589839935303,
+                  3.5408589839935303,
+                  1.6578131914138794,
+                  1.6578131914138794,
+                  1.6578131914138794,
+                  1.6578131914138794,
+                  -0.28654080629348755,
+                  -3.8532254695892334,
+                  -0.029388057067990303,
+                  0.32845487450015964
+                ],
+                [
+                  -1.0106756687164307,
+                  -0.1834338754415512,
+                  -0.680233359336853,
+                  -0.4719788134098053,
+                  -0.4930827021598816,
+                  -0.4984380006790161,
+                  2.048563003540039,
+                  -1.0377832651138306,
+                  -0.7593440413475037,
+                  0.07479815930128098,
+                  -0.7593440413475037,
+                  -0.20286405086517334,
+                  -0.20286405086517334,
+                  -0.9501628875732422,
+                  -0.9501628875732422,
+                  -0.9501628875732422,
+                  -0.1928158700466156,
+                  -0.1928158700466156,
+                  -0.1928158700466156,
+                  -0.1928158700466156,
+                  -0.1809706687927246,
+                  -0.8401681184768677,
+                  -0.8401681184768677,
+                  -0.1809706687927246,
+                  -0.2794997990131378,
+                  -0.2794997990131378,
+                  -0.6152827739715576,
+                  0.9267614483833313,
+                  -0.30603593587875366,
+                  -0.30603593587875366,
+                  -1.8494925498962402,
+                  -1.0390191078186035,
+                  -1.0390191078186035,
+                  1.246314287185669,
+                  1.246314287185669,
+                  -0.6494777798652649,
+                  -1.4599506855010986,
+                  -1.4599506855010986,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1.5915921926498413,
+                  9.426477432250977,
+                  4.084599494934082,
+                  0.7498892487157282
+                ]
+              ]
+            }
+          }
+        }
+      }
+    },
+    "intentDomains": {},
+    "extraSentences": [
+      [
+        "vi",
+        "Chào shop45c48cce2e2d7fbdea1afc51c7c6ad26"
+      ],
+      [
+        "vi",
+        "shop8f14e45fceea167a5a36dedd4bea2543"
+      ],
+      [
+        "vi",
+        "hello shop"
+      ],
+      [
+        "vi",
+        "hi shop"
+      ],
+      [
+        "vi",
+        "Chào shop, shop có ship không ạ 1679091c5a880faf6fb5e6087eb1b2dc"
+      ],
+      [
+        "vi",
+        "ship ko shop ơicfcd208495d565ef66e7dff9f98764da"
+      ],
+      [
+        "vi",
+        "Có ai online khônga87ff679a2f3e71d9181a67b7542122c"
+      ],
+      [
+        "vi",
+        "Tôi cần giúp đỡ1679091c5a880faf6fb5e6087eb1b2dc"
+      ],
+      [
+        "vi",
+        "E cảm ơn shop ạc4ca4238a0b923820dcc509a6f75849b"
+      ],
+      [
+        "vi",
+        "tks shop nhéd3d9446802a44259755d38e6d163e820"
+      ],
+      [
+        "vi",
+        "Cảm ơn , thanks nhiều shop ạ"
+      ],
+      [
+        "vi",
+        "Hiện tại shop bán sản phẩm gì thế"
+      ],
+      [
+        "vi",
+        "Shop còn sản phẩm gì thế"
+      ],
+      [
+        "vi",
+        "Shop có bán món ăn gì thế"
+      ],
+      [
+        "vi",
+        "Kể tên toàn bộ sản phẩm"
+      ],
+      [
+        "vi",
+        "Shop có bao nhiêu topping ạ "
+      ],
+      [
+        "vi",
+        "Shop có topping gì thế"
+      ],
+      [
+        "vi",
+        "Topping topping [q=topping]"
+      ]
+    ]
+  },
+  "ner": {
+    "settings": {
+      "tag": "ner",
+      "entityPreffix": "%",
+      "entitySuffix": "%"
+    },
+    "rules": {}
+  },
+  "nlgManager": {
+    "settings": {
+      "tag": "nlg-manager"
+    },
+    "responses": {
+      "vi": {
+        "AboutShip": [
+          {
+            "answer": "Chào bạn , shop có ship cho bạn ở xa nhé"
+          },
+          {
+            "answer": "Có ship bạn ơi 😙"
+          }
+        ],
+        "thanks": [
+          {
+            "answer": "Ko có gì nè chào bạn nhé !"
+          },
+          {
+            "answer": "❤️❤️❤️❤️❤️❤️"
+          }
+        ],
+        "greeting": [
+          {
+            "answer": "Xin chào , shop có thể giúp gì cho bạn"
+          },
+          {
+            "answer": "Chào bạn 😀!"
+          },
+          {
+            "answer": "Hello Bạn nè"
+          },
+          {
+            "answer": "Hi, Shop đã nhận được tin nhắn của bạn rùi !"
+          }
+        ],
+        "NeedHelp": [
+          {
+            "answer": "Shop lúc nào có mặt nè , bạn cần hỗ trợ gì thế ? "
+          },
+          {
+            "answer": "Shop đang online nè  , bạn có chuyện gì thế "
+          }
+        ]
+      }
+    }
+  },
+  "actionManager": {
+    "settings": {
+      "tag": "action-manager"
+    },
+    "actions": {}
+  },
+  "slotManager": {}
+}

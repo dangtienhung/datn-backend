@@ -17,4 +17,7 @@ uploadBanner.post('/banner', bannerController.create);
 uploadBanner.delete('/banner/:id', bannerController.delete);
 uploadBanner.get('/banners', bannerController.getAll);
 
+uploadBanner.get('/banners-is-active', bannerController.getAllIsActive);
+// {{host}}/banners-is-active?status=true
+
 export default uploadBanner;
