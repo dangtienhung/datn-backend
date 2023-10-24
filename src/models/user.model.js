@@ -57,7 +57,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ['active', 'isActive'],
       default: 'active',
-    }
+    },
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
   },
   { timestamps: true, versionKey: false }
 );
