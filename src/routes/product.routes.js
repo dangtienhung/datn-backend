@@ -16,6 +16,7 @@ productRoutes.get(
   `/products/allDeleteTrueActiveTrue`,
   ProductController.getAllProductsDeletedTrueActiveTrue
 );
+productRoutes.post('/create/product', ProductController.createProductV2);
 
 productRoutes.get('/products/in-active', ProductController.getAllProductInActive);
 

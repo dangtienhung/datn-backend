@@ -238,7 +238,7 @@ export const orderController = {
   /* lấy ra các đơn hàng theo trạng thái */
   getOrderByStatus: async (req, res, status) => {
     try {
-      const { _page = 1, _limit = 10, q } = req.query;
+      const { _page = 1, _limit = 10, q, startDate, endDate } = req.query;
       /* các điều kiện cần */
       const options = {
         page: _page,
@@ -261,8 +261,30 @@ export const orderController = {
             { 'user.email': { $regex: q, $options: 'i' } },
             { 'user.phone': { $regex: q, $options: 'i' } },
             { 'items.product.name': { $regex: q, $options: 'i' } },
+
           ],
         };
+        query = { $and: [searchQuery, query] };
+      }
+
+
+
+      if (startDate && !endDate || startDate && endDate) {
+        const targetDate = new Date(startDate);
+        targetDate.setHours(0, 0, 0, 0);
+        const targetEndDate = new Date(targetDate);
+        targetEndDate.setHours(23, 59, 59, 999);
+        if (startDate > endDate) {
+          return res.status(500).json({ error: "startDate không lớn hơn endDate" });
+        }
+        const searchQuery = {
+          createdAt:
+          {
+            $gte: targetDate,
+            $lt: endDate ? endDate : targetEndDate
+          },
+
+        }
         query = { $and: [searchQuery, query] };
       }
       const orders = await Order.paginate(query, options);
@@ -344,4 +366,5 @@ export const orderController = {
       return res.status(500).json({ error: error.message });
     }
   },
+   
 };
