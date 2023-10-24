@@ -10,6 +10,10 @@ const bannerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    is_active: {
+      type: Boolean,
+      default: true,
+    },
   },
   { versionKey: false }
 );
