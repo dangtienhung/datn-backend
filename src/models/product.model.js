@@ -13,11 +13,13 @@ const productSchema = new mongoose.Schema(
       require: true,
     },
     sale: {
-      value: Number,
-      isPercent: {
-        type: Boolean,
-        default: false,
-      },
+      // value: Number,
+      // isPercent: {
+      //   type: Boolean,
+      //   default: false,
+      // },
+      type: Number,
+      default: 0,
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,

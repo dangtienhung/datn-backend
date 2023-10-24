@@ -26,26 +26,27 @@ const productValidate = joi.object({
         .unknown(true)
     )
     .min(1),
-  sale: joi.object({
-    value: joi.number().required(),
-    isPercent: joi.boolean().default(false),
-  }),
-  sizes: joi.array().items(joi.string()).required(),
-  customsizes: joi.array().items(
-    joi.object({
-      name: joi.string(),
-      price: joi.number().default(0),
-    })
-  ),
-  // sizes: joi.array().items(
-  //   joi
-  //     .object({
-  //       name: joi.string(),
-  //       price: joi.number(),
-  //     })
-  //     .unknown(true)
-  // ),
-  sizes: joi.array().items(joi.string()).required(),
+  // sale: joi.object({
+  //   value: joi.number().required(),
+  //   isPercent: joi.boolean().default(false),
+  // }),
+  sale: joi.number().default(0),
+  size: joi
+    .array()
+    .items(
+      joi.object({
+        name: joi.string(),
+        price: joi.number().default(0),
+      })
+    )
+    .required(),
+  sizeDefault: joi.array().items(joi.string()),
+  // customsizes: joi.array().items(
+  //   joi.object({
+  //     name: joi.string(),
+  //     price: joi.number().default(0),
+  //   })
+  // )
 });
 
 export default productValidate;
