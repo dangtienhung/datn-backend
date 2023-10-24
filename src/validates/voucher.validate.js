@@ -6,6 +6,7 @@ export const voucherValidate = joi.object({
     'string.empty': 'title is not allowed to be empty',
     'string.unique': 'title is unique',
   }),
+  code: joi.string().regex(/^[^~\-.A-Z]*[0-9]+[^~\-.A-Z]*$/).required(),
   discount: joi.number().required(),
   sale: joi.number().required(),
   startDate: joi.date().default(Date.now),
