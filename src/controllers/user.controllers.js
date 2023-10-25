@@ -1,6 +1,5 @@
 import { generateRefreshToken, generateToken } from '../configs/token.js';
-
-import Role from '../models/role.model.js';
+import crypto from 'crypto'
 import User from '../models/user.model.js';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
@@ -8,6 +7,7 @@ import jwt from 'jsonwebtoken';
 import { signupSchema } from '../validates/auth.js';
 import slugify from 'slugify';
 import { userValidate } from '../validates/user.validate.js';
+import { sendEmail } from '../configs/sendMail.js';
 
 dotenv.config();
 
@@ -432,4 +432,90 @@ export const userController = {
       return res.status(500).json({ message: 'Lỗi server', error: error.message });
     }
   },
+
+  // generatePasswordResetToken: () => {
+  //   const token = crypto.randomBytes(32).toString('hex')
+  //   const hashedToken = crypto.createHash('sha256').update(token).digest('hex')
+  //   return { token, hashedToken }
+  // },
+
+  // reset password
+  sendMailForgotPassword: async (req, res) => {
+    const { email } = req.body
+    console.log(email)
+    try {
+      const foundUser = await User.findOne({ account: email })
+
+      if (!foundUser) {
+        return res.status(400).json({
+          message: 'Email does not exists.',
+        })
+      }
+      const token = crypto.randomBytes(32).toString('hex')
+      const hashedToken = crypto.createHash('sha256').update(token).digest('hex')
+
+
+      foundUser.passwordChangedAt = new Date()
+      foundUser.passwordResetToken = hashedToken
+      foundUser.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000)
+      await foundUser.save()
+      const resetURL = `Please follow this link to reset your password. This link is valid still 10 minutes from now. <a href="http://localhost:8080/api/auth/reset-password/${token}">Click Here</a>`
+
+      const data = {
+        to: email,
+        text: 'Hi!',
+        subject: 'Forgot Password Link',
+        html: resetURL,
+      }
+      await sendEmail(data)
+      return res.status(200).json({
+        message: 'Email reset password sent.',
+        data: { token },
+      })
+    } catch (error) {
+      return res.status(400).json({
+        message: `Something went wrong! ${error.message || ''}.`,
+      })
+    }
+  },
+  resetPassword: async (req, res) => {
+    const { password } = req.body
+    const { token } = req.params
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex')
+
+    try {
+      const foundUser = await User.findOne({
+        passwordResetToken: hashedToken,
+        passwordResetExpires: { $gt: new Date() },
+      })
+
+      if (!foundUser) {
+        return res.status(400).json({
+          message: 'Token invalid or expired. Please try again.',
+        })
+      }
+
+      const salt = await bcrypt.genSalt(10);
+
+      const passwordNew = await bcrypt.hash(password, salt);
+
+      foundUser.password = passwordNew
+      foundUser.passwordResetToken = null
+      foundUser.passwordResetExpires = null
+
+      await foundUser.save()
+
+      return res.status(200).json({
+        message: 'Reset password successfully.',
+        data: {
+          user: foundUser,
+        },
+      })
+    } catch (error) {
+      return res.status(400).json({
+        message: `Something went wrong! ${error.message || ''}`,
+      })
+    }
+  }
+
 };
