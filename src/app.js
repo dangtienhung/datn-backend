@@ -24,6 +24,7 @@ import path from 'path';
 import rootRoutes from './routes/index.js';
 import session from 'express-session';
 import { userController } from './controllers/user.controllers.js'; // chat
+import socket from './configs/socket.js';
 
 //
 
@@ -64,14 +65,9 @@ app.get('/', (req, res) => {
   }
 });
 
-//
 app.use(morgan('common'));
-// app.use(cors({ origin: '*' }));
-
 app.use(cookieParser());
 app.use(express.json());
-// app.use(cors({ origin: '*', credentials: true }));
-
 app.use(cors({ origin: ['http://localhost:5173', 'http://localhost:3000'], credentials: true }));
 app.use(
   session({
@@ -93,16 +89,13 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((id, done) => {
   (async () => {
-    const user = await User.findById(id).populate('role', '-users');
+    const user = await User.findById(id);
     return done(null, user);
   })();
 });
 
 /* OAuth2 */
 passport.use(passportMiddleware.GoogleAuth);
-passport.use(passportMiddleware.GithubAuth);
-passport.use(passportMiddleware.TwitterAuth);
-passport.use(passportMiddleware.FacebookAuth);
 
 /* routes */
 app.use('/api-docs', middleSwaggers);
@@ -123,45 +116,50 @@ connectDb();
 
 /* listen */
 const port = process.env.PORT || 5000;
-app.listen(port, (req, res) => {
-  console.log(`Server is running on port ${port}`);
-});
+// app.listen(port, (req, res) => {
+//   console.log(`Server is running on port ${port}`);
+// });
 
 //Chat
 
 const server = http.createServer(app);
 const io = new SocketIo(server);
-
-const Message = mongoose.model('Message', {
-  text: String,
-  username: String,
+server.listen(port, async () => {
+  try {
+    socket(io);
+    console.log(`Server is running on port ${port}`);
+  } catch (error) {
+    console.log(error);
+  }
 });
+// const io = new SocketIo(server);
 
-io.on('connection', (socket) => {
-  console.log('User connected');
+// Tôi chuyển sang configs/socket.js cho gọn nhé
+// io.on('connection', (socket) => {
+//   console.log('User connected');
 
-  socket.on('join', (username) => {
-    socket.username = username;
-    console.log(`${username} joined`);
+//   socket.on('join', (username) => {
+//     socket.username = username;
+//     console.log(`${username} joined`);
 
-    // Gửi thông báo cho tất cả người dùng trong phòng
-    io.emit('user joined', `${username} joined the chat`);
-  });
+//     // Gửi thông báo cho tất cả người dùng trong phòng
+//     io.emit('user joined', `${username} joined the chat`);
+//   });
 
-  socket.on('chat message', async (message) => {
-    console.log('Message:', message);
+//   socket.on('chat message', async (message) => {
+//     console.log('Message:', message);
 
-    // Lưu tin nhắn vào MongoDB
-    const newMessage = new Message({ text: message.text, username: socket.username });
-    await newMessage.save();
+//     // Lưu tin nhắn vào MongoDB
+//     const newMessage = new Message({ text: message.text, username: socket.username });
+//     await newMessage.save();
 
-    // Gửi tin nhắn tới tất cả người dùng trong phòng
-    io.emit('chat message', { text: message.text, username: socket.username });
-  });
+//     // Gửi tin nhắn tới tất cả người dùng trong phòng
+//     io.emit('chat message', { text: message.text, username: socket.username });
+//   });
 
-  socket.on('disconnect', () => {
-    console.log('User disconnected');
-    // Gửi thông báo cho tất cả người dùng trong phòng
-    io.emit('user left', `${socket.username} left the chat`);
-  });
-});
+//   socket.on('disconnect', () => {
+//     console.log('User disconnected');
+//     // Gửi thông báo cho tất cả người dùng trong phòng
+//     io.emit('user left', `${socket.username} left the chat`);
+//   });
+// });
