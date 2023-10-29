@@ -74,30 +74,35 @@ export const ProductController = {
       const sizeIdArray = [];
       const body = req.body;
       const sizeArray = body.size;
+      let dataSizeArray = [];
       /* kiểm tra xem size thêm vào có trùng với size mặc định hay không */
       const sizeDefault = body.sizeDefault;
-      for (let index = 0; index < sizeDefault.length; index++) {
-        const element = await Size.findById(sizeDefault[index]);
-        /*
+      if (sizeArray) {
+        for (let index = 0; index < sizeDefault.length; index++) {
+          const element = await Size.findById(sizeDefault[index]);
+          /*
           so sánh xem tên element size default đó trùng với tên size người dùng đẩy lên thì lấy size mới người dùng thêm
           chứ không lấy size mặc định nữa, loại bỏ id size default đó ra khỏi mảng sizeDefault
         */
-        for (let i = 0; i < sizeArray.length; i++) {
-          if (element.name === sizeArray[i].name) {
-            sizeDefault.splice(index, 1);
+          for (let i = 0; i < sizeArray.length; i++) {
+            if (element.name === sizeArray[i].name) {
+              sizeDefault.splice(index, 1);
+            }
           }
         }
-      }
-      /* tạo ra size này */
-      for (const sizeItem of sizeArray) {
-        const sizeCreate = await Size.create(sizeItem);
-        if (!sizeCreate) {
-          return res.status(400).json({ message: 'fail', err: 'Create Size failed' });
+        /* tạo ra size này */
+        for (const sizeItem of sizeArray) {
+          const sizeCreate = await Size.create(sizeItem);
+          if (!sizeCreate) {
+            return res.status(400).json({ message: 'fail', err: 'Create Size failed' });
+          }
+          sizeIdArray.push(sizeCreate._id);
         }
-        sizeIdArray.push(sizeCreate._id);
+        /* tạo ra product này */
+        dataSizeArray = [...sizeIdArray, ...body.sizeDefault];
+      } else {
+        dataSizeArray = [...body.sizeDefault];
       }
-      /* tạo ra product này */
-      const dataSizeArray = [...sizeIdArray, ...body.sizeDefault];
       const productData = {
         name: body.name,
         description: body.description,
@@ -106,6 +111,7 @@ export const ProductController = {
         toppings: body.toppings,
         images: body.images,
         sale: body.sale,
+        is_active: body.is_active,
       };
       const product = await Product.create(productData);
       if (!product) {

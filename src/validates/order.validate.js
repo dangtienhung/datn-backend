@@ -10,6 +10,7 @@ export const orderValidate = joi.object({
       price: joi.number().required(),
       toppings: joi.array().items(
         joi.object({
+          _id: joi.string(),
           name: joi.string().required(),
           price: joi.number().required(),
         })

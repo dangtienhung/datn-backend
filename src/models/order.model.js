@@ -46,7 +46,7 @@ const orderSchema = new mongoose.Schema(
       // ref: 'Payment',
       type: String,
       required: true,
-      enum: ['cod', 'momo', 'zalopay'],
+      enum: ['cod', 'momo', 'vnpay', 'zalopay'],
       default: 'cod',
     },
     inforOrderShipping: {
