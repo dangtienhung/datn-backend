@@ -1,12 +1,13 @@
 import * as dotenv from 'dotenv';
 
 import { errHandler, notFound } from './middlewares/errhandle.js';
-
+import helmet from "helmet";
 import PassportRoutes from './routes/passport.routes.js';
 import { Server as SocketIo } from 'socket.io';
 import User from './models/user.model.js';
 import Users from './models/user.model.js'; // chat
 import { authController } from './controllers/auth.controller.js'; // chat
+import compression from 'compression'
 import { connectDb } from './configs/index.js';
 import cookie from 'cookie';
 import cookieParser from 'cookie-parser';
@@ -79,7 +80,8 @@ app.use(
     },
   })
 );
-
+app.use(helmet());
+app.use(compression())
 app.use(passport.initialize());
 app.use(passport.session());
 
