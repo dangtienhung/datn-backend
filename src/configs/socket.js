@@ -46,10 +46,16 @@ export default (io) => {
       }
     }
 
-    async function getCancelOrder() {
+    async function getCancelOrder(options) {
       try {
         await axios
-          .get(`${process.env.HTTP}/api/order-canceled`)
+          .get(
+            `${process.env.HTTP}/api/order-canceled?_limit=${
+              options?.limit ? options.limit : 10
+            }&_page=${options?.page ? options.page : 1}&startDate=${
+              options?.startDate ? options.startDate : ''
+            }&endDate=${options?.endDate ? options.endDate : ''}`
+          )
           .then((res) => {
             io.emit('server:loadCancelOrder', res['data']);
           })
@@ -61,10 +67,16 @@ export default (io) => {
       }
     }
 
-    async function getPendingOrder() {
+    async function getPendingOrder(options) {
       try {
         await axios
-          .get(`${process.env.HTTP}/api/order-pending`)
+          .get(
+            `${process.env.HTTP}/api/order-pending?_limit=${
+              options?.limit ? options.limit : 10
+            }&_page=${options?.page ? options.page : 1}&startDate=${
+              options?.startDate ? options.startDate : ''
+            }&endDate=${options?.endDate ? options.endDate : ''}`
+          )
           .then((res) => {
             io.emit('server:loadPendingOrder', res['data']);
           })
@@ -78,10 +90,16 @@ export default (io) => {
 
     // await getPendingOrder();
 
-    async function getDeliveredOrder() {
+    async function getDeliveredOrder(options) {
       try {
         await axios
-          .get(`${process.env.HTTP}/api/order-delivered`)
+          .get(
+            `${process.env.HTTP}/api/order-delivered?_limit=${
+              options?.limit ? options.limit : 10
+            }&_page=${options?.page ? options.page : 1}&startDate=${
+              options.startDate ? options.startDate : ''
+            }&endDate=${options?.endDate ? options.endDate : ''}`
+          )
           .then((res) => {
             io.emit('server:loadDeliveredOrder', res['data']);
           })
@@ -93,10 +111,17 @@ export default (io) => {
       }
     }
 
-    async function getConfirmedOrder() {
+    async function getConfirmedOrder(options = '') {
       try {
+        // console.log(options);
         await axios
-          .get(`${process.env.HTTP}/api/order-confirmed`)
+          .get(
+            `${process.env.HTTP}/api/order-confirmed?_limit=${
+              options?.limit ? options.limit : 10
+            }&_page=${options?.page ? options.page : 1}&startDate=${
+              options.startDate ? options.startDate : ''
+            }&endDate=${options?.endDate ? options.endDate : ''}`
+          )
           .then((res) => {
             io.emit('server:loadConfirmedOrder', res['data']);
           })
@@ -108,10 +133,16 @@ export default (io) => {
       }
     }
 
-    async function getDoneOrder() {
+    async function getDoneOrder(options) {
       try {
         await axios
-          .get(`${process.env.HTTP}/api/order-done`)
+          .get(
+            `${process.env.HTTP}/api/order-done?_limit=${
+              options?.limit ? options.limit : 10
+            }&_page=${options?.page ? options.page : 1}&startDate=${
+              options?.startDate ? options.startDate : ''
+            }&endDate=${options?.endDate ? options.endDate : ''}`
+          )
           .then((res) => {
             io.emit('server:loadDoneOrder', res['data']);
           })
@@ -127,24 +158,25 @@ export default (io) => {
       await getAllOrder();
     });
 
-    socket.on('client:requestCancelOrder', async () => {
-      await getCancelOrder();
+    socket.on('client:requestCancelOrder', async (options) => {
+      await getCancelOrder(options);
     });
 
-    socket.on('client:requestPendingOrder', async () => {
-      await getPendingOrder();
+    socket.on('client:requestPendingOrder', async (options) => {
+      await getPendingOrder(options);
     });
 
-    socket.on('client:requestDeliveredOrder', async () => {
-      await getDeliveredOrder();
+    socket.on('client:requestDeliveredOrder', async (options) => {
+      await getDeliveredOrder(options);
     });
 
-    socket.on('client:requestConfirmedOrder', async () => {
-      await getConfirmedOrder();
+    socket.on('client:requestConfirmedOrder', async (options) => {
+      await getConfirmedOrder(options);
     });
 
-    socket.on('client:requestDoneOrder', async () => {
-      await getDoneOrder();
+    socket.on('client:requestDoneOrder', async (options) => {
+      console.log('doneOrder', options);
+      await getDoneOrder(options);
     });
 
     socket.on('client:cancelOrder', async (id) => {
@@ -154,7 +186,6 @@ export default (io) => {
           .then(async () => {
             await getCancelOrder();
             await getPendingOrder();
-            await getConfirmedOrder();
           })
           .catch((err) => {
             console.log(err);
@@ -185,6 +216,7 @@ export default (io) => {
           .put(`${process.env.HTTP}/api/order/done/${id}`)
           .then(async () => {
             await getDoneOrder();
+            await getConfirmedOrder();
           })
           .catch((err) => {
             console.log(err);
