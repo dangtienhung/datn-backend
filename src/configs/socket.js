@@ -31,10 +31,10 @@ export default (io) => {
       io.emit('chat message', { text: message.text, username: socket.username });
     });
 
-    async function getAllOrder() {
+    async function getAllOrder(options) {
       try {
         await axios
-          .get(`${process.env.HTTP}/api/orders`)
+          .get(`${process.env.HTTP}/api/orders?_page=${options.page}&_limit=${options.limit}`)
           .then((res) => {
             io.emit('server:loadAllOrder', res['data']);
           })
@@ -46,10 +46,12 @@ export default (io) => {
       }
     }
 
-    async function getCancelOrder() {
+    async function getCancelOrder(options) {
       try {
         await axios
-          .get(`${process.env.HTTP}/api/order-canceled`)
+          .get(
+            `${process.env.HTTP}/api/order-canceled?_page=${options.page}&_limit=${options.limit}`
+          )
           .then((res) => {
             io.emit('server:loadCancelOrder', res['data']);
           })
@@ -61,10 +63,12 @@ export default (io) => {
       }
     }
 
-    async function getPendingOrder() {
+    async function getPendingOrder(options) {
       try {
         await axios
-          .get(`${process.env.HTTP}/api/order-pending`)
+          .get(
+            `${process.env.HTTP}/api/order-pending?_page=${options.page}&_limit=${options.limit}`
+          )
           .then((res) => {
             io.emit('server:loadPendingOrder', res['data']);
           })
@@ -78,10 +82,12 @@ export default (io) => {
 
     // await getPendingOrder();
 
-    async function getDeliveredOrder() {
+    async function getDeliveredOrder(options) {
       try {
         await axios
-          .get(`${process.env.HTTP}/api/order-delivered`)
+          .get(
+            `${process.env.HTTP}/api/order-delivered?_page=${options.page}&_limit=${options.limit}`
+          )
           .then((res) => {
             io.emit('server:loadDeliveredOrder', res['data']);
           })
@@ -93,10 +99,12 @@ export default (io) => {
       }
     }
 
-    async function getConfirmedOrder() {
+    async function getConfirmedOrder(options) {
       try {
         await axios
-          .get(`${process.env.HTTP}/api/order-confirmed`)
+          .get(
+            `${process.env.HTTP}/api/order-confirmed?_page=${options.page}&_limit=${options.limit}`
+          )
           .then((res) => {
             io.emit('server:loadConfirmedOrder', res['data']);
           })
@@ -108,10 +116,10 @@ export default (io) => {
       }
     }
 
-    async function getDoneOrder() {
+    async function getDoneOrder(options) {
       try {
         await axios
-          .get(`${process.env.HTTP}/api/order-done`)
+          .get(`${process.env.HTTP}/api/order-done?_page=${options.page}&_limit=${options.limit}`)
           .then((res) => {
             io.emit('server:loadDoneOrder', res['data']);
           })
@@ -123,28 +131,28 @@ export default (io) => {
       }
     }
 
-    socket.on('client:requestAllOrder', async () => {
-      await getAllOrder();
+    socket.on('client:requestAllOrder', async (data) => {
+      await getAllOrder(data);
     });
 
-    socket.on('client:requestCancelOrder', async () => {
-      await getCancelOrder();
+    socket.on('client:requestCancelOrder', async (data) => {
+      await getCancelOrder(data);
     });
 
-    socket.on('client:requestPendingOrder', async () => {
-      await getPendingOrder();
+    socket.on('client:requestPendingOrder', async (data) => {
+      await getPendingOrder(data);
     });
 
-    socket.on('client:requestDeliveredOrder', async () => {
-      await getDeliveredOrder();
+    socket.on('client:requestDeliveredOrder', async (data) => {
+      await getDeliveredOrder(data);
     });
 
-    socket.on('client:requestConfirmedOrder', async () => {
-      await getConfirmedOrder();
+    socket.on('client:requestConfirmedOrder', async (data) => {
+      await getConfirmedOrder(data);
     });
 
-    socket.on('client:requestDoneOrder', async () => {
-      await getDoneOrder();
+    socket.on('client:requestDoneOrder', async (data) => {
+      await getDoneOrder(data);
     });
 
     socket.on('client:cancelOrder', async (id) => {
