@@ -27,7 +27,7 @@ router.patch(
 );
 router.patch(
   '/user/updatePassword',
-  authMiddleware.verifyTokenAdmin,
+   authMiddleware.verifyToken,
   userController.updatePassword
 );
 
