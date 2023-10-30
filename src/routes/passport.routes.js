@@ -8,51 +8,9 @@ const PassportRoutes = express.Router();
 
 PassportRoutes.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-PassportRoutes.get('/twitter', passport.authenticate('twitter'));
-
-PassportRoutes.get('/github', passport.authenticate('github'));
-
-PassportRoutes.get('/facebook', passport.authenticate('facebook'));
-
 PassportRoutes.get(
   '/google/callback',
   passport.authenticate('google', { failureRedirect: process.env.LOGINPAGE }),
-  function (req, res) {
-    const { role } = req.user;
-    if (role.name === 'customer') {
-      res.redirect(process.env.HOMEPAGE);
-    } else if (role.name === 'admin') {
-      res.redirect(process.env.AMINPAGE);
-    }
-  }
-);
-
-PassportRoutes.get(
-  '/twitter/callback',
-  passport.authenticate('twitter', { failureRedirect: process.env.LOGINPAGE }),
-  function (req, res) {
-    const { role } = req.user;
-    if (role.name === 'customer') {
-      res.redirect(process.env.HOMEPAGE);
-    } else if (role.name === 'admin') {
-      res.redirect(process.env.AMINPAGE);
-    }
-  }
-);
-
-PassportRoutes.get(
-  '/github/callback',
-  passport.authenticate('github', { failureRedirect: process.env.HOME }),
-  function (req, res) {
-    res.redirect(process.env.HOMEPAGE);
-  }
-);
-
-PassportRoutes.get(
-  '/facebook/callback',
-  passport.authenticate('facebook', {
-    failureRedirect: process.env.LOGINPAGE,
-  }),
   function (req, res) {
     const { role } = req.user;
     if (role.name === 'customer') {
