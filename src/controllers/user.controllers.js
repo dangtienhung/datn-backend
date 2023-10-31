@@ -282,18 +282,21 @@ export const userController = {
   // update passwword
   updatePassword: async (req, res) => {
     try {
-      // const { _id } = req.user;
+      const { _id } = req.user;
       const { password, passwordNew } = req.body;
-      const user = await User.findById(req.params.id);
-      if (findUser && (await findUser.isPasswordMatched(password))) {
-        // if (password && user) {
+      const findUser = await User.findById(_id);
+
+      if (findUser && (bcrypt.compare(password, findUser.password))) {
+
+
         const hashedPassword = await bcrypt.hash(passwordNew, 10);
-        user.password = hashedPassword;
-        await user.save();
-        res.json({
+        findUser.password = hashedPassword;
+        await findUser.save();
+        return res.json({
           message: 'update password success',
         });
       }
+      return res.status(400).json({ message: "Password cũ nhập vào không đúng" })
     } catch (error) {
       res.json({ message: error });
     }

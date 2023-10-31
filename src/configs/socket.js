@@ -12,12 +12,20 @@ const Message = mongoose.model('Message', {
 export default (io) => {
   io.on('connection', async (socket) => {
     console.log('User connected');
-    socket.on('join', (username) => {
-      socket.username = username;
-      console.log(`${username} joined`);
+    // data có thể là username hoặc id user phụ thuộc vào trường hợp
+    socket.on('join', (data) => {
+      socket.username = data;
+      socket.join(data);
+      // socket.broadcast.emit('somone one joined');
+      console.log(`${data} joined`);
 
       // Gửi thông báo cho tất cả người dùng trong phòng
-      io.emit('user joined', `${username} joined the chat`);
+      io.emit('user joined', `${data} joined the chat`);
+    });
+
+    socket.on('allone', (data) => {
+      console.log('alone', data.room);
+      io.in(data.room).emit('allone:requestOrder', data.listOrder);
     });
 
     socket.on('chat message', async (message) => {
@@ -46,7 +54,7 @@ export default (io) => {
       }
     }
 
-    async function getCancelOrder(options) {
+    async function getCancelOrder(options = '') {
       try {
         await axios
           .get(
@@ -57,7 +65,15 @@ export default (io) => {
             }&endDate=${options?.endDate ? options.endDate : ''}`
           )
           .then((res) => {
-            io.emit('server:loadCancelOrder', res['data']);
+            if (options.room) {
+              io.in(options.room).emit('server:loadCancelOrder', res['data']);
+            } else {
+              socket.broadcast.emit('server:loadCancelOrder', res['data']);
+              socket.emit('server:loadCancelOrder', res['data']);
+            }
+            options.room
+              ? io.in(options.room).emit('server:loadCancelOrder', res['data'])
+              : socket.emit('server:loadCancelOrder', res['data']);
           })
           .catch((err) => {
             console.log(err);
@@ -67,7 +83,7 @@ export default (io) => {
       }
     }
 
-    async function getPendingOrder(options) {
+    async function getPendingOrder(options = '') {
       try {
         await axios
           .get(
@@ -78,7 +94,12 @@ export default (io) => {
             }&endDate=${options?.endDate ? options.endDate : ''}`
           )
           .then((res) => {
-            io.emit('server:loadPendingOrder', res['data']);
+            if (options.room) {
+              io.in(options.room).emit('server:loadPendingOrder', res['data']);
+            } else {
+              socket.broadcast.emit('server:loadPendingOrder', res['data']);
+              socket.emit('server:loadPendingOrder', res['data']);
+            }
           })
           .catch((err) => {
             console.log(err);
@@ -88,9 +109,7 @@ export default (io) => {
       }
     }
 
-    // await getPendingOrder();
-
-    async function getDeliveredOrder(options) {
+    async function getDeliveredOrder(options = '') {
       try {
         await axios
           .get(
@@ -101,7 +120,12 @@ export default (io) => {
             }&endDate=${options?.endDate ? options.endDate : ''}`
           )
           .then((res) => {
-            io.emit('server:loadDeliveredOrder', res['data']);
+            if (options.room) {
+              io.in(options.room).emit('server:loadDeliveredOrder', res['data']);
+            } else {
+              socket.broadcast.emit('server:loadDeliveredOrder', res['data']);
+              socket.emit('server:loadDeliveredOrder', res['data']);
+            }
           })
           .catch((err) => {
             console.log(err);
@@ -113,7 +137,6 @@ export default (io) => {
 
     async function getConfirmedOrder(options = '') {
       try {
-        // console.log(options);
         await axios
           .get(
             `${process.env.HTTP}/api/order-confirmed?_limit=${
@@ -123,7 +146,12 @@ export default (io) => {
             }&endDate=${options?.endDate ? options.endDate : ''}`
           )
           .then((res) => {
-            io.emit('server:loadConfirmedOrder', res['data']);
+            if (options.room) {
+              io.in(options.room).emit('server:loadConfirmedOrder', res['data']);
+            } else {
+              socket.broadcast.emit('server:loadConfirmedOrder', res['data']);
+              socket.emit('server:loadConfirmedOrder', res['data']);
+            }
           })
           .catch((err) => {
             console.log(err);
@@ -144,7 +172,12 @@ export default (io) => {
             }&endDate=${options?.endDate ? options.endDate : ''}`
           )
           .then((res) => {
-            io.emit('server:loadDoneOrder', res['data']);
+            if (options.room) {
+              io.in(options.room).emit('server:loadDoneOrder', res['data']);
+            } else {
+              socket.broadcast.emit('server:loadDoneOrder', res['data']);
+              socket.emit('server:loadDoneOrder', res['data']);
+            }
           })
           .catch((err) => {
             console.log(err);
@@ -175,7 +208,6 @@ export default (io) => {
     });
 
     socket.on('client:requestDoneOrder', async (options) => {
-      console.log('doneOrder', options);
       await getDoneOrder(options);
     });
 
