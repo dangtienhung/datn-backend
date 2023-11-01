@@ -3,11 +3,14 @@ const manager = require('./more.js');
 //
 const axios = require('axios');
 const crypto = require('crypto');
+
 const data =
   'Chỗ này điền secret key để tạo ra tỷ lệ trùng tin nhắn thấp nhất có thể thì chuỗi này cần phải dài nhât';
 const hash = crypto.createHash('md5').update(data).digest('hex');
 console.log(hash);
+
 // traning o day
+
 //Câu mở đầu
 manager.addDocument(
   'vi',
@@ -103,6 +106,7 @@ manager.addAnswer('vi', 'greeting', 'Xin chào , shop có thể giúp gì cho b�
 manager.addAnswer('vi', 'greeting', 'Chào bạn 😀!');
 manager.addAnswer('vi', 'greeting', 'Hello Bạn nè');
 manager.addAnswer('vi', 'greeting', 'Hi, Shop đã nhận được tin nhắn của bạn rùi !');
+
 manager.addAnswer('vi', 'NeedHelp', 'Shop lúc nào có mặt nè , bạn cần hỗ trợ gì thế ? ');
 manager.addAnswer('vi', 'NeedHelp', 'Shop đang online nè  , bạn có chuyện gì thế ');
 
