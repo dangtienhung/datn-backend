@@ -14,6 +14,14 @@ const newsBlog = new Schema(
       type: String,
       require: true,
     },
+    is_deleted: {
+      type: Boolean,
+      default: false,
+    },
+    is_active: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true, versionKey: false }
 );

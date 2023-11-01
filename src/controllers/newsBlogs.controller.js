@@ -111,5 +111,100 @@ const newBlogsController = {
       });
     }
   },
+
+  /* lấy chi tiết 1 bài blog */
+  getDetailNewBlog: async (req, res) => {
+    try {
+      const data = await newBlogModel.findOne({ _id: req.params.id });
+
+      if (!data) {
+        // Kiểm tra xem có tin tức nào được xóa không
+        return res.status(404).json({
+          message: 'Không tìm thấy tin tức',
+        });
+      }
+
+      return res.json(data);
+    } catch (error) {
+      return res.status(500).json({
+        message: error.message,
+      });
+    }
+  },
+
+  /* update is_deleted */
+  updateIsDeletedNewBlog: async (req, res) => {
+    try {
+      const status = req.query.status;
+      const data = await newBlogModel.findOneAndUpdate(
+        { _id: req.params.id },
+        { is_deleted: status },
+        {
+          new: true,
+        }
+      );
+
+      if (!data) {
+        // Kiểm tra xem có tin tức nào cập nhật không
+        return res.status(404).json({
+          message: 'Cập nhật tin tức không thành công',
+        });
+      }
+
+      return res.json(data);
+    } catch (error) {
+      return res.status(500).json({
+        message: error.message,
+      });
+    }
+  },
+
+  /* update is_active */
+  updateIsActiveNewBlog: async (req, res) => {
+    try {
+      const status = req.query.status;
+      const data = await newBlogModel.findOneAndUpdate(
+        { _id: req.params.id },
+        { is_active: status },
+        {
+          new: true,
+        }
+      );
+
+      if (!data) {
+        // Kiểm tra xem có tin tức nào cập nhật không
+        return res.status(404).json({
+          message: 'Cập nhật tin tức không thành công',
+        });
+      }
+
+      return res.json(data);
+    } catch (error) {
+      return res.status(500).json({
+        message: error.message,
+      });
+    }
+  },
+
+  /* get all is_deleted = false, is_active = true */
+  getAllNewBlogsActive: async (_, res) => {
+    try {
+      const data = await newBlogModel.find({ is_deleted: false, is_active: true });
+
+      if (data.length === 0) {
+        // Kiểm tra xem có dữ liệu không
+        return res.status(200).json({
+          message: 'Không có dữ liệu',
+        });
+      }
+
+      return res.json(data);
+    } catch (error) {
+      return res.status(500).json({
+        // Sử dụng mã lỗi 500 cho lỗi server
+        message: error.message,
+      });
+    }
+  },
 };
 export default newBlogsController;
