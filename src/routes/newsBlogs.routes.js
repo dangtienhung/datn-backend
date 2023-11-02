@@ -9,7 +9,7 @@ routerNewBlogs.get('/newsBlog', newBlogsController.getAllNewBlogs);
 routerNewBlogs.put('/newsBlog/:id', newBlogsController.updateNewBlogs);
 routerNewBlogs.delete('/newsBlog-remove/:id', newBlogsController.removeNewBlogs);
 
-routerNewBlogs.get('/newsBlog/:id', newBlogsController.getDetailNewBlog);
+routerNewBlogs.get('/newBlog/:id', newBlogsController.getDetailNewBlog);
 routerNewBlogs.put('/newsBlog-update/deleted/:id', newBlogsController.updateIsDeletedNewBlog);
 routerNewBlogs.put('/newsBlog-update/active/:id', newBlogsController.updateIsActiveNewBlog);
 routerNewBlogs.get('/newsBlog-update/active', newBlogsController.getAllNewBlogsActive);
