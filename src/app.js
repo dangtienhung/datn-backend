@@ -1,19 +1,20 @@
 import * as dotenv from 'dotenv';
 
 import { errHandler, notFound } from './middlewares/errhandle.js';
-import helmet from "helmet";
+
 import PassportRoutes from './routes/passport.routes.js';
 import { Server as SocketIo } from 'socket.io';
 import User from './models/user.model.js';
 import Users from './models/user.model.js'; // chat
 import { authController } from './controllers/auth.controller.js'; // chat
-import compression from 'compression'
+import compression from 'compression';
 import { connectDb } from './configs/index.js';
 import cookie from 'cookie';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import { fileURLToPath } from 'url';
+import helmet from 'helmet';
 import http from 'http';
 import jwt from 'jsonwebtoken';
 import middleSwaggers from './docs/index.js';
@@ -24,8 +25,8 @@ import passportMiddleware from './middlewares/passport.middlewares.js';
 import path from 'path';
 import rootRoutes from './routes/index.js';
 import session from 'express-session';
-import { userController } from './controllers/user.controllers.js'; // chat
 import socket from './configs/socket.js';
+import { userController } from './controllers/user.controllers.js'; // chat
 
 //
 
@@ -69,7 +70,8 @@ app.get('/', (req, res) => {
 app.use(morgan('common'));
 app.use(cookieParser());
 app.use(express.json());
-app.use(cors({ origin: ['http://localhost:5173', 'http://localhost:3000'], credentials: true }));
+app.use(cors({ origin: true, credentials: true }));
+
 app.use(
   session({
     secret: 'secretcode',
@@ -81,7 +83,7 @@ app.use(
   })
 );
 app.use(helmet());
-app.use(compression())
+app.use(compression());
 app.use(passport.initialize());
 app.use(passport.session());
 
