@@ -10,6 +10,10 @@ const newsBlog = new Schema(
       required: true,
     },
     images: [{ url: String, publicId: String, filename: String }],
+    category: {
+      type: Schema.Types.ObjectId,
+      ref: 'CategoryBlog',
+    },
     description: {
       type: String,
       require: true,
