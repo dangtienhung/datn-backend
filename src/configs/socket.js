@@ -161,7 +161,7 @@ export default (io) => {
       }
     }
 
-    async function getDoneOrder(options) {
+    async function getDoneOrder(options = '') {
       try {
         await axios
           .get(
@@ -227,12 +227,28 @@ export default (io) => {
       }
     });
 
+    socket.on('client:createOrder', async (data) => {
+      try {
+        console.log('createOrder', data);
+        await axios
+          .post(`${process.env.HTTP}/api/create-order`, data)
+          .then(async () => {
+            await getPendingOrder();
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    });
+
     socket.on('client:pendingOrder', async (id) => {
       try {
         await axios
           .put(`${process.env.HTTP}/api/order/pending/${id}`)
-          .then(() => {
-            getPendingOrder();
+          .then(async () => {
+            await getPendingOrder();
           })
           .catch((err) => {
             console.log(err);
@@ -290,8 +306,8 @@ export default (io) => {
     });
     socket.on('disconnect', () => {
       console.log('User disconnected');
-      //     // Gửi thông báo cho tất cả người dùng trong phòng
-      //     io.emit('user left', `${socket.username} left the chat`);
+      // Gửi thông báo cho tất cả người dùng trong phòng
+      io.emit('user left', `${socket.username} left the chat`);
     });
   });
 };

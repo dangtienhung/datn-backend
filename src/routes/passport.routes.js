@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import User from '../models/user.model.js';
 import { generateRefreshToken, generateToken } from '../configs/token.js';
 dotenv.config();
+// git;
 const PassportRoutes = express.Router();
 
 PassportRoutes.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
