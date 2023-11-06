@@ -39,10 +39,10 @@ export default (io) => {
       io.emit('chat message', { text: message.text, username: socket.username });
     });
 
-    async function getAllOrder() {
+    async function getAllOrder(options) {
       try {
         await axios
-          .get(`${process.env.HTTP}/api/orders`)
+          .get(`${process.env.HTTP}/api/orders?_page=${options.page}&_limit=${options.limit}`)
           .then((res) => {
             io.emit('server:loadAllOrder', res['data']);
           })
@@ -187,8 +187,8 @@ export default (io) => {
       }
     }
 
-    socket.on('client:requestAllOrder', async () => {
-      await getAllOrder();
+    socket.on('client:requestAllOrder', async (data) => {
+      await getAllOrder(data);
     });
 
     socket.on('client:requestCancelOrder', async (options) => {
