@@ -4,6 +4,7 @@ import UserRoutes from './user.routers.js';
 import addressRouter from './address.routes.js';
 import analyticRoutes from './analytic.routes.js';
 import cartRouter from './cart.routes.js';
+import categoryBlogRoutes from './category-blog.routes.js';
 import categoryRoutes from './category.routes.js';
 import express from 'express';
 import newBlogRouter from './newsBlogs.routes.js';
@@ -33,6 +34,7 @@ const rootRoutes = [
   cartRouter,
   newBlogRouter,
   addressRouter,
+  categoryBlogRoutes,
 ];
 
 rootRoutes.map((route) => {

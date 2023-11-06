@@ -1,4 +1,3 @@
-const { NlpManager } = require('node-nlp');
 const manager = require('./more.js');
 //
 const axios = require('axios');
@@ -115,7 +114,7 @@ manager.addAnswer('vi', 'NeedHelp', 'Shop đang online nè  , bạn có chuyện
 // manager.addDocument('vi','spp','AskProduct1');
 
 axios
-  .get('http://localhost:3000/products')
+  .get('http://localhost:3333/products')
   .then((response) => {
     let i = 0;
     let AllProduct = "<span style='display:flex'>";
@@ -248,7 +247,7 @@ axios
 //bảng checkouts
 
 axios
-  .get('http://localhost:3000/checkouts')
+  .get('http://localhost:3333/checkouts')
   .then((response) => {
     let i = 0;
     response['data'].forEach((value) => {
@@ -317,7 +316,7 @@ manager.addDocument('vi', 'Topping topping [q=topping]', 'isToppingF');
 //call axios o day
 
 axios
-  .get('http://localhost:3000/toppings')
+  .get('http://localhost:3333/toppings')
   .then((response) => {
     let i = 0;
     let listTopping = '<ol>';

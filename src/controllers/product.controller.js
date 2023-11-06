@@ -247,7 +247,7 @@ export const ProductController = {
       /* cập nhật lại topping */
       const toppings = product.toppings;
       if (toppings.length > 0) {
-        for (let i = 0; i < toppings.length, i++; ) {
+        for (let i = 0; i < toppings.length; i++) {
           await Topping.findByIdAndUpdate(toppings[i], {
             $pull: { products: product._id },
           });
@@ -255,7 +255,7 @@ export const ProductController = {
       }
       const updateTopping = req.body.toppings;
       if (updateTopping.length > 0) {
-        for (let i = 0; i < updateTopping.length, i++; ) {
+        for (let i = 0; i < updateTopping.length; i++) {
           await Topping.findByIdAndUpdate(updateTopping[i], {
             $addToSet: { products: product._id },
           });

@@ -1,3 +1,4 @@
+import { CategoryBlog } from '../models/category-blog.model.js';
 import joi from 'joi';
 import newBlogModel from '../models/newsBlogs.model.js';
 
@@ -12,6 +13,7 @@ const newsBlogSchema = joi.object({
     })
     .unknown(true),
   description: joi.string().required(),
+  category: joi.string().required(),
 });
 
 // Lấy tất cả tin tức từ cơ sở dữ liệu
@@ -22,19 +24,15 @@ const newBlogsController = {
     const options = {
       limit: _limit,
       page: _page,
-      sort: {
-        [_sort]: _order === 'desc' ? -1 : 1,
-      },
+      sort: { [_sort]: _order === 'desc' ? -1 : 1 },
+      populate: { path: 'category', select: 'name' },
     };
 
     try {
       const data = await newBlogModel.paginate({}, options);
-      console.log(data);
       if (data.docs.length === 0) {
         // Kiểm tra xem có dữ liệu không
-        return res.status(200).json({
-          message: 'Không có dữ liệu',
-        });
+        return res.status(200).json({ message: 'Không có dữ liệu' });
       }
 
       return res.json(data);
@@ -52,12 +50,22 @@ const newBlogsController = {
 
       if (error) {
         // Kiểm tra lỗi từ Joi
-        return res.status(400).json({
-          message: error.details.map((err) => err.message),
-        });
+        return res.status(400).json({ message: error.details.map((err) => err.message) });
       }
 
       const newBlogs = await newBlogModel.create(req.body);
+
+      if (!newBlogs) {
+        // Kiểm tra xem có tạo mới tin tức không
+        return res.status(400).json({
+          message: 'Tạo mới tin tức không thành công',
+        });
+      }
+
+      /* update id to category */
+      await CategoryBlog.findByIdAndUpdate(req.body.category, {
+        $addToSet: { blogs: newBlogs._id },
+      });
 
       return res.status(201).json(newBlogs); // Sử dụng mã lỗi 201 cho tạo mới thành công
     } catch (error) {
@@ -70,14 +78,37 @@ const newBlogsController = {
   // Cập nhật tin tức theo ID
   updateNewBlogs: async (req, res) => {
     try {
+      const blog = await newBlogModel.findById(req.params.id);
+      if (!blog) {
+        return res.status(404).json({ message: 'Không tìm thấy tin tức' });
+      }
+
+      const { error } = newsBlogSchema.validate(req.body, { abortEarly: false });
+      if (error) {
+        // Kiểm tra lỗi từ Joi
+        return res.status(400).json({ message: error.details.map((err) => err.message) });
+      }
+
+      /* update category */
+      await CategoryBlog.findByIdAndUpdate(blog.category, {
+        $pull: { blogs: blog._id },
+      });
+
+      console.log('ahihi');
+
       const data = await newBlogModel.findOneAndUpdate({ _id: req.params.id }, req.body, {
         new: true,
       });
 
       if (!data) {
         // Kiểm tra xem có tin tức nào cập nhật không
-        return res.status(404).json({
-          message: 'Cập nhật tin tức không thành công',
+        return res.status(404).json({ message: 'Cập nhật tin tức không thành công' });
+      }
+
+      /* update category */
+      if (req.body.category) {
+        await CategoryBlog.findByIdAndUpdate(req.body.category, {
+          $addToSet: { blogs: data._id },
         });
       }
 
