@@ -15,7 +15,7 @@ export const voucherController = {
         return res.status(400).json({ message: errors });
       }
       //  check code đã tồn tại hay chưa
-      console.log(body)
+       
       const isCode = await Voucher.findOne({ code: body.code })
       console.log(isCode)
       if (isCode) {
