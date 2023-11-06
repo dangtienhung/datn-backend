@@ -261,30 +261,26 @@ export const orderController = {
             { 'user.email': { $regex: q, $options: 'i' } },
             { 'user.phone': { $regex: q, $options: 'i' } },
             { 'items.product.name': { $regex: q, $options: 'i' } },
-
           ],
         };
         query = { $and: [searchQuery, query] };
       }
 
-
-
-      if (startDate && !endDate || startDate && endDate) {
+      if ((startDate && !endDate) || (startDate && endDate)) {
         const targetDate = new Date(startDate);
+        console.log(targetDate, 'startDate', startDate);
         targetDate.setHours(0, 0, 0, 0);
         const targetEndDate = new Date(targetDate);
         targetEndDate.setHours(23, 59, 59, 999);
         if (startDate > endDate) {
-          return res.status(500).json({ error: "startDate không lớn hơn endDate" });
+          return res.status(500).json({ error: 'startDate không lớn hơn endDate' });
         }
         const searchQuery = {
-          createdAt:
-          {
+          createdAt: {
             $gte: targetDate,
-            $lt: endDate ? endDate : targetEndDate
+            $lt: endDate ? endDate : targetEndDate,
           },
-
-        }
+        };
         query = { $and: [searchQuery, query] };
       }
       const orders = await Order.paginate(query, options);
@@ -345,26 +341,26 @@ export const orderController = {
   /* lấy ra đơn hàng theo user id */
   getAllOrderByUserId: async (req, res) => {
     try {
-      const { _page = 1, _limit = 10, q } = req.query;
+      // const { _page = 1, _limit = 10, q } = req.query;
       const { id } = req.params;
-      const options = {
-        page: _page,
-        limit: _limit,
-        sort: { createdAt: -1 },
-        populate: [
-          { path: 'user', select: 'username avatar account' },
-          { path: 'items.product', select: 'name' },
-        ],
-      };
-      const query = q ? { name: { $regex: q, $options: 'i' } } : {};
-      const orders = await Order.paginate({ user: id, ...query }, options);
+      // const options = {
+      //   page: _page,
+      //   limit: _limit,
+      //   sort: { createdAt: -1 },
+      //   populate: [
+      //     { path: 'user', select: 'username avatar account' },
+      //     { path: 'items.product', select: 'name' },
+      //   ],
+      // };
+      // const query = q ? { name: { $regex: q, $options: 'i' } } : {};
+      // const orders = await Order.paginate({ user: id, ...query }, options);
+      const orders = await Order.find({ user: id });
       if (!orders) {
         return res.status(400).json({ error: 'get all order by user id failed' });
       }
-      return res.status(200).json({ ...orders });
+      return res.status(200).json([...orders]);
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
   },
-   
 };

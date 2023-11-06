@@ -1,252 +1,349 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Chat App</title>
-  <style>
-    #messages{
-      height:500px;
-      border:2px green solid;
-      border-radius: 10px;
-      overflow-y: scroll;
-      width: 90%;
-    }
-    #messages li{
-      list-style: none;
-    }
-   
-    .left str{
-      color:green;
-    }
-    .right str{
-      color:red;
-    }
-    .UserBox{
-      width: 100%;
-      border: 2px green solid;
-      margin: 10px 0px;
-      
-    }
-    .UserBox small{
-      color:red;
-      margin-left: 10px;
-    }
-    #listUser{
-      height:500px;
-      border-radius: 10px;
-      width: 90%;
+  <head>
+    <title>Chat App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <style>
+      /* #messages {
+        height: 500px;
+        border: 2px green solid;
+        border-radius: 10px;
+        overflow-y: scroll;
+        width: 90%;
+      } */
+      #messages li {
+        list-style: none;
+      }
 
-    }
-    .previewImage,.noImg {
-    height:70px;
-      margin: 1px;
-   }
-   #previewContainer {
-     flex-wrap: wrap;
-     width: 50%;
-     padding: 10px;
-     display: none;
-   }
-   #previewContainer img{
-    width: 60px;
-     height: 60px;
-     object-fit: cover;
-     margin: 5px;
-   }
-  </style>
-</head>
+      .left str {
+        color: green;
+      }
+      .right str {
+        color: red;
+      }
+      .UserBox {
+        width: 100%;
+        border: 2px green solid;
+        margin: 10px 0px;
+      }
+      .UserBox small {
+        color: red;
+        margin-left: 10px;
+      }
+      #listUser {
+        height: 500px;
+        border-radius: 10px;
+        width: 90%;
+      }
+      .previewImage,
+      .noImg {
+        height: 70px;
+        margin: 1px;
+      }
+      #previewContainer {
+        flex-wrap: wrap;
+        width: 50%;
+        /* padding: 10px; */
+        display: none;
+      }
+      #previewContainer img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        margin: 5px;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
 
-<body>
-  <h1>Ticket admin</h1>
-  
-  <div style="display:grid;grid-template-columns:1fr 2fr">
-<center id="listUser">
-<div class="Userbox">
-  Ticket User cần giải quyết
-</div>
-</center>
-  <center>
-  <ul id="messages">
+  <body>
+    <!-- <h1>Ticket admin</h1> -->
 
-  </ul>
+    <div class="flex h-screen max-h-screen overflow-hidden">
+      <div class="sidebar bg-[#202123]">
+        <div id="listUser" class="!h-full !w-[260px] p-2 text-white">
+          <div class="Userbox mb-5 text-center">Ticket User cần giải quyết</div>
+        </div>
+      </div>
+      <div class="flex-1 max-w-full h-full relative">
+        <header
+          class="sticky top-0 w-full z-10 min-h-[60px] bg-[#343541] text-white flex items-center justify-center"
+        >
+          Đang hỗ trợ khách hàng: <span class="ml-2" id="userName"> ABC</span>
+        </header>
+        <div class="message-content relative h-screen max-h-screen overflow-y-auto">
+          <ul
+            id="messages"
+            class="max-h-screen h-screen overflow-y-auto bg-[#343541] pb-[20%]"
+          ></ul>
+          <div class="absolute bottom-[15%] left-1/2 transform -translate-x-1/2">
+            <div class="flex mb-4">
+              <div class="grow"></div>
+              <button id="btnSuccess" class="bg-[#19C37D] text-white text-sm px-3 py-2 rounded-md">
+                <i class="fa-solid fa-check"></i>
+                Đã giải quyết
+              </button>
+            </div>
+            <form class="bg-[#40414F] py-5 rounded-md" id="form" action="">
+              <div class="flex items-center w-full h-full px-2">
+                <input
+                  class="bg-transparent border-none outline-none text-white focus:border-none pr-5 pl-4"
+                  id="input"
+                  autocomplete="off"
+                  style="width: 700px"
+                  placeholder="Nhập câu trả lời tại đây..."
+                />
+                <label for="fileInput">
+                  <i
+                    class="fa-solid fa-image text-white cursor-pointer transition-all hover:text-[#19C37D]"
+                  ></i>
+                </label>
+                <input hidden type="file" id="fileInput" multiple />
+                <button class="px-2 ml-2">
+                  <i
+                    class="fa-solid fa-paper-plane text-white transition-all hover:text-[#19C37D]"
+                  ></i>
+                </button>
+              </div>
+              <div id="previewContainer" class="!border-none mt-4"></div>
+            </form>
+          </div>
+        </div>
 
-  <form id="form" action="">
-    <input id="input" autocomplete="off" style="width:700px"/><button>Gửi</button>
+        <!-- <form id="form3">
+          <button>Tải lên tệp</button>
+        </form> -->
+        <br />
+        <!-- <form id="form1">
+           <button id="clear" onclick="clear();alert('Đã xác nhận')" style="padding:10px;background:rgb(6, 212, 240);color:#000;border:none;border-radius: 10px;">Đã giải quyết vấn đề này </button>
+        </form> -->
+      </div>
+    </div>
 
-  </form>
-  <div id="previewContainer"></div>
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+      function a() {
+        const fileInput = document.getElementById('fileInput');
+        const previewContainer = document.getElementById('previewContainer');
 
-  <form id="form3">
-    <input type="file" id="fileInput" multiple>
-    <button>Tải lên tệp</button>
-</form>
-  <br>
-  <form id="form1">
-    <button id="clear" onclick="clear();alert('Đã xác nhận')" style="padding:10px;background:rgb(6, 212, 240);color:#000;border:none;border-radius: 10px;">Đã giải quyết vấn đề này </button>
+        fileInput.addEventListener('change', handleFileUpload);
 
-  </form>
+        function handleFileUpload(event) {
+          previewContainer.style.display = 'flex';
+          // previewContainer.style.border = '1px green solid';
+          previewContainer.innerHTML = '';
 
-</center>
-</div>
-
-  <!-- <script src="/socket.io/socket.io.js"></script> -->
-  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-  <script>
-    function a(){
-    const fileInput = document.getElementById('fileInput');
-const previewContainer = document.getElementById('previewContainer');
-
-
-
-fileInput.addEventListener('change', handleFileUpload);
-
-function handleFileUpload(event) {
-  previewContainer.style.display="flex";
-previewContainer.style.border="1px green solid";
-  previewContainer.innerHTML = '';
-
-
-  const files = event.target.files;
-  for (const file of files) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const previewImage = document.createElement('img');
-      previewImage.className = 'previewImage';
-      previewImage.src = e.target.result;
-      // console.log(this.result)
-      previewContainer.appendChild(previewImage);
-    };
-    reader.readAsDataURL(file);
-  }
-}
-    }
-    a();
-
-  </script>
-  <script>
-    const socket = io();
-    const messagesList = document.getElementById('messages');
-    const form = document.getElementById('form');
-    const form1 = document.getElementById('form1');
-
-    const input = document.getElementById('input');
-  
-
-function getParameterByName(name, url) {
-    if (!url) url = window.location.href;
-    name = name.replace(/[\[\]]/g, '\\$&');
-    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-        results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, ' '));
-}
-
-
-    fetch("/session").then(response=>response.json())
-    .then(data=>{
-      var username=data.username;
-   
-    console.log(username)
-    const queryUsername=(getParameterByName('username',window.location.href));
-    console.log(queryUsername)
-
-    form1.addEventListener('submit', e => {
-      e.preventDefault();
-        socket.emit("UpdateChatSeen", { username:queryUsername });
-        window.location.href='/admin/chat'
-    });
-
-  
-  function setup(username){
-    fetch("/clientChat").then(response=>response.json())
-    .then(data=>{
-      data.forEach(s=>{
-        if(s.username==queryUsername || (s.reciever=='to'+queryUsername)){
-          const li = document.createElement('li');
-          if(s.reciever=="toAdmin"){
-            li.classList.add("right");
-            li.innerHTML = `<str>${s.username}</str>: ${s.text}`;
+          const files = event.target.files;
+          for (const file of files) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              const previewImage = document.createElement('img');
+              previewImage.className = 'previewImage';
+              previewImage.src = e.target.result;
+              // console.log(this.result)
+              previewContainer.appendChild(previewImage);
+            };
+            reader.readAsDataURL(file);
           }
-          else{
-            li.classList.add("left");
-            li.innerHTML = `<str>Bạn</str>: ${s.text}`;
-          }
-          document.getElementById('messages').appendChild(li);
         }
-        // document.getElementById("listUser")
-      })
-    })
-  }
-  function LoadUser(){
-    fetch("/UniUser").then(response=>response.json())
-    .then(data=>{
-     for(i=0;i<data.length;i++){
-        const div = document.createElement('div');
-        div.classList.add("UserBox");
-        div.innerHTML="<a href='?username="+data[i].username+"'><b>"+data[i].username+"</b><small id='"+data[i].username+"'>"+data[i].count+"</small></a>";
-        document.getElementById("listUser").appendChild(div)
-        console.log(data[i])
-    }
-  })
-
-  }
-  LoadUser();
-
-  if(queryUsername){
-
-
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      const text = input.value;
-      if (text) {
-        socket.emit("AdminMsg", { text,username:queryUsername });
-        input.value = '';
       }
-    });
-    form3.addEventListener('submit', e => {
-      e.preventDefault();
-      const text = document.getElementById('previewContainer').innerHTML;
-      if (text!="") {
-        socket.emit("AdminMsg", { text,username });
-        document.getElementById('previewContainer').innerHTML="";
-        
+      a();
+    </script>
+    <script>
+      const socket = io();
+      const userName = (document.querySelector('#userName').textContent = getParameterByName(
+        'username',
+        window.location.href
+      ));
+      const messagesList = document.getElementById('messages');
+      const form = document.getElementById('form');
+      const form1 = document.getElementById('form1');
+      const btnSucces = document.querySelector('#btnSuccess');
+
+      const input = document.getElementById('input');
+
+      function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+          results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
       }
-    });
-    setup(username)
 
-  
-    socket.on("AdminMsg", message => {
-      if(message.username==username ||message.to=='toAdmin'){
+      fetch('/session')
+        .then((response) => response.json())
+        .then((data) => {
+          var username = data.username;
 
-        const li = document.createElement('li');
-        if(message.to=="toAdmin" ){
-            li.classList.add("left");
-            li.innerHTML = `<str>Bạn</str>: ${message.text}`;
+          const queryUsername = getParameterByName('username', window.location.href);
+          console.log(queryUsername);
+
+          btnSucces.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isConfirm = window.confirm('Xác nhận hoàn thành?');
+            if (isConfirm) {
+              socket.emit('UpdateChatSeen', { username: queryUsername });
+              window.location.href = '/admin/chat';
+            }
+          });
+          // form1.addEventListener('submit', (e) => {
+          //   e.preventDefault();
+          //   socket.emit('UpdateChatSeen', { username: queryUsername });
+          //   window.location.href = '/admin/chat';
+          // });
+
+          function setup(username) {
+            fetch('/clientChat')
+              .then((response) => response.json())
+              .then((data) => {
+                data.forEach((s) => {
+                  if (s.username == queryUsername || s.reciever == 'to' + queryUsername) {
+                    const listClass = ['flex', 'justify-center', 'py-5'];
+                    const li = document.createElement('li');
+                    if (s.reciever == 'toAdmin') {
+                      li.classList.add(...listClass, 'bg-[#444654]');
+                      li.innerHTML = /*html*/ `<div class="w-[70%] flex gap-x-4 items-center justify-between">
+                        <div class="flex-1">
+                          <span class='text-white text-right flex justify-end'>${s.text}</span>
+                        </div>
+                        <img class='w-9 h-9' src="https://ui-avatars.com/api/?name=${s.username}"/>
+                        </div>`;
+                    } else {
+                      li.classList.add(...listClass, 'bg-[#343541]');
+                      li.innerHTML = /*html*/ `<div class="w-[70%] flex gap-x-4 items-center justify-between">
+                        <img class='w-9 h-9' src="https://png.pngtree.com/png-clipart/20230409/original/pngtree-admin-and-customer-service-job-vacancies-png-image_9041264.png"/>
+                        <div class="flex-1">
+                          <span class='text-white '>${s.text}</span>
+                        </div>
+                        </div>`;
+                    }
+                    document.getElementById('messages').appendChild(li);
+                  }
+                  // document.getElementById("listUser")
+                });
+              });
           }
-          else{
-            li.classList.add("right");
-            li.innerHTML = `<str>${message.username}</str>: ${message.text}`;
+          const listClass = ['px-[5px]', 'rounded-md', 'hover:bg-[#2A2B32]'];
+          function LoadUser() {
+            fetch('/UniUser')
+              .then((response) => response.json())
+              .then((data) => {
+                for (i = 0; i < data.length; i++) {
+                  const div = document.createElement('div');
+                  div.className = `${data[i].username === userName ? 'bg-gray-800' : ''}`;
+                  div.classList.add(...listClass);
+                  div.innerHTML = /*html*/ `
+                  <a class="flex justify-between items-center py-3" href='?username=${data[i].username}' >
+                    <div class="flex gap-x-2 items-center">
+                      <i class="fa-regular fa-comment-dots"></i>
+                      <span>${data[i].username}</span>
+                    </div>
+                    <span class="flex items-center justify-center bg-red-500 text-white text-[10px] w-[20px] h-[20px] rounded-full">${data[i].count}</span>
+                  </a>`;
+
+                  // div.innerHTML =
+                  //   "<a href='?username=" +
+                  //   data[i].username +
+                  //   "'><b>" +
+                  //   data[i].username +
+                  //   "</b><small id='" +
+                  //   data[i].username +
+                  //   "'>" +
+                  //   data[i].count +
+                  //   '</small></a>' +
+                  //   '<i class="fa-regular fa-comment-dots"></i>';
+                  document.getElementById('listUser').appendChild(div);
+                }
+              });
           }
-        messagesList.appendChild(li);
-      }
-    });}
+          LoadUser();
 
-    //Cập nhật tin nhắn đang chờ
-    socket.on("UpdateUserListMsg", data => {
-      if(!document.getElementById(data.username)){
-        const div = document.createElement('div');
-        div.classList.add("UserBox");
-        div.innerHTML="<a href='?username="+data.username+"'><b>"+data.username+"</b><small id='"+data.username+"'>1</small></a>";
-        document.getElementById("listUser").appendChild(div)
-      }
-      else document.getElementById(data.username).innerHTML=document.getElementById(data.username).innerHTML*1+1;
-    });
+          if (queryUsername) {
+            form.addEventListener('submit', (e) => {
+              e.preventDefault();
+              const text = input.value;
+              if (text) {
+                socket.emit('AdminMsg', { text, username: queryUsername });
+                const textInpFile = document.getElementById('previewContainer').innerHTML;
+                input.value = '';
+                if (textInpFile !== '') {
+                  socket.emit('AdminMsg', { text: textInpFile, username });
+                  document.getElementById('previewContainer').innerHTML = '';
+                  document.getElementById('previewContainer').classList.add('!hidden');
+                }
+              }
+            });
+            // form3.addEventListener('submit', (e) => {
+            //   e.preventDefault();
+            //   if (text != '') {
+            //     socket.emit('AdminMsg', { text, username });
+            //   }
+            // });
+            setup(username);
 
+            socket.on('AdminMsg', (message) => {
+              if (message.username == username || message.to == 'toAdmin') {
+                const listClass = ['flex', 'justify-center', 'py-5'];
+                const li = document.createElement('li');
+                if (message.to !== 'toAdmin') {
+                  li.classList.add(...listClass, 'bg-[#444654]');
+                  li.innerHTML = /*html*/ `<div class="w-[70%] flex gap-x-4 items-center justify-between">
+                        <div class="flex-1">
+                          <span class='text-white text-right flex justify-end'>${message.text}</span>
+                        </div>
+                        <img class='w-9 h-9' src="https://ui-avatars.com/api/?name=${message.username}"/>
+                        </div>`;
+                } else {
+                  li.classList.add(...listClass, 'bg-[#343541]');
+                  li.innerHTML = /*html*/ `<div class="w-[70%] flex gap-x-4 items-center justify-between">
+                        <img class='w-9 h-9' src="https://png.pngtree.com/png-clipart/20230409/original/pngtree-admin-and-customer-service-job-vacancies-png-image_9041264.png"/>
+                        <div class="flex-1">
+                          <span class='text-white '>${message.text}</span>
+                        </div>
+                        </div>`;
+                }
+                messagesList.appendChild(li);
+              }
+            });
+          }
 
-  
-    })//fetch username
-
-
-  </script>
-</body>
+          //Cập nhật tin nhắn đang chờ
+          socket.on('UpdateUserListMsg', (data) => {
+            if (!document.getElementById(data.username)) {
+              const div = document.createElement('div');
+              div.classList.add(...listClass);
+              /*html*/ `
+               <a class="flex justify-between items-center " href='?username=${data[i].username}' >
+                    <div class="flex gap-x-2 items-center">
+                      <i class="fa-regular fa-comment-dots"></i>
+                      <span>${data[i].username}</span>
+                    </div>
+                    <span class="flex items-center justify-center bg-red-500 text-white text-[10px] w-[20px] h-[20px] rounded-full">${data[i].count}</span>
+                  </a>`;
+              // div.innerHTML =
+              //   "<a href='?username=" +
+              //   data.username +
+              //   "'><b>" +
+              //   data.username +
+              //   "</b><small id='" +
+              //   data.username +
+              //   "'>1</small></a>";
+              document.getElementById('listUser').appendChild(div);
+            } else
+              document.getElementById(data.username).innerHTML =
+                document.getElementById(data.username).innerHTML * 1 + 1;
+          });
+        }); //fetch username
+    </script>
+  </body>
 </html>
