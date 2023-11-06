@@ -23,10 +23,10 @@ export default (io) => {
       io.emit('user joined', `${data} joined the chat`);
     });
 
-    socket.on('allone', (data) => {
-      console.log('alone', data.room);
-      io.in(data.room).emit('allone:requestOrder', data.listOrder);
-    });
+    // socket.on('allone', (data) => {
+    //   console.log('alone', data.room);
+    //   io.in(data.room).emit('allone:requestOrder', data.listOrder);
+    // });
 
     socket.on('chat message', async (message) => {
       console.log('Message:', message);
@@ -39,16 +39,11 @@ export default (io) => {
       io.emit('chat message', { text: message.text, username: socket.username });
     });
 
-    async function getAllOrder(options) {
+    async function getOrderUser(option) {
       try {
-        await axios
-          .get(`${process.env.HTTP}/api/orders?_page=${options.page}&_limit=${options.limit}`)
-          .then((res) => {
-            io.emit('server:loadAllOrder', res['data']);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        await axios.get(`${process.env.HTTP}/api/order-user/${option.room}`).then((res) => {
+          io.emit('server:loadOrderUser', res['data']);
+        });
       } catch (error) {
         console.log(error);
       }
@@ -99,32 +94,6 @@ export default (io) => {
             } else {
               socket.broadcast.emit('server:loadPendingOrder', res['data']);
               socket.emit('server:loadPendingOrder', res['data']);
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
-    async function getDeliveredOrder(options = '') {
-      try {
-        await axios
-          .get(
-            `${process.env.HTTP}/api/order-delivered?_limit=${
-              options?.limit ? options.limit : 10
-            }&_page=${options?.page ? options.page : 1}&startDate=${
-              options.startDate ? options.startDate : ''
-            }&endDate=${options?.endDate ? options.endDate : ''}`
-          )
-          .then((res) => {
-            if (options.room) {
-              io.in(options.room).emit('server:loadDeliveredOrder', res['data']);
-            } else {
-              socket.broadcast.emit('server:loadDeliveredOrder', res['data']);
-              socket.emit('server:loadDeliveredOrder', res['data']);
             }
           })
           .catch((err) => {
@@ -187,8 +156,8 @@ export default (io) => {
       }
     }
 
-    socket.on('client:requestAllOrder', async (data) => {
-      await getAllOrder(data);
+    socket.on('client:requestOrderUser', async (options) => {
+      await getOrderUser(options);
     });
 
     socket.on('client:requestCancelOrder', async (options) => {
@@ -215,7 +184,8 @@ export default (io) => {
       try {
         await axios
           .put(`${process.env.HTTP}/api/order/canceled/${id}`)
-          .then(async () => {
+          .then(async (res) => {
+            await getOrderUser({ room: res['data'].order.user._id });
             await getCancelOrder();
             await getPendingOrder();
           })
@@ -229,10 +199,10 @@ export default (io) => {
 
     socket.on('client:createOrder', async (data) => {
       try {
-        console.log('createOrder', data);
         await axios
           .post(`${process.env.HTTP}/api/create-order`, data)
-          .then(async () => {
+          .then(async (res) => {
+            await getOrderUser({ room: res['data'].order.user._id });
             await getPendingOrder();
           })
           .catch((err) => {
@@ -247,7 +217,8 @@ export default (io) => {
       try {
         await axios
           .put(`${process.env.HTTP}/api/order/pending/${id}`)
-          .then(async () => {
+          .then(async (res) => {
+            await getOrderUser({ room: res['data'].order.user._id });
             await getPendingOrder();
           })
           .catch((err) => {
@@ -262,7 +233,8 @@ export default (io) => {
       try {
         await axios
           .put(`${process.env.HTTP}/api/order/done/${id}`)
-          .then(async () => {
+          .then(async (res) => {
+            await getOrderUser({ room: res['data'].order.user._id });
             await getDoneOrder();
             await getConfirmedOrder();
           })
@@ -278,7 +250,8 @@ export default (io) => {
       try {
         await axios
           .put(`${process.env.HTTP}/api/order/confirmed/${id}`)
-          .then(async () => {
+          .then(async (res) => {
+            await getOrderUser({ room: res['data'].order.user._id });
             await getConfirmedOrder();
             await getPendingOrder();
           })
@@ -290,20 +263,6 @@ export default (io) => {
       }
     });
 
-    socket.on('client:deliveryOrder', async (id) => {
-      try {
-        await axios
-          .put(`${process.env.HTTP}/api/order/delivered/${id}`)
-          .then(async () => {
-            await getDeliveredOrder();
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      } catch (error) {
-        console.log(error);
-      }
-    });
     socket.on('disconnect', () => {
       console.log('User disconnected');
       // Gửi thông báo cho tất cả người dùng trong phòng
