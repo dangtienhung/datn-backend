@@ -15,7 +15,7 @@ export const voucherController = {
         return res.status(400).json({ message: errors });
       }
       //  check code đã tồn tại hay chưa
-       
+
       const isCode = await Voucher.findOne({ code: body.code })
       console.log(isCode)
       if (isCode) {
@@ -96,7 +96,7 @@ export const voucherController = {
       /* update */
       const voucher = await Voucher.findByIdAndUpdate(id, body, { new: true });
       if (!voucher) {
-        return res.status(404).json({ message: 'Voucher not found' });
+        return res.status(404).json({ message: 'Không tìm thấy Voucher  ' });
       }
       return res.status(200).json({ data: voucher });
     } catch (error) {
@@ -109,7 +109,7 @@ export const voucherController = {
       const { id } = req.params;
       const voucher = await Voucher.findByIdAndDelete(id);
       if (!voucher) {
-        return res.status(404).json({ message: 'Voucher not found' });
+        return res.status(404).json({ message: 'Không tìm thấy Voucher ' });
       }
       return res.status(200).json({ data: voucher });
     } catch (error) {
