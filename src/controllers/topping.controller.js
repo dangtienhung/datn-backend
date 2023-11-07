@@ -13,7 +13,7 @@ export const toppingController = {
       const topping = await Topping.create(req.body);
       console.log('🚀 ~ file: topping.controller.js:15 ~ createTopping: ~ topping:', topping);
       if (!topping) {
-        return res.status(400).json({ message: 'fail', err: 'create topping failed' });
+        return res.status(400).json({ message: 'fail', err: 'Thêm mới topping thất bại' });
       }
 
       return res.status(200).json({ message: 'succes', data: topping });
@@ -24,9 +24,9 @@ export const toppingController = {
 
   getAllTopping: async (req, res, next) => {
     try {
-      const topping = await Topping.find({});
+      const topping = await Topping.find({}).sort({ createdAt: -1 });
       if (!topping) {
-        return res.status(404).json({ message: 'fail', err: 'Not found any Topping' });
+        return res.status(404).json({ message: 'fail', err: 'Không tìm thấy Topping' });
       }
       return res.status(200).json({ message: 'succes', data: topping });
     } catch (error) {
@@ -39,7 +39,7 @@ export const toppingController = {
       const topping = await Topping.findById(req.params.id);
       console.log(req.params.id);
       if (!topping) {
-        return res.status(404).json({ message: 'fail', err: 'Not found Topping' });
+        return res.status(404).json({ message: 'fail', err: 'Không tìm thấy Topping' });
       }
       return res.status(200).json({ message: 'success', data: topping });
     } catch (error) {
@@ -57,7 +57,7 @@ export const toppingController = {
       }
       const topping = await Topping.findByIdAndUpdate(req.params.id, req.body, { new: true });
       if (!topping) {
-        return res.status(404).json({ message: 'fail', err: 'Not found topping to update' });
+        return res.status(404).json({ message: 'fail', err: 'Không tìm thấy Topping' });
       }
       return res.status(200).json({ message: 'success', data: topping });
     } catch (error) {
@@ -69,7 +69,7 @@ export const toppingController = {
     try {
       const topping = await Topping.findByIdAndRemove(req.params.id);
       if (!topping) {
-        return res.status(404).json({ message: 'fail', err: 'Not found Size to delete' });
+        return res.status(404).json({ message: 'fail', err: 'Không tìm thấy Topping' });
       }
       return res.status(200).json({ message: 'success', data: topping });
     } catch (error) {

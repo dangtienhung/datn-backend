@@ -7,8 +7,8 @@ export const orderController = {
   create: async (req, res) => {
     try {
       const body = req.body;
-      console.log(body['inforOrderShipping']['shippingNote']);
-      console.log(body['inforOrderShipping']['c']);
+      // console.log(body['inforOrderShipping']['shippingNote']);
+     
       //gửi mail
       // var message="Mua hàng thành công";
       // var subject="Payment Success";
@@ -46,9 +46,9 @@ export const orderController = {
       /* lưu đơn hàng mới */
       const orderNew = await order.save();
       if (!orderNew) {
-        return res.status(400).json({ error: 'create order failed' });
+        return res.status(400).json({ error: 'Tạo đơn hàng thất bại' });
       }
-      return res.status(200).json({ message: 'create order successfully', order: orderNew });
+      return res.status(200).json({ message: 'Tạo đơn hàng thành công', order: orderNew });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
