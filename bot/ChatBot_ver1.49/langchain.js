@@ -1,4 +1,3 @@
-const { NlpManager } = require('node-nlp');
 const manager = require('./more.js');
 //
 const axios = require('axios');

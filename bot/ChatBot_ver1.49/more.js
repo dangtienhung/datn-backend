@@ -1455,6 +1455,56 @@ manager.addAnswer(
   'Bạn có thể tự do đặt hàng và nhận hàng trong thời gian hoạt động của hệ thống.'
 );
 
+
+
+
+
+//
+manager.addDocument(
+  'vi',
+  'số lượng hàng tôi đã mua',
+  'bought_num',
+);
+manager.addDocument(
+  'vi',
+  'tôi đã mua bao nhiêu món đồ',
+  'bought_num',
+);
+manager.addDocument(
+  'vi',
+  'tôi đã đặt tổng cộng bao nhiêu đơn hàng',
+  'bought_num',
+
+
+);
+manager.addDocument(
+  'vi',
+  'số đơn hàng tôi đã đặt',
+  'bought_num',
+);
+
+manager.addAnswer('vi','bought_num','const a of =..[a]')
+manager.addAnswer('vi','bought_num','const b of =..[b]')
+
+
+manager.addDocument(
+  'vi',
+  'Lần gần nhất tôi mua hàng',
+  'lastest_buy',
+);
+manager.addDocument(
+  'vi',
+  'Lần cuối tôi mua hàng ở đây là khi nào thế',
+  'lastest_buy',
+);
+manager.addDocument(
+  'vi',
+  'Lần gần nhất tôi không mua là lúc nào',
+  'lastest_buy',
+);
+manager.addAnswer('vi','lastest_buy',`const c of =..[c]`)
+
+
 manager.save();
 manager.train();
 
