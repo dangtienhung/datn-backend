@@ -13,5 +13,6 @@ routerNewBlogs.get('/newBlog/:id', newBlogsController.getDetailNewBlog);
 routerNewBlogs.put('/newsBlog-update/deleted/:id', newBlogsController.updateIsDeletedNewBlog);
 routerNewBlogs.put('/newsBlog-update/active/:id', newBlogsController.updateIsActiveNewBlog);
 routerNewBlogs.get('/newsBlog-update/active', newBlogsController.getAllNewBlogsActive);
+routerNewBlogs.get('/newsBlog/deleted', newBlogsController.getAllBlogDeleted);
 
 export default routerNewBlogs;
