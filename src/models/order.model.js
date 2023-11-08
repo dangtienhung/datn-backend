@@ -7,7 +7,7 @@ const orderSchema = new mongoose.Schema(
       // user này là id của user
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      // required: true,
     },
     items: [
       {

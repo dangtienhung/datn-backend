@@ -15,12 +15,12 @@ export const categoryController = {
       }
       // /* create slug */
       const slug = slugify(body.name, { lower: true });
-      console.log(slug);
+      // console.log(slug);
       body.slug = slug;
       // /* create */
       const category = await Category.create(body);
       if (!category) {
-        return res.status(400).json({ message: 'Create category failed' });
+        return res.status(400).json({ message: 'Thêm mới danh mục thất bại' });
       }
       return res.status(201).json({ data: category });
     } catch (error) {
@@ -112,7 +112,7 @@ export const categoryController = {
       /* update */
       const category = await Category.findByIdAndUpdate(id, body, { new: true });
       if (!category) {
-        return res.status(400).json({ message: 'Update category failed' });
+        return res.status(400).json({ message: 'Cập nhập danh mục thất bại' });
       }
       return res.status(201).json({ data: category });
     } catch (error) {
@@ -126,20 +126,20 @@ export const categoryController = {
       /* find category and delete product */
       const category = await Category.findById(id);
       if (!category) {
-        return res.status(400).json({ message: 'Category not found' });
+        return res.status(400).json({ message: 'Danh mục không tồn tại' });
       }
       /* delete product */
       const products = category.products;
       if (products.length > 0) {
         const deleteProducts = await Product.deleteMany({ _id: { $in: products } });
         if (!deleteProducts) {
-          return res.status(400).json({ message: 'Delete products failed' });
+          return res.status(400).json({ message: 'Xóa sản phẩm thất bại' });
         }
       }
       /* delete category */
       const deleteCategory = await Category.findByIdAndDelete(id);
       if (!deleteCategory) {
-        return res.status(400).json({ message: 'Delete category failed' });
+        return res.status(400).json({ message: 'Xóa danh mục thất bại' });
       }
       return res.status(201).json({ data: category });
     } catch (error) {
@@ -153,7 +153,7 @@ export const categoryController = {
       /* find category */
       const category = await Category.findById(id);
       if (!category) {
-        return res.status(400).json({ message: 'Category not found' });
+        return res.status(400).json({ message: 'Danh mục không tồn tại' });
       }
       /* thay đổi trạng thái của product false -> true */
       const products = category.products;
@@ -164,7 +164,7 @@ export const categoryController = {
           { new: true }
         );
         if (!updateProducts) {
-          return res.status(400).json({ message: 'Delete products failed' });
+          return res.status(400).json({ message: 'Xóa sản phẩm thất bại' });
         }
       }
       /* update category */
@@ -174,7 +174,7 @@ export const categoryController = {
         { new: true }
       );
       if (!updateCategory) {
-        return res.status(400).json({ message: 'Delete category failed' });
+        return res.status(400).json({ message: 'Xóa danh mục thất bại' });
       }
       return res.status(201).json({ data: updateCategory });
     } catch (error) {
@@ -188,7 +188,7 @@ export const categoryController = {
       /* find category */
       const category = await Category.findById(id);
       if (!category) {
-        return res.status(400).json({ message: 'Category not found' });
+        return res.status(400).json({ message: 'Danh mục không tồn tại' });
       }
       /* thay đổi trạng thái của product true -> false */
       const products = category.products;
@@ -199,7 +199,7 @@ export const categoryController = {
           { new: true }
         );
         if (!updateProducts) {
-          return res.status(400).json({ message: 'Delete products failed' });
+          return res.status(400).json({ message: 'Xóa sản phẩm thất bại' });
         }
       }
       /* update category */
@@ -209,7 +209,7 @@ export const categoryController = {
         { new: true }
       );
       if (!updateCategory) {
-        return res.status(400).json({ message: 'Delete category failed' });
+        return res.status(400).json({ message: 'Xóa danh mục thất bại' });
       }
       return res.status(201).json({ data: updateCategory });
     } catch (error) {
