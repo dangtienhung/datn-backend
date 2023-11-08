@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Chat App</title>
+    <title>Hỗ trợ khách hàng</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       rel="stylesheet"
@@ -11,13 +11,14 @@
       referrerpolicy="no-referrer"
     />
     <style>
-      /* #messages {
-        height: 500px;
+      #messages {
+        /* height: 500px;
         border: 2px green solid;
         border-radius: 10px;
         overflow-y: scroll;
-        width: 90%;
-      } */
+        width: 90%; */
+        scroll-behavior: smooth;
+      }
       #messages li {
         list-style: none;
       }
@@ -60,6 +61,16 @@
         margin: 5px;
         border-radius: 10px;
       }
+      #messages::-webkit-scrollbar {
+        width: 10px;
+      }
+      #messages::-webkit-scrollbar-track {
+        border-radius: 10px;
+      }
+      #messages::-webkit-scrollbar-thumb {
+        background: #d9d9d9;
+        border-radius: 10px !important;
+      }
     </style>
   </head>
 
@@ -73,6 +84,14 @@
         </div>
       </div>
       <div class="flex-1 max-w-full h-full relative">
+        <div class="noticeBox flex w-full h-full items-center justify-center bg-[#343541]">
+          <h3 class="text-white text-4xl">Hãy chọn 1 khách hàng để bắt đầu!</h3>
+        </div>
+        <div
+          class="loading absolute top-0 right-0 left-0 bottom-0 bg-[#343541] z-[15] flex items-center justify-center hidden"
+        >
+          <i class="fa-solid fa-spinner fa-spin-pulse text-white text-4xl"></i>
+        </div>
         <header
           class="sticky top-0 w-full z-10 min-h-[60px] bg-[#343541] text-white flex items-center justify-center"
         >
@@ -88,7 +107,7 @@
               <div class="grow"></div>
               <button id="btnSuccess" class="bg-[#19C37D] text-white text-sm px-3 py-2 rounded-md">
                 <i class="fa-solid fa-check"></i>
-                Đã giải quyết
+                Xác nhận hoàn thành
               </button>
             </div>
             <form class="bg-[#40414F] py-5 rounded-md" id="form" action="">
@@ -124,6 +143,15 @@
         <!-- <form id="form1">
            <button id="clear" onclick="clear();alert('Đã xác nhận')" style="padding:10px;background:rgb(6, 212, 240);color:#000;border:none;border-radius: 10px;">Đã giải quyết vấn đề này </button>
         </form> -->
+
+        <button
+          id="btnScrollBottom"
+          class="absolute right-[25px] bottom-[70px] w-9 h-9 rounded-full group border border-[#D7B978] bg-white shadow-lg hover:bg-[#343541] transition-all"
+        >
+          <i
+            class="fa-solid fa-arrow-down text-[#D7B978] group-hover:text-white transition-all"
+          ></i>
+        </button>
       </div>
     </div>
 
@@ -163,6 +191,9 @@
         'username',
         window.location.href
       ));
+      const noticeBox = document.querySelector('.noticeBox');
+      !userName ? (noticeBox.style.display = 'flex') : (noticeBox.style.display = 'none');
+
       const messagesList = document.getElementById('messages');
       const form = document.getElementById('form');
       const form1 = document.getElementById('form1');
@@ -203,6 +234,26 @@
           // });
 
           function setup(username) {
+            const loading = document.querySelector('.loading');
+            const btnScrollBottom = document.querySelector('#btnScrollBottom');
+            btnScrollBottom.addEventListener('click', () => {
+              if (messagesList) {
+                messagesList.scrollTop = messagesList.scrollHeight;
+              }
+            });
+            messagesList.addEventListener('scroll', () => {
+              if (btnScrollBottom) {
+                if (
+                  Math.floor(messagesList.scrollHeight - messagesList.scrollTop) ===
+                  messagesList.clientHeight
+                ) {
+                  btnScrollBottom.style.display = 'none';
+                } else {
+                  btnScrollBottom.style.display = 'block';
+                }
+              }
+            });
+            loading.style.display = 'flex';
             fetch('/clientChat')
               .then((response) => response.json())
               .then((data) => {
@@ -214,7 +265,7 @@
                       li.classList.add(...listClass, 'bg-[#444654]');
                       li.innerHTML = /*html*/ `<div class="w-[70%] flex gap-x-4 items-center justify-between">
                         <div class="flex-1">
-                          <span class='text-white text-right flex justify-end'>${s.text}</span>
+                          <span class='text-white text-right flex flex-col items-end'>${s.text}</span>
                         </div>
                         <img class='w-9 h-9' src="https://ui-avatars.com/api/?name=${s.username}"/>
                         </div>`;
@@ -223,14 +274,16 @@
                       li.innerHTML = /*html*/ `<div class="w-[70%] flex gap-x-4 items-center justify-between">
                         <img class='w-9 h-9' src="https://png.pngtree.com/png-clipart/20230409/original/pngtree-admin-and-customer-service-job-vacancies-png-image_9041264.png"/>
                         <div class="flex-1">
-                          <span class='text-white '>${s.text}</span>
+                          <span class='text-white flex flex-col items-start'>${s.text}</span>
                         </div>
                         </div>`;
                     }
                     document.getElementById('messages').appendChild(li);
+                    messagesList.scrollTop = messagesList.scrollHeight;
                   }
                   // document.getElementById("listUser")
                 });
+                loading.style.display = 'none';
               });
           }
           const listClass = ['px-[5px]', 'rounded-md', 'hover:bg-[#2A2B32]'];
@@ -271,16 +324,24 @@
           if (queryUsername) {
             form.addEventListener('submit', (e) => {
               e.preventDefault();
-              const text = input.value;
-              if (text) {
-                socket.emit('AdminMsg', { text, username: queryUsername });
-                const textInpFile = document.getElementById('previewContainer').innerHTML;
+              const textInput = input.value;
+              const textInpFile = document.getElementById('previewContainer').innerHTML;
+              if (textInpFile && textInput) {
+                socket.emit('AdminMsg', {
+                  text: `${textInpFile} <br/> ${textInput}`,
+                  username: queryUsername,
+                });
                 input.value = '';
-                if (textInpFile !== '') {
-                  socket.emit('AdminMsg', { text: textInpFile, username });
-                  document.getElementById('previewContainer').innerHTML = '';
-                  document.getElementById('previewContainer').classList.add('!hidden');
-                }
+                document.getElementById('previewContainer').innerHTML = '';
+                document.getElementById('fileInput').value = '';
+                return;
+              }
+              if (textInput) {
+                socket.emit('AdminMsg', { text: textInput, username: queryUsername });
+                input.value = '';
+                // if (textInpFile !== '') {
+                //   socket.emit('AdminMsg', { text: textInpFile, username });
+                // }
               }
             });
             // form3.addEventListener('submit', (e) => {
@@ -313,6 +374,7 @@
                         </div>`;
                 }
                 messagesList.appendChild(li);
+                messagesList.scrollTop = messagesList.scrollHeight;
               }
             });
           }
