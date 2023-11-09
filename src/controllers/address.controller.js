@@ -22,7 +22,7 @@ export const addressController = {
       await User.findByIdAndUpdate(body.userId, {
         $addToSet: { address: address._id },
       });
-      return res.status(200).json({ address });
+      return res.status(200).json(address);
     } catch (error) {
       return res.status(500).json({
         errors: error.message,
