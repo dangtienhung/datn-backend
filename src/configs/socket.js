@@ -23,11 +23,6 @@ export default (io) => {
       io.emit('user joined', `${data} joined the chat`);
     });
 
-    // socket.on('allone', (data) => {
-    //   console.log('alone', data.room);
-    //   io.in(data.room).emit('allone:requestOrder', data.listOrder);
-    // });
-
     socket.on('chat message', async (message) => {
       console.log('Message:', message);
 
@@ -199,15 +194,8 @@ export default (io) => {
 
     socket.on('client:createOrder', async (data) => {
       try {
-        await axios
-          .post(`${process.env.HTTP}/api/create-order`, data)
-          .then(async (res) => {
-            await getOrderUser({ room: res['data'].order.user._id });
-            await getPendingOrder();
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        await getOrderUser({ room: data });
+        await getPendingOrder();
       } catch (error) {
         console.log(error);
       }
