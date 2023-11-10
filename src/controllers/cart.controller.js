@@ -264,20 +264,4 @@ export const cartController = {
       res.status(400).json({ message: error.message });
     }
   },
-
-  deleteCartByUserId: async (req, res) => {
-    try {
-      const { _id } = req.params;
-      const cart = await Cart.deleteOne({
-        user: _id,
-      });
-
-      return res.status(200).json({
-        message: 'delete success',
-        data: cart,
-      });
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  },
 };

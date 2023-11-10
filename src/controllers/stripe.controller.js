@@ -3,8 +3,6 @@ import dotenv from 'dotenv';
 import { generateStripeToken } from '../configs/token.js';
 import { formatCurrency } from '../utils/formatCurrency.js';
 import jwt from 'jsonwebtoken';
-import Cart from '../models/cart.model.js';
-import axios from 'axios';
 dotenv.config();
 
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
@@ -18,8 +16,9 @@ const CheckoutStripe = {
         noteOrder: noteOrder,
         noteShipping: inforOrderShipping.noteShipping,
       };
+      console.log(req.body);
       const encodeStripe = generateStripeToken(dataOrder);
-      const line_items = items.map(({ image, quantity, product, price, size, toppings }) => {
+      const line_items = items.map(({ image, name, quantity, product, price, size, toppings }) => {
         const arrayPriceTopping =
           toppings?.length > 0
             ? toppings.map((topping) => {
@@ -44,11 +43,11 @@ const CheckoutStripe = {
           price_data: {
             currency: 'vnd',
             product_data: {
-              name: `${product.name} (${size.name}) ${topping}`,
+              name: `${name} (${size.name}) ${topping}`,
               images: [image],
               metadata: {
                 productId: product,
-                productName: product.name,
+                productName: name,
                 sizeId: size._id,
                 sizeName: size.name,
                 sizePrice: size.price,
@@ -68,7 +67,6 @@ const CheckoutStripe = {
       const customer = await stripe.customers.create({
         name: `${inforOrderShipping.name}`,
         phone: `+84 ${inforOrderShipping.phone}`,
-        email: 'giab8185@gmail.com',
         address: {
           line1: inforOrderShipping.address,
         },

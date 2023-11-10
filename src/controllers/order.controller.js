@@ -59,7 +59,7 @@ export const orderController = {
         return res.status(400).json({ error: 'Tạo đơn hàng thất bại' });
       }
 
-      const cart = await Cart.findOneAndDelete({
+      const cart = await Cart.deleteMany({
         user: order.user,
       });
 

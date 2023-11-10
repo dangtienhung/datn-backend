@@ -180,7 +180,9 @@ export default (io) => {
         await axios
           .put(`${process.env.HTTP}/api/order/canceled/${id}`)
           .then(async (res) => {
-            await getOrderUser({ room: res['data'].order.user._id });
+            if (res['data'].order.user?._id) {
+              await getOrderUser({ room: res['data'].order.user._id });
+            }
             await getCancelOrder();
             await getPendingOrder();
           })
@@ -194,7 +196,9 @@ export default (io) => {
 
     socket.on('client:createOrder', async (data) => {
       try {
-        await getOrderUser({ room: data });
+        if (data) {
+          await getOrderUser({ room: data });
+        }
         await getPendingOrder();
       } catch (error) {
         console.log(error);
@@ -206,7 +210,9 @@ export default (io) => {
         await axios
           .put(`${process.env.HTTP}/api/order/pending/${id}`)
           .then(async (res) => {
-            await getOrderUser({ room: res['data'].order.user._id });
+            if (res['data'].order.user?._id) {
+              await getOrderUser({ room: res['data'].order.user._id });
+            }
             await getPendingOrder();
           })
           .catch((err) => {
@@ -222,7 +228,9 @@ export default (io) => {
         await axios
           .put(`${process.env.HTTP}/api/order/done/${id}`)
           .then(async (res) => {
-            await getOrderUser({ room: res['data'].order.user._id });
+            if (res['data'].order.user?._id) {
+              await getOrderUser({ room: res['data'].order.user._id });
+            }
             await getDoneOrder();
             await getConfirmedOrder();
           })
@@ -239,7 +247,9 @@ export default (io) => {
         await axios
           .put(`${process.env.HTTP}/api/order/confirmed/${id}`)
           .then(async (res) => {
-            await getOrderUser({ room: res['data'].order.user._id });
+            if (res['data'].order.user?._id) {
+              await getOrderUser({ room: res['data'].order.user._id });
+            }
             await getConfirmedOrder();
             await getPendingOrder();
           })

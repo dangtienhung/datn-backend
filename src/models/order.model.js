@@ -11,6 +11,7 @@ const orderSchema = new mongoose.Schema(
     },
     items: [
       {
+        name: { type: String },
         product: {
           // product này là id của product
           type: mongoose.Schema.Types.ObjectId,

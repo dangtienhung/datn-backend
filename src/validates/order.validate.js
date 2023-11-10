@@ -4,6 +4,7 @@ export const orderValidate = joi.object({
   user: joi.string(),
   items: joi.array().items(
     joi.object({
+      name: joi.string(),
       image: joi.string(),
       product: joi.string().required(),
       quantity: joi.number().required(),
