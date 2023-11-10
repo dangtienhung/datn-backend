@@ -15,6 +15,7 @@ import toppingRoutes from './topping.routes.js';
 import uploadBanner from './banner.routes.js';
 import uploadRouter from './uploadfiles.routes.js';
 import voucherRoutes from './voucher.routes.js';
+import stripeRoutes from './stripe.routes.js';
 
 const router = express.Router();
 
@@ -35,6 +36,7 @@ const rootRoutes = [
   newBlogRouter,
   addressRouter,
   categoryBlogRoutes,
+  stripeRoutes,
 ];
 
 rootRoutes.map((route) => {

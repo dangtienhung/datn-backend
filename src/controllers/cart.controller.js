@@ -129,8 +129,9 @@ export const cartController = {
         .populate([
           // {
           //   path: 'items.product',
+          //   select: 'name',
           //   select: '-is_deleted -is_active -createdAt -updatedAt',
-          //   // select: '_id',
+          //   select: '_id',
           // },
           {
             path: 'items.toppings',
@@ -145,7 +146,8 @@ export const cartController = {
         ])
         .select('-user')
         .exec();
-      // console.log("cartAll::", cartAll)
+      console.log(cartAll);
+      // console.log('cartAll::', { ...cartAll, product: cartAll.items[0].product._id });
       return res.json({
         message: 'Cart all successfully',
         data: cartAll,
@@ -165,9 +167,9 @@ export const cartController = {
       })
         .populate([
           // {
-          //   path: 'items.product',
-          //   select: '-is_deleted -is_active -createdAt -updatedAt',
-          //   // select: '_id',
+          // path: 'items.product',
+          // select: '-is_deleted -is_active -createdAt -updatedAt',
+          // select: '_id',
           // },
           {
             path: 'items.toppings',

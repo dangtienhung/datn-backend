@@ -1,14 +1,24 @@
 import Order from '../models/order.model.js';
+import dotenv from 'dotenv';
 import axios from 'axios';
 import { orderValidate } from '../validates/order.validate.js';
+import { generateStripeToken } from '../configs/token.js';
+import Cart from '../models/cart.model.js';
+dotenv.config();
 
 export const orderController = {
   /* create */
   create: async (req, res) => {
     try {
       const body = req.body;
+      const note = {
+        user: body.user,
+        noteOrder: body.noteOrder,
+        noteShipping: body.inforOrderShipping.noteShipping,
+      };
+      const encodeStripe = generateStripeToken(note);
       // console.log(body['inforOrderShipping']['shippingNote']);
-     
+
       //gửi mail
       // var message="Mua hàng thành công";
       // var subject="Payment Success";
@@ -48,7 +58,25 @@ export const orderController = {
       if (!orderNew) {
         return res.status(400).json({ error: 'Tạo đơn hàng thất bại' });
       }
-      return res.status(200).json({ message: 'Tạo đơn hàng thành công', order: orderNew });
+
+      const cart = await Cart.deleteMany({
+        user: order.user,
+      });
+
+      if (!cart) {
+        return res.status(200).json({
+          message: 'delete success',
+          data: cart,
+        });
+      }
+
+      return res.status(200).json({
+        message: 'create order successfully',
+        order: {
+          orderNew,
+          url: `${process.env.RETURN_URL}/products/checkout/payment-result?encode=${encodeStripe}`,
+        },
+      });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }

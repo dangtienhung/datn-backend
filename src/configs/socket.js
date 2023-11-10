@@ -23,11 +23,6 @@ export default (io) => {
       io.emit('user joined', `${data} joined the chat`);
     });
 
-    // socket.on('allone', (data) => {
-    //   console.log('alone', data.room);
-    //   io.in(data.room).emit('allone:requestOrder', data.listOrder);
-    // });
-
     socket.on('chat message', async (message) => {
       console.log('Message:', message);
 
@@ -185,7 +180,9 @@ export default (io) => {
         await axios
           .put(`${process.env.HTTP}/api/order/canceled/${id}`)
           .then(async (res) => {
-            await getOrderUser({ room: res['data'].order.user._id });
+            if (res['data'].order.user?._id) {
+              await getOrderUser({ room: res['data'].order.user._id });
+            }
             await getCancelOrder();
             await getPendingOrder();
           })
@@ -199,15 +196,10 @@ export default (io) => {
 
     socket.on('client:createOrder', async (data) => {
       try {
-        await axios
-          .post(`${process.env.HTTP}/api/create-order`, data)
-          .then(async (res) => {
-            await getOrderUser({ room: res['data'].order.user._id });
-            await getPendingOrder();
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        if (data) {
+          await getOrderUser({ room: data });
+        }
+        await getPendingOrder();
       } catch (error) {
         console.log(error);
       }
@@ -218,7 +210,9 @@ export default (io) => {
         await axios
           .put(`${process.env.HTTP}/api/order/pending/${id}`)
           .then(async (res) => {
-            await getOrderUser({ room: res['data'].order.user._id });
+            if (res['data'].order.user?._id) {
+              await getOrderUser({ room: res['data'].order.user._id });
+            }
             await getPendingOrder();
           })
           .catch((err) => {
@@ -234,7 +228,9 @@ export default (io) => {
         await axios
           .put(`${process.env.HTTP}/api/order/done/${id}`)
           .then(async (res) => {
-            await getOrderUser({ room: res['data'].order.user._id });
+            if (res['data'].order.user?._id) {
+              await getOrderUser({ room: res['data'].order.user._id });
+            }
             await getDoneOrder();
             await getConfirmedOrder();
           })
@@ -251,7 +247,9 @@ export default (io) => {
         await axios
           .put(`${process.env.HTTP}/api/order/confirmed/${id}`)
           .then(async (res) => {
-            await getOrderUser({ room: res['data'].order.user._id });
+            if (res['data'].order.user?._id) {
+              await getOrderUser({ room: res['data'].order.user._id });
+            }
             await getConfirmedOrder();
             await getPendingOrder();
           })

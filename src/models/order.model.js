@@ -11,6 +11,7 @@ const orderSchema = new mongoose.Schema(
     },
     items: [
       {
+        name: { type: String },
         product: {
           // product này là id của product
           type: mongoose.Schema.Types.ObjectId,
@@ -46,7 +47,7 @@ const orderSchema = new mongoose.Schema(
       // ref: 'Payment',
       type: String,
       required: true,
-      enum: ['cod', 'momo', 'vnpay', 'zalopay'],
+      enum: ['cod', 'momo', 'vnpay', 'zalopay', 'stripe'],
       default: 'cod',
     },
     inforOrderShipping: {

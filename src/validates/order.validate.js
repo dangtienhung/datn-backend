@@ -4,6 +4,7 @@ export const orderValidate = joi.object({
   user: joi.string(),
   items: joi.array().items(
     joi.object({
+      name: joi.string(),
       image: joi.string(),
       product: joi.string().required(),
       quantity: joi.number().required(),
@@ -29,7 +30,7 @@ export const orderValidate = joi.object({
   noteOrder: joi.string(),
   total: joi.number(),
   priceShipping: joi.number().default(0),
-  paymentMethodId: joi.string().valid('cod', 'momo', 'zalopay', 'vnpay').default('cod'),
+  paymentMethodId: joi.string().valid('cod', 'momo', 'zalopay', 'vnpay', 'stripe').default('cod'),
   inforOrderShipping: joi
     .object({
       name: joi.string().required(),
