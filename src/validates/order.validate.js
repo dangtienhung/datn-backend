@@ -1,7 +1,7 @@
 import joi from 'joi';
 
 export const orderValidate = joi.object({
-  user: joi.string().required(),
+  user: joi.string(),
   items: joi.array().items(
     joi.object({
       image: joi.string(),

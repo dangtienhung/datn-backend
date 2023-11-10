@@ -17,8 +17,8 @@ export const orderController = {
         noteShipping: body.inforOrderShipping.noteShipping,
       };
       const encodeStripe = generateStripeToken(note);
-      console.log(body['inforOrderShipping']['shippingNote']);
-      console.log(body['inforOrderShipping']['c']);
+      // console.log(body['inforOrderShipping']['shippingNote']);
+
       //gửi mail
       // var message="Mua hàng thành công";
       // var subject="Payment Success";
@@ -56,7 +56,7 @@ export const orderController = {
       /* lưu đơn hàng mới */
       const orderNew = await order.save();
       if (!orderNew) {
-        return res.status(400).json({ error: 'create order failed' });
+        return res.status(400).json({ error: 'Tạo đơn hàng thất bại' });
       }
 
       const cart = await Cart.findOneAndDelete({

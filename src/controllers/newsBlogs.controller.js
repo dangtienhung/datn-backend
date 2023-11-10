@@ -14,6 +14,8 @@ const newsBlogSchema = joi.object({
     .unknown(true),
   description: joi.string().required(),
   category: joi.string().required(),
+  is_active: joi.boolean().default(true),
+  is_deleted: joi.boolean().default(false),
 });
 
 // Lấy tất cả tin tức từ cơ sở dữ liệu
@@ -218,9 +220,44 @@ const newBlogsController = {
   },
 
   /* get all is_deleted = false, is_active = true */
-  getAllNewBlogsActive: async (_, res) => {
+  getAllNewBlogsActive: async (req, res) => {
+    const { _limit = 10, _sort = 'createAt', _order = 'asc', _page = 1 } = req.query;
+
+    const options = {
+      limit: _limit,
+      page: _page,
+      sort: { [_sort]: _order === 'desc' ? -1 : 1 },
+      populate: { path: 'category', select: 'name' },
+    };
     try {
-      const data = await newBlogModel.find({ is_deleted: false, is_active: true });
+      const data = await newBlogModel.paginate({ is_deleted: false, is_active: true }, options);
+
+      if (data.length === 0) {
+        // Kiểm tra xem có dữ liệu không
+        return res.status(200).json({
+          message: 'Không có dữ liệu',
+        });
+      }
+
+      return res.json(data);
+    } catch (error) {
+      return res.status(500).json({
+        // Sử dụng mã lỗi 500 cho lỗi server
+        message: error.message,
+      });
+    }
+  },
+  getAllBlogDeleted: async (req, res) => {
+    const { _limit = 10, _sort = 'createAt', _order = 'asc', _page = 1 } = req.query;
+
+    const options = {
+      limit: _limit,
+      page: _page,
+      sort: { [_sort]: _order === 'desc' ? -1 : 1 },
+      populate: { path: 'category', select: 'name' },
+    };
+    try {
+      const data = await newBlogModel.paginate({ is_deleted: true }, options);
 
       if (data.length === 0) {
         // Kiểm tra xem có dữ liệu không
