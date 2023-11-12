@@ -42,6 +42,9 @@ export const addressController = {
           errors: error.details.map((err) => err.message),
         });
       }
+      /* nếu mà người dùng update là true thì sẽ lấy trạng thái vừa update đó là default true, các default khác sẽ là false */
+      /* update lại các address còn lại là false */
+      await Address.updateMany({ userId: body.userId }, { $set: { default: false } });
       /* update */
       const address = await Address.findByIdAndUpdate(id, body, {
         new: true,
@@ -68,7 +71,7 @@ export const addressController = {
       }
       /* ref to addres user */
       await User.findByIdAndUpdate(address.userId, {}, { $pull: { address: address._id } });
-      return res.status(200).json({ address });
+      return res.status(200).json(address);
     } catch (error) {
       return res.status(500).json({
         errors: error.message,
