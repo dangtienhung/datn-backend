@@ -110,7 +110,6 @@ manager.addAnswer('vi', 'NeedHelp', 'Shop lúc nào có mặt nè , bạn cần 
 manager.addAnswer('vi', 'NeedHelp', 'Shop đang online nè  , bạn có chuyện gì thế ');
 
 //product
-// manager.addDocument('vi','spp','AskProduct1');
 
 axios
   .get('http://localhost:3333/products')
