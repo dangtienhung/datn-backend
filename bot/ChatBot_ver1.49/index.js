@@ -18,6 +18,7 @@ app.use(
   })
 );
 const manager = require('./langchain.js');
+const { all } = require('axios');
 //train model
 manager.train().then(async () => {
   manager.save();
@@ -71,7 +72,7 @@ const checkouts = mongoose.model(
       },
     ],
     description: String,
-    createdAt:String,
+    createdAt: String,
   })
 );
 const topping = mongoose.model(
@@ -87,13 +88,15 @@ const FastOrder = mongoose.model(
     text: String,
   })
 );
-const trained = mongoose.model('trained',mongoose.Schema({
+const trained = mongoose.model(
+  'trained',
+  mongoose.Schema({
     data: String,
   })
 );
 app.get('/products', async (req, res) => {
   const documents = await products.find({});
-  res.json(documents);
+  if (documents) res.json(documents);
 });
 app.get('/checkouts', async (req, res) => {
   const documents = await checkouts.find({});
@@ -128,106 +131,106 @@ io.on('connection', (socket) => {
   });
 });
 app.get('/ask', async (req, res) => {
-  const { query,id } = req.query;
-  const allData=await trained.findOne({});
-  await manager.import(allData.data);
+  const { query, id } = req.query;
+  const allData = await trained.findOne({});
+  if (allData) await manager.import(allData.data);
 
   if (query) {
     let response = await manager.process('vi', query);
     // console.log(response)
-    if(response.intent=='bought_num' && (!id ||id=="")){
-      return res.json({answer:"Bạn cần phải đăng nhập để xem mục này !"})
+    if (response.intent == 'bought_num' && (!id || id == '')) {
+      return res.json({ answer: 'Bạn cần phải đăng nhập để xem mục này !' });
     }
     // lastest_buy
-    else if(response.intent=='lastest_buy'){
-      const _id= new mongoose.Types.ObjectId(id);
-      const documents = await checkouts.find({user:_id});
-      console.log(documents[0].createdAt)
+    else if (response.intent == 'lastest_buy') {
+      const _id = new mongoose.Types.ObjectId(id);
+      const documents = await checkouts.find({ user: _id });
+      console.log(documents[0].createdAt);
       return res.json({
-        answer:`lần cuối bạn mua hàng là ${documents[0].createdAt} `
-      })
-    }
-    else if(response.intent=='bought_num'){
-      const _id= new mongoose.Types.ObjectId(id);
+        answer: `lần cuối bạn mua hàng là ${documents[0].createdAt} `,
+      });
+    } else if (response.intent == 'bought_num') {
+      const _id = new mongoose.Types.ObjectId(id);
       // mongoose.Types.ObjectId(id);
-      const documents = await checkouts.find({user:_id});
+      const documents = await checkouts.find({ user: _id });
       return res.json({
-        answer:`bạn đã mua ${documents.length} đơn hàng`
-      })
+        answer: `bạn đã mua ${documents.length} đơn hàng`,
+      });
     }
     return res.json({ answer: response.answer });
   }
 });
-app.get('/admin',async (req,res)=>{
-  res.sendFile(__dirname+'/add.html')
-})
-const pre_training = mongoose.model('pre_training',mongoose.Schema({
-  class: String,
-  answer:String,
-  question:String,
-})
+app.get('/admin', async (req, res) => {
+  res.sendFile(__dirname + '/add.html');
+});
+const pre_training = mongoose.model(
+  'pre_training',
+  mongoose.Schema({
+    class: String,
+    answer: String,
+    question: String,
+  })
 );
-app.get('/api/loadAll',async (req,res)=>{
-  const p=await pre_training.find({});
-  var json={};
-  var onClass=[];
+app.get('/api/loadAll', async (req, res) => {
+  const p = await pre_training.find({});
+  var json = {};
+  var onClass = [];
 
-  for(const x of p){
+  for (const x of p) {
     onClass.push(x.class);
 
-    if(json[x.class]!==undefined){
-      json[x.class]['answer'].push(x.answer)
-      json[x.class]['question'].push(x.question)
-    }
-    else{
-      json={...json,...{
-        [x.class]:{
-          "answer":[x.answer],
-          "question":[x.question],
-        }
-      }}
+    if (json[x.class] !== undefined) {
+      json[x.class]['answer'].push(x.answer);
+      json[x.class]['question'].push(x.question);
+    } else {
+      json = {
+        ...json,
+        ...{
+          [x.class]: {
+            answer: [x.answer],
+            question: [x.question],
+          },
+        },
+      };
     }
   }
-  const {c}=req.query;
-  if(c)return res.json(onClass)
+  const { c } = req.query;
+  if (c) return res.json(onClass);
   res.json(json);
-})
-app.get('/api/add',async (req,res)=>{
-  const {answer,classs,question}=req.query;
+});
+app.get('/api/add', async (req, res) => {
+  const { answer, classs, question } = req.query;
   await pre_training({
-    class:classs,
-    answer:answer,
-    question:question
+    class: classs,
+    answer: answer,
+    question: question,
   }).save();
 
-  res.json({status:true})
-})
-app.get('/api/delete',async (req,res)=>{
-  const {question}=req.query;
-  await pre_training.deleteOne({question:question})
-  res.json({status:true})
+  res.json({ status: true });
+});
+app.get('/api/delete', async (req, res) => {
+  const { question } = req.query;
+  await pre_training.deleteOne({ question: question });
+  res.json({ status: true });
+});
+app.get('/api/train', async (req, res) => {
+  const p = await pre_training.find({});
 
-})
-app.get('/api/train',async (req,res)=>{
-  const p=await pre_training.find({});
-
-  for(const v of p){
-    manager.addDocument('vi',`${v.question}`,`${v.class}`);
-    manager.addAnswer('vi',`${v.class}`,`${v.answer}`);
+  for (const v of p) {
+    manager.addDocument('vi', `${v.question}`, `${v.class}`);
+    manager.addAnswer('vi', `${v.class}`, `${v.answer}`);
     manager.train();
     manager.save();
   }
-  const ex=manager.export();
+  const ex = manager.export();
   await trained.deleteMany({});
   await trained({
-    data:ex,
-  }).save()
-  res.json({status:true})
+    data: ex,
+  }).save();
+  res.json({ status: true });
+});
 
-
-})
-
-app.post('/upload', upload.single('file'), async(req, res) => {
+app.post('/upload', upload.single('file'), async (req, res) => {
   if (!req.file) {
     res.status(400).send('cần upload file');
     return;
@@ -242,19 +245,19 @@ app.post('/upload', upload.single('file'), async(req, res) => {
     const sheet = workbook.Sheets[sheetName];
     result[sheetName] = xlsx.utils.sheet_to_json(sheet);
   });
-  const allData=await trained.findOne({});
+  const allData = await trained.findOne({});
   manager.import(allData.data);
-  for(const v of result.Sheet1){
-    manager.addDocument('vi',`${v.question}`,`${v.class}`);
-    manager.addAnswer('vi',`${v.class}`,`${v.answer}`);
+  for (const v of result.Sheet1) {
+    manager.addDocument('vi', `${v.question}`, `${v.class}`);
+    manager.addAnswer('vi', `${v.class}`, `${v.answer}`);
     manager.train();
     manager.save();
   }
-  const ex=manager.export();
+  const ex = manager.export();
   await trained.deleteMany({});
   await trained({
-    data:ex,
-  }).save()
+    data: ex,
+  }).save();
   res.json(result);
 });
 app.use(cors({ origin: ['http://localhost:5173'], credentials: true }));

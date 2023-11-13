@@ -117,14 +117,20 @@ axios
   .get('http://localhost:3333/products')
   .then((response) => {
     let i = 0;
-    let AllProduct = "<span style='display:flex'>";
+    let AllProduct =
+      "<span style='display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; height: 500px;overflow-y: auto; width:100%'>";
     response['data'].forEach((value) => {
+      let nameText = value.name.length > 14 ? value.name.substring(0, 14) + '...' : value.name;
       AllProduct +=
-        "<div style='width:100px;color:green;border:1px #ccc solid;margin:10px'>" +
-        value.name +
-        "<img style='width:100px;height:100px' src=" +
+        "<a href='/products' style='display: block; width:150px; height:220px; padding:10px; border:1px #ccc solid; color: white; margin:10px; box-shadow:0 4px 8px 0 rgba(0,0,0,0.2); border-radius:10px; text-align:center;'>" +
+        "<div style='height: 40px; overflow: hidden; margin-bottom: 10px;'>" +
+        nameText +
+        '</div>' +
+        "<img style='width:120px; height:100px; object-fit:cover;' src=" +
         value.images[0].url +
-        '></div> ';
+        '>' +
+        '<button style=\'width:120px; height:35px; margin-top:5px; background:green; color:white; border:none; box-shadow: 2px 2px 4px rgba(0,0,0,0.3); border-radius: 5px;\' onmouseover=\'this.style.backgroundColor="#3cb371"; this.style.color="black"; this.style.fontWeight="bold";\' onmouseout=\'this.style.backgroundColor="green"; this.style.color="white"; this.style.fontWeight="normal";\'>Mua Ngay</button>' +
+        '</a>';
       manager.addDocument('vi', 'Shop cho em xin giá của món ăn ' + value.name, 'AskProduct' + i);
       manager.addDocument('vi', 'em xin giá ' + value.name, 'AskProduct' + i);
       manager.addDocument('vi', 'em muốn ăn ' + value.name, 'AskProduct' + i);
@@ -138,7 +144,6 @@ axios
         'AskProduct' + i,
         'Giá của ' + value.name + ' là ' + value.sale + 'vnđ nè !'
       );
-
       //description
       manager.addDocument(
         'vi',
