@@ -111,7 +111,6 @@ manager.addAnswer('vi', 'NeedHelp', 'Shop đang online nè  , bạn có chuyện
 
 //product
 // manager.addDocument('vi','spp','AskProduct1');
-// manager.addDocument('vi','spp','AskProduct1');
 
 axios
   .get('http://localhost:3333/products')
