@@ -109,8 +109,6 @@ manager.addAnswer('vi', 'greeting', 'Hi, Shop đã nhận được tin nhắn c�
 manager.addAnswer('vi', 'NeedHelp', 'Shop lúc nào có mặt nè , bạn cần hỗ trợ gì thế ? ');
 manager.addAnswer('vi', 'NeedHelp', 'Shop đang online nè  , bạn có chuyện gì thế ');
 
-//product
-
 axios
   .get('http://localhost:3333/products')
   .then((response) => {
