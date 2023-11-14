@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 import crypto from 'crypto';
 import querystring from 'qs';
 import moment from 'moment';
-import Cart from '../models/cart.model.js';
 dotenv.config();
 
 process.env.TZ = 'Asia/Ho_Chi_Minh';
@@ -26,11 +25,6 @@ function sortObject(obj) {
 const checkoutVnpay = {
   payment: async (req, res) => {
     try {
-      const dataOrder = {
-        user: req.body.user,
-        noteOrder: req.body.noteOrder,
-        noteShipping: req.body.inforOrderShipping.noteShipping,
-      };
       const secretKey = process.env.VNP_HASHSECRET;
       let vnpUrl = process.env.VNP_URL;
       const ip =
@@ -72,31 +66,6 @@ const checkoutVnpay = {
       vnp_Params['vnp_SecureHash'] = signed;
       vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
       res.send({ url: vnpUrl });
-    } catch (error) {
-      return res.status(500, { message: 'Error server' });
-    }
-  },
-  Billing: async (req, res) => {
-    try {
-      const cartUser = await Cart.findOne({ user: req.body.user }).populate([
-        {
-          path: 'items.toppings',
-          select: 'name price _id',
-        },
-        {
-          path: 'items.size',
-          select: 'name price _id',
-        },
-      ]);
-      const line_items = cartUser.items.map((item) => {
-        const { image, product, quantity, price, size, toppings } = item;
-        return { image, product, quantity, price, size, toppings };
-      });
-      const Order = {
-        ...req.body,
-        items: line_items,
-      };
-      res.send(Order);
     } catch (error) {
       return res.status(500, { message: 'Error server' });
     }
