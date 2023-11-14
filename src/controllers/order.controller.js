@@ -1,9 +1,8 @@
 import Order from '../models/order.model.js';
 import dotenv from 'dotenv';
-import axios from 'axios';
 import { orderValidate } from '../validates/order.validate.js';
-import { generateStripeToken } from '../configs/token.js';
 import Cart from '../models/cart.model.js';
+import { generatePaymentToken } from '../configs/token.js';
 dotenv.config();
 
 export const orderController = {
@@ -16,7 +15,7 @@ export const orderController = {
         noteOrder: body.noteOrder,
         noteShipping: body.inforOrderShipping.noteShipping,
       };
-      const encodeStripe = generateStripeToken(note);
+      const encodeStripe = generatePaymentToken(note);
       // console.log(body['inforOrderShipping']['shippingNote']);
 
       //gửi mail
@@ -69,6 +68,8 @@ export const orderController = {
           data: cart,
         });
       }
+
+      console.log('Order', orderNew);
 
       return res.status(200).json({
         message: 'create order successfully',

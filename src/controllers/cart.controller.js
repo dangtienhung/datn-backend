@@ -146,7 +146,7 @@ export const cartController = {
         ])
         .select('-user')
         .exec();
-      console.log(cartAll);
+      // console.log(cartAll);
       // console.log('cartAll::', { ...cartAll, product: cartAll.items[0].product._id });
       return res.json({
         message: 'Cart all successfully',
