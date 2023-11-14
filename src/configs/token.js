@@ -20,7 +20,7 @@ export const generateRefreshToken = (user) => {
   );
 };
 
-export const generateStripeToken = (infor) => {
+export const generatePaymentToken = (infor) => {
   return jwt.sign(
     {
       user: infor.user,
