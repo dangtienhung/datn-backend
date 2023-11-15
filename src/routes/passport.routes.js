@@ -14,9 +14,10 @@ PassportRoutes.get(
   passport.authenticate('google', { failureRedirect: process.env.LOGINPAGE }),
   function (req, res) {
     const { role } = req.user;
-    if (role.name === 'customer') {
+    console.log('role', role);
+    if (role === 'customer') {
       res.redirect(process.env.HOMEPAGE);
-    } else if (role.name === 'admin') {
+    } else if (role === 'admin') {
       res.redirect(process.env.AMINPAGE);
     }
   }
@@ -43,10 +44,7 @@ PassportRoutes.get('/getUser', async (req, res) => {
         account: user?.account,
         address: user.address,
         avatar: user.avatar,
-        role: {
-          name: user.role.name,
-          status: user.role.status,
-        },
+        role: user.role,
         gender: user.gender,
         birthday: user.birthday,
         accessToken: token,

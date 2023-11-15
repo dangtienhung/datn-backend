@@ -5,8 +5,6 @@ import { errHandler, notFound } from './middlewares/errhandle.js';
 import PassportRoutes from './routes/passport.routes.js';
 import { Server as SocketIo } from 'socket.io';
 import User from './models/user.model.js';
-import Users from './models/user.model.js'; // chat
-import { authController } from './controllers/auth.controller.js'; // chat
 import compression from 'compression';
 import { connectDb } from './configs/index.js';
 import cookie from 'cookie';
@@ -18,7 +16,6 @@ import helmet from 'helmet';
 import http from 'http';
 import jwt from 'jsonwebtoken';
 import middleSwaggers from './docs/index.js';
-import mongoose from 'mongoose';
 import morgan from 'morgan';
 import passport from 'passport';
 import passportMiddleware from './middlewares/passport.middlewares.js';
@@ -26,9 +23,6 @@ import path from 'path';
 import rootRoutes from './routes/index.js';
 import session from 'express-session';
 import socket from './configs/socket.js';
-import { userController } from './controllers/user.controllers.js'; // chat
-
-//
 
 //lấy  jwt
 
@@ -44,13 +38,6 @@ const __dirname = path.dirname(__filename);
 //
 
 const app = express();
-
-// app.use((req, res, next) => {
-//   res.append('Access-Control-Allow-Origin', ['*']);
-//   res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-//   res.append('Access-Control-Allow-Headers', 'Content-Type');
-//   next();
-// });
 
 app.get('/', (req, res) => {
   const cookies = cookie.parse(req.headers.cookie || '');
@@ -100,6 +87,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((id, done) => {
   (async () => {
+    console.log('deser', id);
     const user = await User.findById(id);
     return done(null, user);
   })();
@@ -117,19 +105,9 @@ app.use(notFound);
 app.use(errHandler);
 /* connectDb */
 connectDb();
-// mongoose
-// .connect(
-// 'mongodb+srv://hungdang02042003:jVp9aHU2eqE747nE@du-an-framework2-milk-t.ntg5d7s.mongodb.net/?retryWrites=true&w=majority'
-//   'mongodb://127.0.0.1:27017/be_du_an_tot_nghiep'
-// )
-// .then(() => console.log('Database connected!'))
-// .catch((err) => console.log(err));
 
 /* listen */
 const port = process.env.PORT || 5000;
-// app.listen(port, (req, res) => {
-//   console.log(`Server is running on port ${port}`);
-// });
 
 //Chat
 

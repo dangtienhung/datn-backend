@@ -1,5 +1,4 @@
 import AuthRouter from './auth.router.js';
-import RoleRoutes from './role.router.js';
 import UserRoutes from './user.routers.js';
 import addressRouter from './address.routes.js';
 import analyticRoutes from './analytic.routes.js';
@@ -28,7 +27,6 @@ const rootRoutes = [
   toppingRoutes,
   productRoutes,
   uploadRouter,
-  RoleRoutes,
   voucherRoutes,
   orderRoutes,
   uploadBanner,
