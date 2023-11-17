@@ -388,6 +388,12 @@ axios
     //bat loi o day
     console.error('Lỗi khi truy vấn API:', error);
   });
+
+manager.addDocument('vi','sản phẩm hot nhất tháng này là gì','dtt');
+manager.addDocument('vi','tháng này bán được nhiều nhất sản phẩm nào','dtt');
+manager.addDocument('vi','đồ ăn bán được top nhiều nhất trong tháng','dtt');
+
+
 manager.save();
 
 module.exports = manager;
