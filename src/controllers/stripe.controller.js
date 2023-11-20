@@ -1,8 +1,9 @@
 import Stripe from 'stripe';
 import dotenv from 'dotenv';
-import { generateStripeToken } from '../configs/token.js';
+import { generatePaymentToken } from '../configs/token.js';
 import { formatCurrency } from '../utils/formatCurrency.js';
 import jwt from 'jsonwebtoken';
+import Order from '../models/order.model.js';
 dotenv.config();
 
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
@@ -17,7 +18,7 @@ const CheckoutStripe = {
         noteShipping: inforOrderShipping.noteShipping,
       };
       console.log(req.body);
-      const encodeStripe = generateStripeToken(dataOrder);
+      const encodeStripe = generatePaymentToken(dataOrder);
       const line_items = items.map(({ image, name, quantity, product, price, size, toppings }) => {
         const arrayPriceTopping =
           toppings?.length > 0
@@ -170,6 +171,7 @@ const CheckoutStripe = {
 
         const Order = {
           user: invoice.customer.metadata.userId,
+          payment_intent: invoice.payment_intent,
           items: line_items,
           total: invoice.amount_total,
           priceShipping: invoice.shipping_options[0].shipping_amount,
@@ -186,6 +188,8 @@ const CheckoutStripe = {
               : decodedToken.noteShipping,
           },
         };
+
+        console.log(Order);
         res.clearCookie('sessionId');
         return res.send({ invoice: Order });
       }
@@ -194,7 +198,23 @@ const CheckoutStripe = {
     } catch (error) {
       return res.status(500, { message: 'Error server' });
     }
-    // const invoice
+  },
+
+  RefundMoney: async (req, res) => {
+    try {
+      const { id } = req.body;
+      const OrderUser = await Order.findById(id);
+      if (OrderUser) {
+        return res.status(400, { message: 'Not found Order to refund' });
+      }
+      console.log(OrderUser);
+      // const refund = await stripe.refunds.create({
+      //   payment_intent: 'pi_Aabcxyz01aDfoo',
+      //   amount: 1000,
+      // });
+    } catch (error) {
+      return res.status(500, { message: 'Error server' });
+    }
   },
 };
 

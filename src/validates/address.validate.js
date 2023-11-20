@@ -1,6 +1,7 @@
 import joi from 'joi';
 
 export const addressValidate = joi.object({
+  _id: joi.string(),
   name: joi.string().required().messages({
     'string.base': 'name must be a string',
     'string.empty': 'name is not allowed to be empty',

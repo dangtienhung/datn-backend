@@ -1,5 +1,4 @@
 import AuthRouter from './auth.router.js';
-import RoleRoutes from './role.router.js';
 import UserRoutes from './user.routers.js';
 import addressRouter from './address.routes.js';
 import analyticRoutes from './analytic.routes.js';
@@ -17,6 +16,7 @@ import uploadRouter from './uploadfiles.routes.js';
 import voucherRoutes from './voucher.routes.js';
 import stripeRoutes from './stripe.routes.js';
 import notificationRoutes from './notification.routes.js';
+import vnpayRoutes from './vnpay.rotues.js';
 
 const router = express.Router();
 
@@ -28,7 +28,6 @@ const rootRoutes = [
   toppingRoutes,
   productRoutes,
   uploadRouter,
-  RoleRoutes,
   voucherRoutes,
   orderRoutes,
   uploadBanner,
@@ -39,6 +38,7 @@ const rootRoutes = [
   categoryBlogRoutes,
   stripeRoutes,
   notificationRoutes,
+  vnpayRoutes,
 ];
 
 rootRoutes.map((route) => {

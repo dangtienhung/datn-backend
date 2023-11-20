@@ -9,6 +9,12 @@ const orderSchema = new mongoose.Schema(
       ref: 'User',
       // required: true,
     },
+
+    // phiên giao dịch của stripe
+    payment_intent: { type: String },
+
+    // phiên giao dịch của vnpay
+    payment_vnpay: { type: String },
     items: [
       {
         name: { type: String },
