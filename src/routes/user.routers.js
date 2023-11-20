@@ -25,11 +25,7 @@ router.patch(
   //  authMiddleware.verifyToken,
   userController.updateUser
 );
-router.patch(
-  '/user/updatePassword',
-   authMiddleware.verifyToken,
-  userController.updatePassword
-);
+router.patch('/user/updatePassword', authMiddleware.verifyToken, userController.updatePassword);
 
 router.route('/changeRoleUser/:id/:role').put(userController.changeRoleUser);
 // post
@@ -44,5 +40,7 @@ router.delete(
 
 /* thêm người dùng */
 router.post('/users', userController.createUser);
+//lấy role admin và staff
+router.get('/user-admin-staff-role', userController.getAllAdminAndStaff);
 
 export default router;

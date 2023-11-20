@@ -16,6 +16,7 @@ import uploadBanner from './banner.routes.js';
 import uploadRouter from './uploadfiles.routes.js';
 import voucherRoutes from './voucher.routes.js';
 import stripeRoutes from './stripe.routes.js';
+import notificationRoutes from './notification.routes.js';
 
 const router = express.Router();
 
@@ -37,6 +38,7 @@ const rootRoutes = [
   addressRouter,
   categoryBlogRoutes,
   stripeRoutes,
+  notificationRoutes,
 ];
 
 rootRoutes.map((route) => {
