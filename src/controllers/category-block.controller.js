@@ -1,5 +1,6 @@
 import { CategoryBlog } from '../models/category-blog.model.js';
 import { categoryBlogValdiate } from '../validates/category-blog.validate.js';
+import newBlogModel from '../models/newsBlogs.model.js';
 
 export const categoryBlogController = {
   create: async (req, res) => {
@@ -88,6 +89,21 @@ export const categoryBlogController = {
   delete: async (req, res) => {
     try {
       const { id } = req.params;
+      const categoryBlog = await CategoryBlog.findById(id);
+      if (!categoryBlog) {
+        return res.status(400).json({
+          message: 'Danh mục blog không tồn tại!',
+        });
+      }
+      const blogs = categoryBlog.blogs;
+      if (blogs.length > 0) {
+        const deleteBlogs = await newBlogModel.deleteMany({ _id: { $in: blogs } });
+        if (!deleteBlogs) {
+          return res.status(400).json({
+            message: 'Xóa blogs thất bại',
+          });
+        }
+      }
       const categoryDelete = await CategoryBlog.findByIdAndDelete(id);
       if (!categoryDelete) {
         return res.status(400).json({ message: 'Delete category failed' });

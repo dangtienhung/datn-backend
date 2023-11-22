@@ -285,16 +285,24 @@ export const userController = {
       const { _id } = req.user;
       const { password, passwordNew } = req.body;
       const findUser = await User.findById(_id);
+      if (!findUser) {
+        return res.status(404).json({ message: 'Người dùng không tồn tại' });
+      }
+      const isPasswordValid = await bcrypt.compare(password, findUser.password);
+
+      if (!isPasswordValid) {
+        return res.status(400).json({ message: 'Mật khẩu cũ không đúng' });
+      }
 
       if (findUser && bcrypt.compare(password, findUser.password)) {
         const hashedPassword = await bcrypt.hash(passwordNew, 10);
         findUser.password = hashedPassword;
         await findUser.save();
         return res.json({
-          message: 'update password success',
+          message: 'Cập nhật mật khẩu thành công!',
         });
       }
-      return res.status(400).json({ message: 'Password cũ nhập vào không đúng' });
+      // return res.status(400).json({ message: 'Password cũ nhập vào không đúng' });
     } catch (error) {
       res.json({ message: error });
     }
