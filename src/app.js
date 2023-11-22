@@ -307,8 +307,6 @@ server.listen(port, async () => {
   }
 });
 
-// const io = new SocketIo(server);
-
 // Tôi chuyển sang configs/socket.js cho gọn nhé
 // io.on('connection', (socket) => {
 //   console.log('User connected');
