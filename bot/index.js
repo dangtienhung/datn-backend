@@ -12,6 +12,7 @@ const multer = require('multer');
 const xlsx = require('xlsx');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
+const axios=require('axios')
 app.use(
   cors({
     origin: 'http://localhost:5173', // or '*' for a less secure option that allows all origins
@@ -60,6 +61,7 @@ const products = mongoose.model(
     description: String,
   })
 );
+
 const checkouts = mongoose.model(
   'checkouts',
   new mongoose.Schema({
@@ -94,6 +96,7 @@ const trained = mongoose.model(
     data: String,
   })
 );
+
 app.get('/products', async (req, res) => {
   const documents = await products.find({});
   if (documents) res.json(documents);
@@ -138,6 +141,15 @@ app.get('/ask', async (req, res) => {
   if (query) {
     let response = await manager.process('vi', query);
     // console.log(response)
+    if(response.intent=='dtt'){
+      const pp=await axios.get('http://localhost:8000/api/analyst');
+      const aaa=pp.data;
+      const nn=aaa['mặt hàng bán chạy tháng này']['sản phẩm bán nhiều nhất'].name;
+      const cc=aaa['mặt hàng bán chạy tháng này']['sản phẩm bán nhiều nhất'].count;
+
+      return res.json({answer:`Sản phẩm bán chạy nhất tháng này là ${nn} và đã bán được ${cc} lượt`})
+
+    }
     if (response.intent == 'bought_num' && (!id || id == '')) {
       return res.json({ answer: 'Bạn cần phải đăng nhập để xem mục này !' });
     }

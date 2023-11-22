@@ -1,5 +1,5 @@
 import { generateRefreshToken, generateToken } from '../configs/token.js';
-import crypto from 'crypto'
+import crypto from 'crypto';
 import User from '../models/user.model.js';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
@@ -286,9 +286,7 @@ export const userController = {
       const { password, passwordNew } = req.body;
       const findUser = await User.findById(_id);
 
-      if (findUser && (bcrypt.compare(password, findUser.password))) {
-
-
+      if (findUser && bcrypt.compare(password, findUser.password)) {
         const hashedPassword = await bcrypt.hash(passwordNew, 10);
         findUser.password = hashedPassword;
         await findUser.save();
@@ -296,7 +294,7 @@ export const userController = {
           message: 'update password success',
         });
       }
-      return res.status(400).json({ message: "Password cũ nhập vào không đúng" })
+      return res.status(400).json({ message: 'Password cũ nhập vào không đúng' });
     } catch (error) {
       res.json({ message: error });
     }
@@ -444,81 +442,97 @@ export const userController = {
 
   // reset password
   sendMailForgotPassword: async (req, res) => {
-    const { email } = req.body
-    console.log(email)
+    const { email } = req.body;
+    console.log(email);
     try {
-      const foundUser = await User.findOne({ account: email })
+      const foundUser = await User.findOne({ account: email });
 
       if (!foundUser) {
         return res.status(400).json({
           message: 'Email does not exists.',
-        })
+        });
       }
-      const token = crypto.randomBytes(32).toString('hex')
-      const hashedToken = crypto.createHash('sha256').update(token).digest('hex')
+      const token = crypto.randomBytes(32).toString('hex');
+      const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
-
-      foundUser.passwordChangedAt = new Date()
-      foundUser.passwordResetToken = hashedToken
-      foundUser.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000)
-      await foundUser.save()
-      const resetURL = `Please follow this link to reset your password. This link is valid still 10 minutes from now. <a href="http://localhost:5173/reset-forgot-password/${token}">Click Here</a>`
+      foundUser.passwordChangedAt = new Date();
+      foundUser.passwordResetToken = hashedToken;
+      foundUser.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000);
+      await foundUser.save();
+      const resetURL = `Please follow this link to reset your password. This link is valid still 10 minutes from now. <a href="http://localhost:5173/reset-forgot-password/${token}">Click Here</a>`;
 
       const data = {
         to: email,
         text: 'Hi!',
         subject: 'Forgot Password Link',
         html: resetURL,
-      }
-      await sendEmail(data)
+      };
+      await sendEmail(data);
       return res.status(200).json({
         message: 'Email reset password sent.',
         data: { token },
-      })
+      });
     } catch (error) {
       return res.status(400).json({
         message: `Something went wrong! ${error.message || ''}.`,
-      })
+      });
     }
   },
   resetPassword: async (req, res) => {
-    const { password } = req.body
-    const { token } = req.params
-    const hashedToken = crypto.createHash('sha256').update(token).digest('hex')
+    const { password } = req.body;
+    const { token } = req.params;
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
     try {
       const foundUser = await User.findOne({
         passwordResetToken: hashedToken,
         passwordResetExpires: { $gt: new Date() },
-      })
+      });
 
       if (!foundUser) {
         return res.status(400).json({
           message: 'Token invalid or expired. Please try again.',
-        })
+        });
       }
 
       const salt = await bcrypt.genSalt(10);
 
       const passwordNew = await bcrypt.hash(password, salt);
 
-      foundUser.password = passwordNew
-      foundUser.passwordResetToken = null
-      foundUser.passwordResetExpires = null
+      foundUser.password = passwordNew;
+      foundUser.passwordResetToken = null;
+      foundUser.passwordResetExpires = null;
 
-      await foundUser.save()
+      await foundUser.save();
 
       return res.status(200).json({
         message: 'Reset password successfully.',
         data: {
           user: foundUser,
         },
-      })
+      });
     } catch (error) {
       return res.status(400).json({
         message: `Something went wrong! ${error.message || ''}`,
-      })
+      });
     }
-  }
+  },
 
+  //getAllAdmin,Staff
+  getAllAdminAndStaff: async (req, res) => {
+    try {
+      const listData = await User.find({ role: { $in: ['admin', 'staff'] } });
+      if (listData.length === 0 || !listData) {
+        return res.status(400).json({
+          message: 'Không có dữ liệu',
+        });
+      }
+      return res.status(200).json({
+        message: 'Lấy danh sách thành công',
+        data: listData,
+      });
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+  },
 };

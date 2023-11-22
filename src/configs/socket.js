@@ -34,6 +34,67 @@ export default (io) => {
       io.emit('chat message', { text: message.text, username: socket.username });
     });
 
+    socket.on('client:sendNotificationToAdmin', async (data) => {
+      // console.log(data);
+      await createNotification(data);
+    });
+    socket.on('client:sendNotification', async (data) => {
+      // console.log(data);
+      await createNotification(data);
+    });
+    socket.on('client:requestUnreadNotificationByidUser', async (idUser) => {
+      await getUnReadNotificationByIdUser(idUser);
+    });
+    socket.on('client:requestUnReadNotificationToAdmin', async () => {
+      await getUnReadNotificationToAdmin();
+    });
+
+    async function createNotification(data) {
+      try {
+        const { data: createData } = await axios.post(
+          `${process.env.HTTP}/api/create-notification`,
+          data
+        );
+        // io.to(data.idUser).emit('server:sendNotification', createData.data);
+        if (data.to === 'user') {
+          await getUnReadNotificationByIdUser(createData.data.idUser);
+        }
+        if (data.to === 'admin') {
+          await getUnReadNotificationToAdmin();
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    async function getUnReadNotificationToAdmin() {
+      try {
+        await axios.get(`${process.env.HTTP}/api/get-unread-notifications-to-admin`).then((res) => {
+          const listNotifications = res.data;
+          axios.get(`${process.env.HTTP}/api/user-admin-staff-role`).then((res) => {
+            const listAdminStaffs = res.data;
+            listAdminStaffs.data.forEach((adminStaff) => {
+              io.to(adminStaff._id).emit('server:loadUnreadNotificationToAdmin', listNotifications);
+            });
+          });
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    async function getUnReadNotificationByIdUser(idUser) {
+      try {
+        await axios
+          .get(`${process.env.HTTP}/api/get-notifications-unread-by-id-user/${idUser}`)
+          .then((res) => {
+            io.to(idUser).emit('server:loadUnreadNotificationByidUser', res['data']);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
     async function getOrderUser(option) {
       try {
         await axios.get(`${process.env.HTTP}/api/order-user/${option.room}`).then((res) => {
