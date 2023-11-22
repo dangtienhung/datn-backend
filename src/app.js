@@ -314,10 +314,6 @@ server.listen(port, async () => {
 //     socket.username = username;
 //     console.log(`${username} joined`);
 
-//     // Gửi thông báo cho tất cả người dùng trong phòng
-//     io.emit('user joined', `${username} joined the chat`);
-//   });
-
 //   socket.on('chat message', async (message) => {
 //     console.log('Message:', message);
 
