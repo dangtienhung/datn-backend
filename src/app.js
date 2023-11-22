@@ -309,7 +309,6 @@ server.listen(port, async () => {
 
 // Tôi chuyển sang configs/socket.js cho gọn nhé
 // io.on('connection', (socket) => {
-//   console.log('User connected');
 
 //   socket.on('join', (username) => {
 //     socket.username = username;
