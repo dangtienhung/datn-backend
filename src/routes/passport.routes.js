@@ -2,6 +2,7 @@ import express from 'express';
 import passport from 'passport';
 import dotenv from 'dotenv';
 import User from '../models/user.model.js';
+
 import { generateRefreshToken, generateToken } from '../configs/token.js';
 dotenv.config();
 // git;
@@ -14,11 +15,8 @@ PassportRoutes.get(
   passport.authenticate('google', { failureRedirect: process.env.LOGINPAGE }),
   function (req, res) {
     const { role } = req.user;
-    console.log('role', role);
     if (role === 'customer') {
       res.redirect(process.env.HOMEPAGE);
-    } else if (role === 'admin') {
-      res.redirect(process.env.AMINPAGE);
     }
   }
 );
