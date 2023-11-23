@@ -25,7 +25,7 @@ function sortObject(obj) {
 const checkoutVnpay = {
   payment: async (req, res) => {
     try {
-      console.log(req.body);
+      // console.log(req.body);
       const secretKey = process.env.VNP_HASHSECRET;
       let vnpUrl = process.env.VNP_URL;
       const ip =
@@ -54,7 +54,7 @@ const checkoutVnpay = {
       }&phone=${req.body.inforOrderShipping.phone}&total=${req.body.total}&address=${
         req.body.inforOrderShipping.address
       }&priceShipping=${req.body.priceShipping}&expire=${moment(new Date())
-        .add(25, 'second')
+        .add(15, 'minute')
         .toDate()
         .getTime()}`;
       vnp_Params['vnp_TxnRef'] = moment(new Date()).format('DDHHmmss');

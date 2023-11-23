@@ -15,6 +15,7 @@ const orderSchema = new mongoose.Schema(
 
     // phiên giao dịch của vnpay
     payment_vnpay: { type: String },
+    isPayment: { type: Boolean, default: false },
     items: [
       {
         name: { type: String },
