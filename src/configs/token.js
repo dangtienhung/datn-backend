@@ -29,7 +29,7 @@ export const generatePaymentToken = (infor) => {
     },
     process.env.JWT_STRIPE,
     {
-      expiresIn: '15s',
+      expiresIn: '15m',
     }
   );
 };

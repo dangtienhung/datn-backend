@@ -51,6 +51,7 @@ export const orderController = {
         total: total + priceShipping,
         priceShipping: body.priceShipping,
         is_active: true,
+        isPayment: ['vnpay', 'stripe'].includes(body.paymentMethodId) ? true : false,
       });
       /* lưu đơn hàng mới */
       const orderNew = await order.save();
