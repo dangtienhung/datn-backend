@@ -1,8 +1,10 @@
 import Category from '../models/category.model.js';
+import { CategoryBlog } from '../models/category-blog.model.js';
 import Order from '../models/order.model.js';
 import Product from '../models/product.model.js';
 import User from '../models/user.model.js';
 import Voucher from '../models/voucher.model.js';
+import newBlogModel from '../models/newsBlogs.model.js';
 
 export const analyticController = {
   /* số lượng order 1 ngày */
@@ -307,6 +309,16 @@ export const analyticController = {
       const countCategoryActive = await Category.countDocuments({ is_deleted: true });
       const countCategoryInActive = await Category.countDocuments({ is_deleted: false });
 
+      /* new blog */
+      const categoryBlog = await CategoryBlog.countDocuments(); /* lấy hết blog đang có */
+      const countCategoryBlogActive = await CategoryBlog.countDocuments({ is_active: true });
+      const countCategoryBlogInActive = await CategoryBlog.countDocuments({ is_active: false });
+
+      /* blog */
+      const countBlogs = await newBlogModel.countDocuments(); /* lấy hết blog đang có */
+      const countBlogActive = await newBlogModel.countDocuments({ is_active: true });
+      const countBlogInActive = await newBlogModel.countDocuments({ is_active: false });
+
       /* get total day */
       const totalMoneyDays = await Order.find({
         status: 'done',
@@ -420,6 +432,20 @@ export const analyticController = {
           { name: 'total', value: countCategorys },
           { name: 'active', value: countCategoryActive },
           { name: 'inActive', value: countCategoryInActive },
+        ],
+
+        /* category blog */
+        categoryBlogs: [
+          { name: 'total', value: categoryBlog },
+          { name: 'active', value: countCategoryBlogActive },
+          { name: 'inActive', value: countCategoryBlogInActive },
+        ],
+
+        /* blog */
+        blogs: [
+          { name: 'total', value: countBlogs },
+          { name: 'active', value: countBlogActive },
+          { name: 'inActive', value: countBlogInActive },
         ],
       });
     } catch (error) {
