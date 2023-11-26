@@ -62,7 +62,7 @@ export const userController = {
   // register
   register: async (req, res) => {
     try {
-      console.log(req.body);
+
       const { error } = signupSchema.validate(req.body, { abortEarly: false });
       if (error) {
         const errors = error.details.map((error) => error.message);
@@ -72,7 +72,7 @@ export const userController = {
       }
 
       const findUser = await User.findOne({ account: req.body?.account });
-      // console.log(findUser);
+
       if (!findUser) {
         // create user
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -116,6 +116,10 @@ export const userController = {
       if (!findUser) {
         return res.status(400).json({ message: 'Tài khoản không tồn tại' });
       }
+      if(findUser.status!=="active"){
+        return res.status(400).json({ message: 'Tài khoản của bạn đã bị chặn do vi phạm chính sách cửa hàng' });
+
+      }
       const isMatch = await bcrypt.compare(password, findUser.password);
       if (!isMatch) {
         return res.status(400).json({ message: 'Tài khoản hoặc Mật khẩu không khớp' });
@@ -152,6 +156,7 @@ export const userController = {
           role: findUser.role,
           birthday: findUser.birthday,
           gender: findUser.gender,
+          status: findUser.status
         },
       });
     } catch (error) {
@@ -389,7 +394,7 @@ export const userController = {
   createUser: async (req, res) => {
     try {
       const body = req.body;
-      console.log('body', req.body);
+
       /* validate */
       const { error } = userValidate.validate(body, { abortEarly: false });
       if (error) {
@@ -400,7 +405,7 @@ export const userController = {
       }
       /* check account exists */
       const accountExit = await User.findOne({ account: body.account });
-      console.log('🚀 ~ file: user.controllers.js:298 ~ createUser: ~ accountExit:', accountExit);
+
       if (accountExit) {
         return res.status(400).json({
           message: 'Account đã tồn tại',
@@ -416,10 +421,7 @@ export const userController = {
 
       /* check account exists */
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      console.log(
-        '🚀 ~ file: user.controllers.js:311 ~ createUser: ~ hashedPassword:',
-        hashedPassword
-      );
+
 
       const user = await User.create({
         ...req.body,
@@ -442,16 +444,11 @@ export const userController = {
     }
   },
 
-  // generatePasswordResetToken: () => {
-  //   const token = crypto.randomBytes(32).toString('hex')
-  //   const hashedToken = crypto.createHash('sha256').update(token).digest('hex')
-  //   return { token, hashedToken }
-  // },
 
   // reset password
   sendMailForgotPassword: async (req, res) => {
     const { email } = req.body;
-    console.log(email);
+
     try {
       const foundUser = await User.findOne({ account: email });
 
