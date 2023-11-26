@@ -358,14 +358,22 @@ export const analyticController = {
       });
       /* order có trạng thái là pending */
       const countOrderPending = await Order.countDocuments({ status: 'pending' });
+      /* số tiến có trạng thái là pending */
+      const countOrderPendingMoneys = await Order.find({ status: 'pending' }).select('total');
       /* order có trạng thái là confirmed */
       const countOrderConfirmed = await Order.countDocuments({ status: 'confirmed' });
+      /* số tiến có trạng thái là confirmed */
+      const countOrderConfirmedMoneys = await Order.find({ status: 'confirmed' }).select('total');
       /* order có trạng thái là delivered */
       const countOrderDelivered = await Order.countDocuments({ status: 'delivered' });
+      /* số tiến có trạng thái là done */
+      const countOrderDeliveredMoneys = await Order.find({ status: 'done' }).select('total');
       /* order có trạng thái là done */
       const countOrderDone = await Order.countDocuments({ status: 'done' });
       /* order có trạng thái là canceled */
       const countOrderCanceled = await Order.countDocuments({ status: 'canceled' });
+      /* tổng số tiền có trạng thái là cancalled */
+      const countOrderCanceledMoneys = await Order.find({ status: 'canceled' }).select('total');
       /* order có trạng thái là pending và đã hết hạn */
       const countOrderPendingExpiration = await Order.countDocuments({
         status: 'pending',
@@ -391,10 +399,10 @@ export const analyticController = {
         countOrderStatus: [
           { name: 'pending', value: countOrderPending },
           { name: 'confirmed', value: countOrderConfirmed },
-          { name: 'delivered', value: countOrderDelivered },
+          // { name: 'delivered', value: countOrderDelivered },
           { name: 'done', value: countOrderDone },
           { name: 'canceled', value: countOrderCanceled },
-          { name: 'pendingExpiration', value: countOrderPendingExpiration },
+          // { name: 'pendingExpiration', value: countOrderPendingExpiration },
         ],
         moneys: [
           {
@@ -408,6 +416,26 @@ export const analyticController = {
           {
             name: 'totalMoneyMonth',
             value: totalMoneyMonth,
+          },
+        ],
+
+        /* money order status */
+        moneyOrderStatus: [
+          {
+            name: 'pending',
+            value: countOrderPendingMoneys.reduce((a, b) => a + b.total, 0),
+          },
+          {
+            name: 'confirmed',
+            value: countOrderConfirmedMoneys.reduce((a, b) => a + b.total, 0),
+          },
+          {
+            name: 'done',
+            value: countOrderDeliveredMoneys.reduce((a, b) => a + b.total, 0),
+          },
+          {
+            name: 'canceled',
+            value: countOrderCanceledMoneys.reduce((a, b) => a + b.total, 0),
           },
         ],
 
