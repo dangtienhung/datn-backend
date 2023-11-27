@@ -19,7 +19,9 @@ export const NotificationController = {
   },
   getUnReadNotificationToAdmin: async (req, res) => {
     try {
-      const notifications = await Notification.find({ is_read: false, to: 'admin' });
+      const notifications = await Notification.find({ is_read: false, to: 'admin' })
+        .sort({ createdAt: -1 })
+        .exec();
       if (notifications.length === 0) {
         return res.status(200).json({
           message: 'notification is empty',
@@ -39,7 +41,9 @@ export const NotificationController = {
   getNotificationUnReadByIdUser: async (req, res) => {
     try {
       const { idUser } = req.params;
-      const notifications = await Notification.find({ idUser: idUser, is_read: false });
+      const notifications = await Notification.find({ idUser: idUser, is_read: false })
+        .sort({ createdAt: -1 })
+        .exec();
       if (notifications.length === 0) {
         return res.status(200).json({
           message: 'notification is empty',
