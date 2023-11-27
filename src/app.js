@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 
 import { errHandler, notFound } from './middlewares/errhandle.js';
-
+import Coins from './models/coin.js';
 import PassportRoutes from './routes/passport.routes.js';
 import { Server as SocketIo } from 'socket.io';
 import User from './models/user.model.js';
@@ -24,7 +24,9 @@ import rootRoutes from './routes/index.js';
 import session from 'express-session';
 import socket from './configs/socket.js';
 import { ppid } from 'process';
-
+import Orders from './models/order.model.js';
+import Order from './models/order.model.js';
+ 
 //lấy  jwt
 
 dotenv.config();
@@ -47,12 +49,11 @@ app.get('/', (req, res) => {
   if (refreshTokenCookie) {
     try {
       const decoded = jwt.verify(refreshTokenCookie, process.env.SECRET_REFRESH);
-      console.log(decoded);
+
     } catch (err) {
       console.error('Invalid token:', err.message);
     }
 
-    // console.log('Refresh Token:', refreshTokenCookie);
 
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('Refresh Token: ' + refreshTokenCookie);
@@ -88,7 +89,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((id, done) => {
   (async () => {
-    console.log('deser', id);
+
     const user = await User.findById(id);
     return done(null, user);
   })();
@@ -105,7 +106,7 @@ app.use('/auth', PassportRoutes);
 app.get('/home', (req, res) => {
   res.sendFile(__dirname + '/voucher.html');
 });
-import Coins from './models/coin.js';
+
 app.get('/api/new_voucher', async (req, res) => {
   const { coin, name } = req.query;
   const check = await Coins.findOne({ name });
@@ -135,13 +136,12 @@ app.get('/api/edit_voucher', async (req, res) => {
     return res.json({ msg: `Update thành công số dư: ${lt}` });
   }
 });
-import Orders from './models/order.model.js';
-import Order from './models/order.model.js';
-import Product from './models/product.model.js';
-import Users from './models/user.model.js';
+
+// thống kê
+
 app.get('/api/analyst', async (req, res) => {
   //doanh thu
-  console.log(1);
+
   var doanh_thu = 0;
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth() + 1;
@@ -178,7 +178,7 @@ app.get('/api/analyst', async (req, res) => {
         money: list_doanhthu['tháng ' + v.month].money + v.total,
       };
   }
-  console.log(doanh_thu);
+  // console.log(doanh_thu);
   var all_dth = 0;
   const all_dt = await Order.find({});
   for (const v of all_dt) if (v.status != 'canceled') all_dth += v.total;
@@ -186,7 +186,7 @@ app.get('/api/analyst', async (req, res) => {
   var m_product = { count: 0, name: '' };
   //
   for (const v of result) {
-    console.log(v.items, 'p');
+    // console.log(v.items, 'p');
 
     if (v.status != 'canceled') doanh_thu += v.total; //doanh thu
     // mặt hàng bán đc
@@ -310,34 +310,4 @@ server.listen(port, async () => {
   }
 });
 
-// const io = new SocketIo(server);
 
-// Tôi chuyển sang configs/socket.js cho gọn nhé
-// io.on('connection', (socket) => {
-//   console.log('User connected');
-
-//   socket.on('join', (username) => {
-//     socket.username = username;
-//     console.log(`${username} joined`);
-
-//     // Gửi thông báo cho tất cả người dùng trong phòng
-//     io.emit('user joined', `${username} joined the chat`);
-//   });
-
-//   socket.on('chat message', async (message) => {
-//     console.log('Message:', message);
-
-//     // Lưu tin nhắn vào MongoDB
-//     const newMessage = new Message({ text: message.text, username: socket.username });
-//     await newMessage.save();
-
-//     // Gửi tin nhắn tới tất cả người dùng trong phòng
-//     io.emit('chat message', { text: message.text, username: socket.username });
-//   });
-
-//   socket.on('disconnect', () => {
-//     console.log('User disconnected');
-//     // Gửi thông báo cho tất cả người dùng trong phòng
-//     io.emit('user left', `${socket.username} left the chat`);
-//   });
-// });

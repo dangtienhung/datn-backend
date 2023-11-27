@@ -13,7 +13,7 @@ function handleFileUpload(event) {
       const previewImage = document.createElement('img');
       previewImage.className = 'previewImage';
       previewImage.src = e.target.result;
-      console.log(this.result)
+      
       previewContainer.appendChild(previewImage);
     };
     reader.readAsDataURL(file);

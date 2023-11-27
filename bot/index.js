@@ -12,7 +12,7 @@ const multer = require('multer');
 const xlsx = require('xlsx');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
-const axios=require('axios')
+const axios = require('axios')
 app.use(
   cors({
     origin: 'http://localhost:5173', // or '*' for a less secure option that allows all origins
@@ -119,9 +119,9 @@ io.on('connection', (socket) => {
     io.emit(
       'ChatMessage',
       "<str style='color:green'>" +
-        (response.answer ||
-          'Xin lỗi ,shop chưa hiểu câu hỏi của bạn ,  bạn vui lòng hãy chat cụ thể hơn ạ 🥹  !') +
-        '</str>'
+      (response.answer ||
+        'Xin lỗi ,shop chưa hiểu câu hỏi của bạn ,  bạn vui lòng hãy chat cụ thể hơn ạ 🥹  !') +
+      '</str>'
     );
   });
   socket.on('Order', async (message) => {
@@ -140,14 +140,14 @@ app.get('/ask', async (req, res) => {
 
   if (query) {
     let response = await manager.process('vi', query);
-    // console.log(response)
-    if(response.intent=='dtt'){
-      const pp=await axios.get('http://localhost:8000/api/analyst');
-      const aaa=pp.data;
-      const nn=aaa['mặt hàng bán chạy tháng này']['sản phẩm bán nhiều nhất'].name;
-      const cc=aaa['mặt hàng bán chạy tháng này']['sản phẩm bán nhiều nhất'].count;
 
-      return res.json({answer:`Sản phẩm bán chạy nhất tháng này là ${nn} và đã bán được ${cc} lượt`})
+    if (response.intent == 'dtt') {
+      const pp = await axios.get('http://localhost:8000/api/analyst');
+      const aaa = pp.data;
+      const nn = aaa['mặt hàng bán chạy tháng này']['sản phẩm bán nhiều nhất'].name;
+      const cc = aaa['mặt hàng bán chạy tháng này']['sản phẩm bán nhiều nhất'].count;
+
+      return res.json({ answer: `Sản phẩm bán chạy nhất tháng này là ${nn} và đã bán được ${cc} lượt` })
 
     }
     if (response.intent == 'bought_num' && (!id || id == '')) {

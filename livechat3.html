@@ -156,7 +156,7 @@
               const previewImage = document.createElement('img');
               previewImage.className = 'previewImage';
               previewImage.src = e.target.result;
-              // console.log(this.result)
+
               previewContainer.appendChild(previewImage);
             };
             reader.readAsDataURL(file);
@@ -195,8 +195,6 @@
         .then((response) => response.json())
         .then((data) => {
           var username = data.username;
-
-          console.log(username);
 
           function setup(username) {
             fetch('/clientChat')

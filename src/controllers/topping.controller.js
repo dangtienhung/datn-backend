@@ -11,7 +11,7 @@ export const toppingController = {
           .json({ message: 'fail', err: error.details.map((err) => err.message) });
       }
       const topping = await Topping.create(req.body);
-      console.log('🚀 ~ file: topping.controller.js:15 ~ createTopping: ~ topping:', topping);
+   
       if (!topping) {
         return res.status(400).json({ message: 'fail', err: 'Thêm mới topping thất bại' });
       }
@@ -37,7 +37,7 @@ export const toppingController = {
   getTopping: async (req, res, next) => {
     try {
       const topping = await Topping.findById(req.params.id);
-      console.log(req.params.id);
+     
       if (!topping) {
         return res.status(404).json({ message: 'fail', err: 'Không tìm thấy Topping' });
       }

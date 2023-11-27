@@ -10,7 +10,6 @@ export const uploadImage = async (req, res, next) => {
       // Sử dụng Cloudinary API để upload file lên Cloudinary
       return cloudinary.uploader.upload(file.path);
     });
-    // console.log('uploadPromises', uploadPromises);
 
     // Chờ cho tất cả các file đều được upload lên Cloudinary
     const results = await Promise.all(uploadPromises);
@@ -57,7 +56,7 @@ export const updateImage = async (req, res) => {
     // Trả về kết quả với url và publicId của ảnh mới
     return res.json({ url: uploadResult.secure_url, publicId: uploadResult.public_id });
   } catch (error) {
-    console.log(error);
+
     return res.status(500).json({ error: error.message || 'Error updating image' });
   }
 };

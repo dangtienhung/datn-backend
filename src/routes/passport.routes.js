@@ -23,7 +23,7 @@ PassportRoutes.get(
 
 PassportRoutes.get('/getUser', async (req, res) => {
   const user = req.user;
-  console.log(user);
+
   if (user) {
     const token = generateToken({ id: user._id, role: user.role });
     const refreshToken = generateRefreshToken({ id: user._id, role: user.role });

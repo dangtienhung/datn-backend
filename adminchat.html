@@ -176,7 +176,6 @@
               const previewImage = document.createElement('img');
               previewImage.className = 'previewImage';
               previewImage.src = e.target.result;
-              // console.log(this.result)
               previewContainer.appendChild(previewImage);
             };
             reader.readAsDataURL(file);
@@ -217,7 +216,6 @@
           var username = data.username;
 
           const queryUsername = getParameterByName('username', window.location.href);
-          console.log(queryUsername);
 
           btnSucces.addEventListener('click', (e) => {
             e.preventDefault();

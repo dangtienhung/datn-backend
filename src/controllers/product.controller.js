@@ -318,7 +318,7 @@ export const ProductController = {
         },
         { new: true }
       );
-      console.log(product);
+   
       /* khi người dùng xóa mềm product đi rồi thì cateogry cũng sẽ tự động cho product out */
       const updateCategory = await Category.findByIdAndUpdate(product.category, {
         $pull: { products: product._id },
@@ -404,10 +404,10 @@ export const ProductController = {
         ],
       };
       if (query) {
-        console.log(
-          '🚀 ~ file: product.controller.js:347 ~ getAllProductsDeletedTrue: ~ query:',
-          query
-        );
+        // console.log(
+        //   '🚀 ~ file: product.controller.js:347 ~ getAllProductsDeletedTrue: ~ query:',
+        //   query
+        // );
         const products = await Product.paginate(
           {
             $or: [

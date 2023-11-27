@@ -78,7 +78,7 @@ app.get('/hotro', (req, res) => {
       const JWTusername = decoded.username;
       JWTrole = decoded.role.name;
       res.sendFile(__dirname + '/livechat3.html');
-      // console.log(decoded);
+
     } catch (err) {
       console.error('Invalid token:', err.message);
     }
@@ -153,7 +153,7 @@ app.get('/Service/bot_history', async (req, res) => {
         if (MaxTimeH > val['createdAt'].toISOString().substring(11, 13) * 1)
           MinTimeH = val['createdAt'].toISOString().substring(11, 13) * 1;
         AvDay = (-FirstDay + val['createdAt'].toISOString().substring(5, 7) * 1) / 2;
-        console.log(val['createdAt'].toISOString());
+        // console.log(val['createdAt'].toISOString());
 
         total = (total + val['total']) / 2;
         //Lặp lại mua hàng

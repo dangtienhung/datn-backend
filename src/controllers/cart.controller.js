@@ -45,7 +45,7 @@ export const cartController = {
         for (let i = 0; i < cart.items.length; i++) {
           for (let j = 0; j < req.body.items.length; j++) {
             if (cart.items[i].size?._id.toString() === req.body.items[j].size) {
-              console.log('Same size');
+
               toppingMatch = true;
 
               if (req.body.items[j].toppings.length === cart.items[i].toppings.length) {
@@ -99,14 +99,13 @@ export const cartController = {
         }
 
         await cart.save();
-        console.log('Data added successfully');
+
       } else {
         await new Cart({
           user: _id,
           name: req.body.name,
           items: req.body.items,
         }).save();
-        console.log('Data added successfully');
       }
 
       return res.status(200).json({
@@ -114,7 +113,6 @@ export const cartController = {
         data: req.body,
       });
     } catch (err) {
-      console.error(err);
       return res.status(500).json({
         message: 'fail',
         err: 'Server error',
@@ -146,8 +144,7 @@ export const cartController = {
         ])
         .select('-user')
         .exec();
-      // console.log(cartAll);
-      // console.log('cartAll::', { ...cartAll, product: cartAll.items[0].product._id });
+
       return res.json({
         message: 'Cart all successfully',
         data: cartAll,
@@ -210,16 +207,14 @@ export const cartController = {
         if (cartItem) {
           if (newQuantity == 0) {
             getCart.items = getCart.items.filter((item) => item._id != idProduct);
-            console.log('xóa');
+
           } else {
             cartItem.quantity = newQuantity;
             cartItem.total = cartItem.price * cartItem.quantity;
           }
           await getCart.save();
 
-          // console.log('Cart item updated successfully');
         } else {
-          // console.log("k tìm thấy id_cart ietm")
           return res.status(400).json({
             message: 'fail',
             err: 'Cart item not found',
@@ -237,7 +232,6 @@ export const cartController = {
 
       if (!hasItems) {
         await Cart.findByIdAndRemove(getCart._id);
-        console.log('Cart deleted successfully');
       }
       return res.status(200).json({
         message: 'success',
@@ -255,7 +249,7 @@ export const cartController = {
         user: _id,
         _id: cartItemId,
       });
-      console.log(deleteProducts, _id, cartItemId);
+
       return res.json({
         message: 'delete success',
         data: deleteProducts,

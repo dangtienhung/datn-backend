@@ -25,7 +25,7 @@ function sortObject(obj) {
 const checkoutVnpay = {
   payment: async (req, res) => {
     try {
-      // console.log(req.body);
+     
       const secretKey = process.env.VNP_HASHSECRET;
       let vnpUrl = process.env.VNP_URL;
       const ip =

@@ -6,7 +6,6 @@ const crypto = require('crypto');
 const data =
   'Chỗ này điền secret key để tạo ra tỷ lệ trùng tin nhắn thấp nhất có thể thì chuỗi này cần phải dài nhât';
 const hash = crypto.createHash('md5').update(data).digest('hex');
-console.log(hash);
 
 // traning o day
 
@@ -14,20 +13,20 @@ console.log(hash);
 manager.addDocument(
   'vi',
   'Chào shop' +
-    crypto
-      .createHash('md5')
-      .update('' + Math.floor(Math.random() * 11) + '')
-      .digest('hex'),
+  crypto
+    .createHash('md5')
+    .update('' + Math.floor(Math.random() * 11) + '')
+    .digest('hex'),
   'greeting'
 );
 // thu vien crypto
 manager.addDocument(
   'vi',
   'shop' +
-    crypto
-      .createHash('md5')
-      .update('' + Math.floor(Math.random() * 11) + '')
-      .digest('hex'),
+  crypto
+    .createHash('md5')
+    .update('' + Math.floor(Math.random() * 11) + '')
+    .digest('hex'),
   'greeting'
 );
 manager.addDocument('vi', 'hello shop', 'greeting');
@@ -36,19 +35,19 @@ manager.addDocument('vi', 'hi shop', 'greeting');
 manager.addDocument(
   'vi',
   'Chào shop, shop có ship không ạ ' +
-    crypto
-      .createHash('md5')
-      .update('' + Math.floor(Math.random() * 11) + '')
-      .digest('hex'),
+  crypto
+    .createHash('md5')
+    .update('' + Math.floor(Math.random() * 11) + '')
+    .digest('hex'),
   'AboutShip'
 );
 manager.addDocument(
   'vi',
   'ship ko shop ơi' +
-    crypto
-      .createHash('md5')
-      .update('' + Math.floor(Math.random() * 11) + '')
-      .digest('hex'),
+  crypto
+    .createHash('md5')
+    .update('' + Math.floor(Math.random() * 11) + '')
+    .digest('hex'),
   'AboutShip'
 );
 manager.addAnswer('vi', 'AboutShip', 'Chào bạn , shop có ship cho bạn ở xa nhé');
@@ -58,38 +57,38 @@ manager.addAnswer('vi', 'AboutShip', 'Có ship bạn ơi 😙');
 manager.addDocument(
   'vi',
   'Có ai online không' +
-    crypto
-      .createHash('md5')
-      .update('' + Math.floor(Math.random() * 11) + '')
-      .digest('hex'),
+  crypto
+    .createHash('md5')
+    .update('' + Math.floor(Math.random() * 11) + '')
+    .digest('hex'),
   'NeedHelp'
 );
 manager.addDocument(
   'vi',
   'Tôi cần giúp đỡ' +
-    crypto
-      .createHash('md5')
-      .update('' + Math.floor(Math.random() * 11) + '')
-      .digest('hex'),
+  crypto
+    .createHash('md5')
+    .update('' + Math.floor(Math.random() * 11) + '')
+    .digest('hex'),
   'NeedHelp'
 );
 //Lời cảm ơn
 manager.addDocument(
   'vi',
   'E cảm ơn shop ạ' +
-    crypto
-      .createHash('md5')
-      .update('' + Math.floor(Math.random() * 11) + '')
-      .digest('hex'),
+  crypto
+    .createHash('md5')
+    .update('' + Math.floor(Math.random() * 11) + '')
+    .digest('hex'),
   'thanks'
 );
 manager.addDocument(
   'vi',
   'tks shop nhé' +
-    crypto
-      .createHash('md5')
-      .update('' + Math.floor(Math.random() * 11) + '')
-      .digest('hex'),
+  crypto
+    .createHash('md5')
+    .update('' + Math.floor(Math.random() * 11) + '')
+    .digest('hex'),
   'thanks'
 );
 manager.addDocument('vi', 'Cảm ơn , thanks nhiều shop ạ', 'thanks');
@@ -200,19 +199,19 @@ axios
       manager.addDocument(
         'vi',
         'Ship [cho] em ' +
-          value.name +
-          ' [tới,đến] địa chỉ ' +
-          ' sđt [là] : 0987654321' +
-          ' người nhận :',
+        value.name +
+        ' [tới,đến] địa chỉ ' +
+        ' sđt [là] : 0987654321' +
+        ' người nhận :',
         'MesCheckOut' + i
       );
       manager.addDocument(
         'vi',
         'Gửi [cho] em ' +
-          value.name +
-          ' [tới,đến] địa điểm ' +
-          ' số điện thoại [là]  0987654321' +
-          ' người nhận ',
+        value.name +
+        ' [tới,đến] địa điểm ' +
+        ' số điện thoại [là]  0987654321' +
+        ' người nhận ',
         'MesCheckOut' + i
       );
       manager.addAnswer(
@@ -267,21 +266,21 @@ axios
         'vi',
         'AskAboutOrdered?name=' + i,
         "<nav style='padding:10px;border:1px blue solid;color:blue'>Người nhận: " +
-          value['shippingInfo']['name'] +
-          '<br>Địa chỉ: ' +
-          value['shippingInfo']['address'] +
-          '<br>Tồng tiền: ' +
-          value.totalPrice +
-          "vnđ <br><b style='color:#e91e63'>Trạng thái đơn: " +
-          value['status'] +
-          '</b></nav>'
+        value['shippingInfo']['name'] +
+        '<br>Địa chỉ: ' +
+        value['shippingInfo']['address'] +
+        '<br>Tồng tiền: ' +
+        value.totalPrice +
+        "vnđ <br><b style='color:#e91e63'>Trạng thái đơn: " +
+        value['status'] +
+        '</b></nav>'
       );
       // khi đơn hàng không tồn tại
       manager.addDocument(
         'vi',
         'd81d9da7fae0fba1865b0ca58' +
-          value._id +
-          '0ca58b7e60cfd81d9da7fae0fba1865b0ca58b7e60cfd81d9da7fae0fba1865b0ca58b7e60cfd81d9da7fae0fba1865b',
+        value._id +
+        '0ca58b7e60cfd81d9da7fae0fba1865b0ca58b7e60cfd81d9da7fae0fba1865b0ca58b7e60cfd81d9da7fae0fba1865b',
         'AskAboutOrderedError?name=' + i
       );
       manager.addDocument(
@@ -352,8 +351,8 @@ axios
       manager.addDocument(
         'vi',
         'Shop cho em xin giá topping[q=topping] [q=product_name]d81d9da7fae0fba1865b0ca58' +
-          value._id +
-          '0ca58b7e60cfd81d9da7fae0fba1865b0ca58b7e60cfd81d9da7fae0fba1865b0ca58b7e60cfd81d9da7fae0fba1865b',
+        value._id +
+        '0ca58b7e60cfd81d9da7fae0fba1865b0ca58b7e60cfd81d9da7fae0fba1865b0ca58b7e60cfd81d9da7fae0fba1865b',
         'AskAboutToppingError?name=' + i
       );
       manager.addDocument(
@@ -389,9 +388,9 @@ axios
     console.error('Lỗi khi truy vấn API:', error);
   });
 
-manager.addDocument('vi','sản phẩm hot nhất tháng này là gì','dtt');
-manager.addDocument('vi','tháng này bán được nhiều nhất sản phẩm nào','dtt');
-manager.addDocument('vi','đồ ăn bán được top nhiều nhất trong tháng','dtt');
+manager.addDocument('vi', 'sản phẩm hot nhất tháng này là gì', 'dtt');
+manager.addDocument('vi', 'tháng này bán được nhiều nhất sản phẩm nào', 'dtt');
+manager.addDocument('vi', 'đồ ăn bán được top nhiều nhất trong tháng', 'dtt');
 
 
 manager.save();

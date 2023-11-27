@@ -16,13 +16,12 @@ export const orderController = {
         noteShipping: body.inforOrderShipping.noteShipping,
       };
       const encodeStripe = generatePaymentToken(note);
-      // console.log(body['inforOrderShipping']['shippingNote']);
-
+     
       //gửi mail
       // var message="Mua hàng thành công";
       // var subject="Payment Success";
       // var email=body['inforOrderShipping']['email'];
-      // console.log(email)
+      
       // var link=""
       // axios.get('https://ketquaday99.com/api/NodeMailer/?email='+email+'&subject='+subject+'&message='+message).then(function (response) {console.log(response);});
 
@@ -69,9 +68,7 @@ export const orderController = {
           data: cart,
         });
       }
-
-      console.log('Order', orderNew);
-
+ 
       return res.status(200).json({
         message: 'create order successfully',
         order: {
@@ -298,7 +295,7 @@ export const orderController = {
 
       if ((startDate && !endDate) || (startDate && endDate)) {
         const targetDate = new Date(startDate);
-        console.log(targetDate, 'startDate', startDate);
+        
         targetDate.setHours(0, 0, 0, 0);
         const targetEndDate = new Date(targetDate);
         targetEndDate.setHours(23, 59, 59, 999);

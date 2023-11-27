@@ -96,7 +96,7 @@ const newBlogsController = {
         $pull: { blogs: blog._id },
       });
 
-      console.log('ahihi');
+    
 
       const data = await newBlogModel.findOneAndUpdate({ _id: req.params.id }, req.body, {
         new: true,

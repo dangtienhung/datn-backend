@@ -15,7 +15,7 @@ export const categoryController = {
       }
       // /* create slug */
       const slug = slugify(body.name, { lower: true });
-      // console.log(slug);
+       
       body.slug = slug;
       // /* create */
       const category = await Category.create(body);

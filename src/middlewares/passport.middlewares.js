@@ -15,7 +15,7 @@ const passportMiddleware = {
       (async () => {
         try {
           const user = await User.findOne({ googleId: profile.id });
-          console.log('user', user);
+
           if (!user) {
             const newUser = await User.create({
               googleId: profile.id,

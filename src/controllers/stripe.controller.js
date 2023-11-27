@@ -17,7 +17,7 @@ const CheckoutStripe = {
         noteOrder: noteOrder,
         noteShipping: inforOrderShipping.noteShipping,
       };
-      console.log(req.body);
+     
       const encodeStripe = generatePaymentToken(dataOrder);
       const line_items = items.map(({ image, name, quantity, product, price, size, toppings }) => {
         const arrayPriceTopping =
@@ -152,7 +152,7 @@ const CheckoutStripe = {
           expand: ['line_items.data.price.product', 'customer'],
         });
         const decodedToken = jwt.verify(invoice.customer.metadata.encode, process.env.JWT_STRIPE);
-        // console.log(invoice);
+        
 
         const line_items = invoice.line_items.data.map((item) => {
           return {
@@ -189,7 +189,7 @@ const CheckoutStripe = {
           },
         };
 
-        console.log(Order);
+        
         res.clearCookie('sessionId');
         return res.send({ invoice: Order });
       }
@@ -207,7 +207,7 @@ const CheckoutStripe = {
       if (OrderUser) {
         return res.status(400, { message: 'Not found Order to refund' });
       }
-      console.log(OrderUser);
+     
       // const refund = await stripe.refunds.create({
       //   payment_intent: 'pi_Aabcxyz01aDfoo',
       //   amount: 1000,
