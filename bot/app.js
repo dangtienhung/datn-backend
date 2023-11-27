@@ -14,7 +14,6 @@ app.use(bodyParser.json());
 
 // Xử lý yêu cầu từ người dùng
 app.post('/chat', (req, res) => {
-
   const userMessage = req.body.message;
   // Sử dụng mô hình chatbot để trả lời userMessage
   const chatbotResponse = yourChatbotModel(userMessage);
