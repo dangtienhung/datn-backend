@@ -13,11 +13,11 @@ const xlsx = require('xlsx');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const axios = require('axios');
-// app.use(
-//   cors({
-//     origin: 'http://localhost:5173', // or '*' for a less secure option that allows all origins
-//   })
-// );
+app.use(
+  cors({
+    origin: 'http://localhost:5173', // or '*' for a less secure option that allows all origins
+  })
+);
 const manager = require('./langchain.js');
 const { all } = require('axios');
 //train model
@@ -163,7 +163,12 @@ app.get('/ask', async (req, res) => {
     else if (response.intent == 'lastest_buy') {
       const _id = new mongoose.Types.ObjectId(id);
       const documents = await checkouts.find({ user: _id });
-      console.log(documents[0]?.createdAt);
+      // console.log(documents[0]?.createdAt);
+      if (documents[0]?.createdAt == undefined) {
+        return res.json({
+          answer: `không co don hang nao gan day`,
+        });
+      }
       return res.json({
         answer: `lần cuối bạn mua hàng là ${documents[0]?.createdAt} `,
       });
