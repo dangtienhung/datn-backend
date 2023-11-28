@@ -1,13 +1,14 @@
 import { generateRefreshToken, generateToken } from '../configs/token.js';
-import crypto from 'crypto';
+
 import User from '../models/user.model.js';
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
+import { sendEmail } from '../configs/sendMail.js';
 import { signupSchema } from '../validates/auth.js';
 import slugify from 'slugify';
 import { userValidate } from '../validates/user.validate.js';
-import { sendEmail } from '../configs/sendMail.js';
 
 dotenv.config();
 
@@ -111,7 +112,7 @@ export const userController = {
       const { account, password } = req.body;
       // check user exists or not
       const findUser = await User.findOne({ account }).populate([
-        { path: 'address', select: 'name address phone' },
+        { path: 'address', select: '-__v -_id -userId' },
       ]);
       if (!findUser) {
         return res.status(400).json({ message: 'Tài khoản không tồn tại' });
