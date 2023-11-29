@@ -32,6 +32,7 @@ export const categoryBlogController = {
         limit: _limit,
         page: _page,
         sort: { createdAt: -1 },
+        populate: { path: 'blogs', },
       };
 
       if (query) {
