@@ -7,8 +7,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon ./src/app.js",
+    "startBot": "npx nodemon ./bot/index.js",
     "dev": "nodemon ./clientBot2.js",
-    "all": "concurrently \"npm start\" \"npm run dev\""
+    "all": "concurrently \"npm start\" \"npm run dev\" \"npm run startBot\""
   },
   "keywords": [],
   "author": "",
@@ -52,7 +53,11 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.3",
     "yamljs": "^0.3.0",
-    "yup": "^1.2.0"
+    "yup": "^1.2.0",
+    "node-nlp": "^4.27.0",
+    "nodemon": "^3.0.1",
+    "random": "^4.1.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "morgan": "^1.10.0",
