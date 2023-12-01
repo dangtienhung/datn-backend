@@ -15,7 +15,11 @@ const orderSchema = new mongoose.Schema(
 
     // phiên giao dịch của vnpay
     payment_vnpay: { type: String },
-    isPayment: { type: Boolean, default: false },
+    isPayment:
+    {
+      type: Boolean,
+      default: false
+    },
     items: [
       {
         name: { type: String },
@@ -48,7 +52,11 @@ const orderSchema = new mongoose.Schema(
     reasonCancelOrder: { type: String },
     noteOrder: { type: String },
     total: { type: Number },
-    priceShipping: { type: Number, default: 0 },
+    priceShipping:
+    {
+      type: Number,
+      default: 0
+    },
     paymentMethodId: {
       // type: mongoose.Schema.Types.ObjectId,
       // ref: 'Payment',
@@ -58,14 +66,37 @@ const orderSchema = new mongoose.Schema(
       default: 'cod',
     },
     inforOrderShipping: {
-      name: { type: String, required: true },
-      address: { type: String, required: true },
-      phone: { type: String, required: true },
+      name:
+      {
+        type: String,
+        required: true
+      },
+      address: {
+        type: String,
+        required: true
+      },
+      phone: {
+        type: String,
+        required: true
+      },
       noteShipping: { type: String },
     },
-    is_active: { type: Boolean, default: true },
+    is_active: {
+      type: Boolean,
+      default: true
+    },
+    moneyPromotion: {
+      price: Number,
+      voucherId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Voucher',
+      }
+    }
   },
-  { timestamps: true, versionKey: false }
+  {
+    timestamps: true,
+    versionKey: false
+  }
 );
 
 orderSchema.plugin(mongoosePaginate);

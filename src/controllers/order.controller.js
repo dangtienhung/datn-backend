@@ -16,12 +16,12 @@ export const orderController = {
         noteShipping: body.inforOrderShipping.noteShipping,
       };
       const encodeStripe = generatePaymentToken(note);
-     
+
       //gửi mail
       // var message="Mua hàng thành công";
       // var subject="Payment Success";
       // var email=body['inforOrderShipping']['email'];
-      
+
       // var link=""
       // axios.get('https://ketquaday99.com/api/NodeMailer/?email='+email+'&subject='+subject+'&message='+message).then(function (response) {console.log(response);});
 
@@ -44,10 +44,11 @@ export const orderController = {
       });
       /* kiểm tra xem đã có order nào chưa */
       const priceShipping = Number(body.priceShipping) || 0;
+      const moneyPromotion = body.moneyPromotion.price ? body.moneyPromotion.price : 0
       /* tạo đơn hàng mới */
       const order = new Order({
         ...body,
-        total: total + priceShipping,
+        total: total + priceShipping - Number(moneyPromotion) || 0,
         priceShipping: body.priceShipping,
         is_active: true,
         isPayment: ['vnpay', 'stripe'].includes(body.paymentMethodId) ? true : false,
@@ -68,7 +69,7 @@ export const orderController = {
           data: cart,
         });
       }
- 
+
       return res.status(200).json({
         message: 'create order successfully',
         order: {
@@ -95,6 +96,7 @@ export const orderController = {
             populate: { path: 'role', select: '-users' },
           },
           { path: 'items.product' },
+          { path: 'moneyPromotion.voucherId' },
         ],
       };
       const query = q ? { name: { $regex: q, $options: 'i' } } : {};
@@ -118,6 +120,10 @@ export const orderController = {
           select: '-password -products -order',
           populate: { path: 'role', select: '-users' },
         },
+        {
+          path: 'moneyPromotion.voucherId',
+        },
+
         {
           path: 'items.product',
           select: '-toppings -sizes -is_deleted -createdAt -updatedAt',
@@ -274,6 +280,7 @@ export const orderController = {
         populate: [
           { path: 'user', select: '_id googleId username avatar' },
           { path: 'items.product', select: '_id name sale' },
+          { path: 'moneyPromotion.voucherId', },
         ],
       };
       /* chức năng tìm kiếm đơn hàng */
@@ -295,7 +302,7 @@ export const orderController = {
 
       if ((startDate && !endDate) || (startDate && endDate)) {
         const targetDate = new Date(startDate);
-        
+
         targetDate.setHours(0, 0, 0, 0);
         const targetEndDate = new Date(targetDate);
         targetEndDate.setHours(23, 59, 59, 999);

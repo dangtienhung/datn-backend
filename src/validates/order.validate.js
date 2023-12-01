@@ -47,5 +47,10 @@ export const orderValidate = joi.object({
       'object.empty': 'inforOrderShipping must be an object',
       'any.required': 'inforOrderShipping is required',
     }),
+  moneyPromotion: joi
+    .object({
+      price: joi.number().default(0),
+      voucherId: joi.string(),
+    }),
   is_active: joi.boolean().valid(true, false).default(true),
 });
