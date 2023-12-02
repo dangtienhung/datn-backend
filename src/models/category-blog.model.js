@@ -19,7 +19,7 @@ export const categoryBlogSchema = mongoose.Schema(
     blogs: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'blog',
+        ref: 'NewsBlog',
       },
     ],
   },
