@@ -16,7 +16,7 @@ export const toppingController = {
         return res.status(400).json({ message: 'fail', err: 'Thêm mới topping thất bại' });
       }
 
-      return res.status(200).json({ message: 'succes', data: topping });
+      return res.status(200).json({ message: 'success', data: topping });
     } catch (error) {
       next(error);
     }
@@ -28,7 +28,7 @@ export const toppingController = {
       if (!topping) {
         return res.status(404).json({ message: 'fail', err: 'Không tìm thấy Topping' });
       }
-      return res.status(200).json({ message: 'succes', data: topping });
+      return res.status(200).json({ message: 'success', data: topping });
     } catch (error) {
       next(error);
     }
