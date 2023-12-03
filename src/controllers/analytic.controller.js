@@ -277,6 +277,106 @@ export const analyticController = {
     }
   },
 
+  /* tổng số tiền doanh thu theo tuần 52 tuần */
+  getWeeklyRevenueByStatus: async (status) => {
+    try {
+      const currentYear = new Date().getFullYear();
+      let weeklyRevenue = [];
+
+      // Lặp qua 52 tuần trong năm
+      for (let week = 1; week <= 52; week++) {
+        // Xác định ngày đầu tiên và cuối cùng của tuần
+        const startOfWeek = new Date(currentYear, 0, (week - 1) * 7);
+        const endOfWeek = new Date(currentYear, 0, week * 7);
+
+        const ordersInWeek = await Order.find({
+          status,
+          createdAt: { $gte: startOfWeek, $lte: endOfWeek },
+        });
+
+        const totalRevenueInWeek = ordersInWeek.reduce((total, order) => total + order.total, 0);
+
+        weeklyRevenue.push({
+          week: week,
+          totalRevenue: totalRevenueInWeek,
+        });
+      }
+
+      return weeklyRevenue;
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
+
+  getWeeklyRevenueByStatusAndCurrentMonth: async (status) => {
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth(); // Lấy tháng hiện tại (bắt đầu từ 0)
+
+    // Xác định ngày đầu tiên và cuối cùng của tháng hiện tại
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+    const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+
+    // Lấy số tuần trong tháng
+    const totalWeeks = Math.ceil((lastDayOfMonth.getDate() - firstDayOfMonth.getDate() + 1) / 7);
+    console.log(
+      '🚀 ~ file: analytic.controller.js:321 ~ getWeeklyRevenueByStatusAndCurrentMonth: ~ totalWeeks:',
+      totalWeeks
+    );
+
+    let weeklyRevenue = [];
+
+    // Lặp qua các tuần trong tháng
+    for (let week = 1; week < totalWeeks; week++) {
+      // Xác định ngày đầu tiên và cuối cùng của tuần
+      const startOfWeek = new Date(currentYear, currentMonth, (week - 1) * 7 + 1);
+      const endOfWeek = new Date(currentYear, currentMonth, week * 7);
+
+      // Đảm bảo rằng endOfWeek không vượt quá ngày cuối cùng của tháng
+      if (endOfWeek > lastDayOfMonth) {
+        endOfWeek.setDate(lastDayOfMonth.getDate());
+      }
+
+      const ordersInWeek = await Order.find({
+        status,
+        createdAt: { $gte: startOfWeek, $lte: endOfWeek },
+      });
+
+      const totalRevenueInWeek = ordersInWeek.reduce((total, order) => total + order.total, 0);
+
+      weeklyRevenue.push({
+        week: week,
+        totalRevenue: totalRevenueInWeek,
+      });
+    }
+
+    return weeklyRevenue;
+  },
+
+  /* tổng số tiền thu theo từng tháng */
+  countOrderByStatusAndMonth: async (status) => {
+    const currentYear = new Date().getFullYear();
+    let monthlyRevenue = [];
+
+    for (let month = 1; month <= 12; month++) {
+      const startOfMonth = new Date(currentYear, month - 1, 1);
+      const endOfMonth = new Date(currentYear, month, 0, 23, 59, 59, 999);
+
+      const ordersInMonth = await Order.find({
+        status,
+        createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+      });
+
+      const totalRevenueInMonth = ordersInMonth.reduce((total, order) => total + order.total, 0);
+
+      monthlyRevenue.push({
+        month: month,
+        totalRevenue: totalRevenueInMonth,
+      });
+    }
+
+    return monthlyRevenue;
+  },
+
   analytics: async (_, res) => {
     try {
       /* đếm số lượng khách hàng */
@@ -474,6 +574,84 @@ export const analyticController = {
           { name: 'total', value: countBlogs },
           { name: 'active', value: countBlogActive },
           { name: 'inActive', value: countBlogInActive },
+        ],
+      });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
+
+  analyticMonth: async (req, res) => {
+    try {
+      /* order có trạng thái là pending theo tháng */
+      const countOrderPendingMonth = await analyticController.countOrderByStatusAndMonth('pending');
+      /* order có trạng thái là confirmed theo tháng */
+      const countOrderConfirmedMonth = await analyticController.countOrderByStatusAndMonth(
+        'confirmed'
+      );
+      /* order có trạng thái là done theo tháng */
+      const countOrderDoneMonth = await analyticController.countOrderByStatusAndMonth('done');
+      /* order có trạng thái là canceled theo tháng */
+      const countOrderCanceledMonth = await analyticController.countOrderByStatusAndMonth(
+        'canceled'
+      );
+
+      /* số tiền thu được theo tuần */
+      const totalMoneyWeeksPending =
+        await analyticController.getWeeklyRevenueByStatusAndCurrentMonth('pending');
+      const totalMoneyWeeksConfirmed =
+        await analyticController.getWeeklyRevenueByStatusAndCurrentMonth('confirmed');
+      const totalMoneyWeeksDone = await analyticController.getWeeklyRevenueByStatusAndCurrentMonth(
+        'done'
+      );
+      const totalMoneyWeeksCanceled =
+        await analyticController.getWeeklyRevenueByStatusAndCurrentMonth('canceled');
+
+      /* số tiền thu được theo tháng */
+      // const totalMoneyMonth = await Order.aggregate([
+      //   { $match: { status: 'done' } },
+      //   {
+      //     $group: {
+      //       _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } },
+      //       total: { $sum: '$total' },
+      //     },
+      //   },
+      // ]).sort({ _id: -1 });
+
+      return res.status(200).json({
+        orders: [
+          {
+            name: 'weeks',
+            analytics: [
+              {
+                name: 'pending',
+                analytics: totalMoneyWeeksPending,
+              },
+              {
+                name: 'confirmed',
+                analytics: totalMoneyWeeksConfirmed,
+              },
+              {
+                name: 'done',
+                analytics: totalMoneyWeeksDone,
+              },
+              {
+                name: 'canceled',
+                analytics: totalMoneyWeeksCanceled,
+              },
+            ],
+          },
+          {
+            name: 'months',
+            analytics: [
+              {
+                pending: countOrderPendingMonth,
+                confirmed: countOrderConfirmedMonth,
+                done: countOrderDoneMonth,
+                canceled: countOrderCanceledMonth,
+              },
+            ],
+          },
         ],
       });
     } catch (error) {
