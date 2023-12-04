@@ -63,7 +63,7 @@ export const ProductController = {
           });
         }
       }
-      return res.status(200).json({ message: 'succes', data: product });
+      return res.status(200).json({ message: 'success', data: product });
     } catch (error) {
       next(error);
     }
@@ -139,7 +139,7 @@ export const ProductController = {
           });
         }
       }
-      return res.status(200).json({ message: 'succes', data: product });
+      return res.status(200).json({ message: 'success', data: product });
     } catch (error) {
       return res.status(500).json({ message: 'fail', err: error });
     }
