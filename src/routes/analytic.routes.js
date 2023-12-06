@@ -12,6 +12,7 @@ router.get('/countOrderDayByProduct', analyticController.countOrderDayByProduct)
 router.get('/countUser', analyticController.countUser);
 
 router.get('/analytics', analyticController.analytics);
+router.get('/analyst', analyticController.analysticTotal);
 router.get('/analytics-month', analyticController.analyticMonth);
 
 export default router;
