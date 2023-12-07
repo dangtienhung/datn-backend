@@ -9,7 +9,7 @@
     "start": "nodemon ./src/app.js",
     "startBot": "npx nodemon ./bot/index.js",
     "dev": "nodemon ./clientBot2.js",
-    "all": "concurrently \"npm start\" \"npm run dev\" \"npm run startBot\""
+    "all": "concurrently \"npm run dev\" \"npm run startBot\" \"npm start\" "
   },
   "keywords": [],
   "author": "",
