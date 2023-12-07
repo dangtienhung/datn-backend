@@ -62,13 +62,17 @@ export const userController = {
   },
   // register
   register: async (req, res) => {
+
+
     try {
 
       const { error } = signupSchema.validate(req.body, { abortEarly: false });
+
       if (error) {
         const errors = error.details.map((error) => error.message);
+
         return res.status(400).json({
-          message: errors,
+          message: errors[0],
         });
       }
 
@@ -88,7 +92,7 @@ export const userController = {
         });
 
         return res.status(201).json({
-          message: 'register success',
+          message: 'Đăng ký tài khoản thành công',
 
           user: {
             _id: user._id,
@@ -98,9 +102,13 @@ export const userController = {
           },
         });
       } else {
-        throw new Error('User already exists');
+       
+        return res.status(500).json({
+          message: 'Tài khoản đã tồn tại !',
+        });
       }
     } catch (error) {
+
       res.status(500).json({
         message: error,
       });
@@ -117,7 +125,7 @@ export const userController = {
       if (!findUser) {
         return res.status(400).json({ message: 'Tài khoản không tồn tại' });
       }
-      if(findUser.status!=="active"){
+      if (findUser.status !== "active") {
         return res.status(400).json({ message: 'Tài khoản của bạn đã bị chặn do vi phạm chính sách cửa hàng' });
 
       }
