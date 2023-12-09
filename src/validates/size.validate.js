@@ -13,6 +13,10 @@ const SizeValidate = joi.object({
     'string.empty': 'product is not allowed to be empty',
     'any.required': 'product is required',
   }),
+  is_default: joi.boolean().messages({
+    'boolean.base': 'is_default must be a boolean',
+    'boolean.empty': 'is_default is not allowed to be empty',
+  }),
 });
 
 export default SizeValidate;

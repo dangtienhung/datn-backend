@@ -86,9 +86,8 @@ export const SizeController = {
   /* lấy ra tất cả các size có is_default là true */
   getAllSizeDefault: async (req, res, next) => {
     try {
-     
       const size = await Size.find({ is_default: true });
-     
+
       if (!size) {
         return res.status(404).json({ message: 'fail', err: 'Not found any size' });
       }

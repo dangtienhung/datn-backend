@@ -323,7 +323,6 @@ export default (io) => {
     });
 
     socket.on('disconnect', () => {
-      console.log('User disconnected');
       // Gửi thông báo cho tất cả người dùng trong phòng
       io.emit('user left', `${socket.username} left the chat`);
     });
