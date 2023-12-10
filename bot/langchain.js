@@ -132,12 +132,12 @@ axios
       manager.addAnswer(
         'vi',
         'AskProduct' + i,
-        'Giá hiện tại của ' + value.name + ' là ' + value.sale + 'vnđ nhé bạn !'
+        'Giá hiện tại của ' + value.name + ' là ' + value.sale + 'VND nhé bạn !'
       );
       manager.addAnswer(
         'vi',
         'AskProduct' + i,
-        'Giá của ' + value.name + ' là ' + value.sale + 'vnđ nè !'
+        'Giá của ' + value.name + ' là ' + value.sale + 'VND nè !'
       );
       //description
       manager.addDocument(
@@ -271,7 +271,7 @@ axios
         value['shippingInfo']['address'] +
         '<br>Tồng tiền: ' +
         value.totalPrice +
-        "vnđ <br><b style='color:#e91e63'>Trạng thái đơn: " +
+        "VND <br><b style='color:#e91e63'>Trạng thái đơn: " +
         value['status'] +
         '</b></nav>'
       );
@@ -337,13 +337,13 @@ axios
       manager.addAnswer(
         'vi',
         'AskAboutTopping?name=' + i,
-        'Giá của ' + value.name + ' là ' + value.price + 'vnđ nhé bạn 😀'
+        'Giá của ' + value.name + ' là ' + value.price + 'VND nhé bạn 😀'
       );
-      manager.addAnswer('vi', 'AskAboutTopping?name=' + i, value.price + 'vnđ nhé bạn ơi');
+      manager.addAnswer('vi', 'AskAboutTopping?name=' + i, value.price + 'VND nhé bạn ơi');
       manager.addAnswer(
         'vi',
         'AskAboutTopping?name=' + i,
-        'Giá hiện tại là' + value.price + 'vnđ nhé'
+        'Giá hiện tại là' + value.price + 'VND nhé'
       );
 
       //train don ao

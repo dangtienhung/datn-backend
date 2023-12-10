@@ -43,31 +43,40 @@ export const orderController = {
           });
         }
       });
-      // check voucher đã đc dùng hay chưa
-      const checkVoucher = body?.moneyPromotion?.voucherId && await Voucher.findById({ _id: body.moneyPromotion.voucherId })
-
-      if (!checkVoucher) {
-        return res.status(400).json({ error: 'Không tìm thấy mã voucher' });
-      }
-
-      if (checkVoucher.discount == 0) {
-        return res.status(400).json({ error: 'Voucher đã hết lượt dùng!' });
-      }
-      const userUsedVoucher = body.user ? body.user : body.inforOrderShipping.phone
-      const exitUser = checkVoucher.user_used.includes(userUsedVoucher);
-      if (exitUser) {
-        return res.status(400).json({ error: 'Đã hết lượt dùng Voucher' });
-      }
-
-      checkVoucher?.user_used.push(userUsedVoucher)
-      checkVoucher.discount--
-      await checkVoucher.save()
-
-      /* kiểm tra xem đã có order nào chưa */
+      let totalAll = 0
       const priceShipping = Number(body.priceShipping) || 0;
-      const moneyPromotion = body.moneyPromotion?.price ? body.moneyPromotion?.price : 0
-      const totalPricePr = total + priceShipping - Number(moneyPromotion)
-      const totalAll = Number(moneyPromotion) >= totalPricePr ? 0 : totalPricePr
+      // check _id or phone user
+      const userUsedVoucher =   body.inforOrderShipping.phone
+      // check voucher đã đc dùng hay chưa
+      if (body?.moneyPromotion?.voucherId) {
+
+        const checkVoucher = await Voucher.findById({ _id: body.moneyPromotion.voucherId })
+
+        if (!checkVoucher) {
+          return res.status(400).json({ error: 'Không tìm thấy mã voucher' });
+        }
+
+        if (checkVoucher.discount == 0) {
+          return res.status(400).json({ error: 'Voucher đã hết lượt dùng!' });
+        }
+        const exitUser = checkVoucher.user_used.includes(userUsedVoucher);
+        if (exitUser) {
+          return res.status(400).json({ error: 'Đã hết lượt dùng Voucher' });
+        }
+
+        checkVoucher?.user_used.push(userUsedVoucher)
+        checkVoucher.discount--
+        await checkVoucher.save()
+
+        const moneyPromotion = body.moneyPromotion?.price ? body.moneyPromotion?.price : 0
+        const totalPricePr = total + priceShipping - Number(moneyPromotion)
+        totalAll = totalPricePr <= 0 ? 0 : totalPricePr
+      }
+      else {
+        totalAll = total + priceShipping
+      }
+
+
       /* tạo đơn hàng mới */
       const order = new Order({
         ...body,
