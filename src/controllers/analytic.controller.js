@@ -663,6 +663,7 @@ export const analyticController = {
   analysticTotal: async (req, res) => {
     var doanh_thu = 0;
     const currentDate = new Date();
+    console.log(currentDate);
     const currentMonth = currentDate.getMonth() + 1;
     const currentYear = currentDate.getFullYear();
     const result = await Order.find({
@@ -788,29 +789,38 @@ export const analyticController = {
         const ass1_b = await User.findOne({ _id: key });
         cUser2_Order.push(ass1_b);
       }
-    res.json({
-      '*theo thời gian tuỳ ý': AnaZone,
-      voucher: {
-        'số lượng': Vouchers.length,
-        'tổng tiền': total_voucher_money,
-      },
-      'doanh thu tháng này': {
-        'tháng này': doanh_thu,
-        'tổng doanh thu': all_dth,
-        'số đơn': list_doanhthu,
-        'doanh thu khách vãn lai ': dt_ssUser2_Order,
-      },
+    const { TopSell } = req.query;
+    if (!TopSell) {
+      res.json({
+        '*theo thời gian tuỳ ý': AnaZone,
+        voucher: {
+          'số lượng': Vouchers.length,
+          'tổng tiền': total_voucher_money,
+        },
+        'doanh thu tháng này': {
+          'tháng này': doanh_thu,
+          'tổng doanh thu': all_dth,
+          'số đơn': list_doanhthu,
+          'doanh thu khách vãn lai ': dt_ssUser2_Order,
+        },
 
-      'số user tham gia': {
-        'tháng này': nUs.length,
-        'tổng ': all_nUs.length,
-        'khách vãn lai': c_ssUser2_Order,
-      },
-      'mặt hàng bán chạy tháng này': {
-        'sản phẩm bán nhiều nhất': m_product,
-        'danh sách ': sold_product,
-      },
-      'user mua 2 đơn trở lên': cUser2_Order,
-    });
+        'số user tham gia': {
+          'tháng này': nUs.length,
+          'tổng ': all_nUs.length,
+          'khách vãn lai': c_ssUser2_Order,
+        },
+        TopSell: {
+          'sản phẩm bán nhiều nhất': m_product,
+          List: [sold_product],
+        },
+        'user mua 2 đơn trở lên': cUser2_Order,
+      });
+    } else {
+      var newArr = [];
+      for (const [key, value] of Object.entries(sold_product)) {
+        newArr.push({ ...value, name: key });
+      }
+      return res.json(newArr);
+    }
   },
 };
