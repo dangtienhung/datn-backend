@@ -609,14 +609,12 @@ export const analyticController = {
         await analyticController.getWeeklyRevenueByStatusAndCurrentMonth('canceled');
 
       /* số tiền thu được theo tháng */
-      // const totalMoneyMonth = await Order.aggregate([
       //   { $match: { status: 'done' } },
       //   {
       //     $group: {
       //       _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } },
       //       total: { $sum: '$total' },
       //     },
-      //   },
       // ]).sort({ _id: -1 });
 
       return res.status(200).json({
