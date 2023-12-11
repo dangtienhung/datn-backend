@@ -4,6 +4,7 @@ export const orderValidate = joi.object({
   user: joi.string(),
   payment_intent: joi.string(),
   payment_vnpay: joi.string().default(false),
+  email: joi.string().required(),
   isPayment: joi.boolean(),
   items: joi.array().items(
     joi.object({

@@ -1,9 +1,10 @@
-import Order from '../models/order.model.js';
 import dotenv from 'dotenv';
-import { orderValidate } from '../validates/order.validate.js';
-import Cart from '../models/cart.model.js';
 import { generatePaymentToken } from '../configs/token.js';
+import Cart from '../models/cart.model.js';
+import Order from '../models/order.model.js';
 import Voucher from '../models/voucher.model.js';
+import { orderValidate } from '../validates/order.validate.js';
+import { sendEmailOrder } from './nodeMailer.controllers.js';
 dotenv.config();
 
 export const orderController = {
@@ -17,15 +18,6 @@ export const orderController = {
         noteShipping: body.inforOrderShipping.noteShipping,
       };
       const encodeStripe = generatePaymentToken(note);
-
-      //gửi mail
-      // var message="Mua hàng thành công";
-      // var subject="Payment Success";
-      // var email=body['inforOrderShipping']['email'];
-
-      // var link=""
-      // axios.get('https://ketquaday99.com/api/NodeMailer/?email='+email+'&subject='+subject+'&message='+message).then(function (response) {console.log(response);});
-
       /* validate */
       const { error } = orderValidate.validate(body, { abortEarly: false });
       if (error) {
@@ -46,7 +38,7 @@ export const orderController = {
       let totalAll = 0
       const priceShipping = Number(body.priceShipping) || 0;
       // check _id or phone user
-      const userUsedVoucher =   body.inforOrderShipping.phone
+      const userUsedVoucher = body.inforOrderShipping.phone
       // check voucher đã đc dùng hay chưa
       if (body?.moneyPromotion?.voucherId) {
 
@@ -86,7 +78,17 @@ export const orderController = {
         isPayment: ['vnpay', 'stripe'].includes(body.paymentMethodId) ? true : false,
       });
 
+      const dataEmail = {
+        items,
+        userInfo: body.inforOrderShipping,
+        priceShipping: body.priceShipping,
+        total: totalAll,
+        to: body.email,
+        text: 'Hi!',
+        subject: 'cảm ơn bạn đã đặt hàng tại Trà sữa Connect',
 
+      };
+      await sendEmailOrder(dataEmail)
       /* lưu đơn hàng mới */
       const orderNew = await order.save();
       if (!orderNew) {
