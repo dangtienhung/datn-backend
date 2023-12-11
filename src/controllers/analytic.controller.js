@@ -1,4 +1,5 @@
-import Coins from '../models/coin.js'; import Category from '../models/category.model.js';
+import Coins from '../models/coin.js';
+import Category from '../models/category.model.js';
 import { CategoryBlog } from '../models/category-blog.model.js';
 import Order from '../models/order.model.js';
 import Product from '../models/product.model.js';
@@ -660,8 +661,6 @@ export const analyticController = {
   },
 
   analysticTotal: async (req, res) => {
-    //doanh thu
-
     var doanh_thu = 0;
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth() + 1;
@@ -698,26 +697,33 @@ export const analyticController = {
           money: list_doanhthu['tháng ' + v.month].money + v.total,
         };
     }
-    // console.log(doanh_thu);
     var all_dth = 0;
     const all_dt = await Order.find({});
     for (const v of all_dt) if (v.status != 'canceled') all_dth += v.total;
     var sold_product = {};
-    var m_product = { count: 0, name: '' };
+    var m_product = { count: 0, name: '', _id: '', images: [] };
     //
     for (const v of result) {
-      // console.log(v.items, 'p');
-
       if (v.status != 'canceled') doanh_thu += v.total; //doanh thu
-      // mặt hàng bán đc
       for (const c of v.items) {
-        if (sold_product[c.name] === undefined)
-          sold_product = { ...sold_product, ...{ [c.name]: 1 } };
-        else sold_product[c.name] = sold_product[c.name] + 1;
-        if (m_product.count < sold_product[c.name])
-          m_product = { count: sold_product[c.name], name: c.name };
+        if (!sold_product[c.name]) {
+          sold_product[c.name] = { count: 1, _id: c._id, images: [c.image] };
+        } else {
+          if (!sold_product[c.name].images.includes(c.image)) {
+            sold_product[c.name].images.push(c.image);
+          }
+          sold_product[c.name].count++;
+          sold_product[c.name]._id = c._id;
+        }
+        if (m_product.count < sold_product[c.name].count) {
+          m_product.count = sold_product[c.name].count;
+          m_product.name = c.name;
+          m_product._id = c._id;
+          m_product.images = sold_product[c.name].images;
+        }
       }
     }
+    console.log(sold_product, 'C');
     //số user mới
     const nUs = await Coins.find({
       $expr: {
@@ -806,6 +812,5 @@ export const analyticController = {
       },
       'user mua 2 đơn trở lên': cUser2_Order,
     });
-  }
-
+  },
 };
