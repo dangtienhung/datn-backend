@@ -187,15 +187,12 @@ export const userController = {
   handleRefreshToken: async (req, res) => {
     try {
       const { token: refreshToken } = req.params;
-
       const isHasUser = jwt.verify(refreshToken, process.env.JWT_SECRET);
-
       const user = await User.findById(isHasUser?.id);
       if (!user || !refreshToken) throw new Error('No refresh token present in db or not matched');
 
       if (refreshToken && user) {
         const accessToken = generateToken(user?._id);
-
         res.json({
           message: 'refreshToken success',
           data: accessToken,
