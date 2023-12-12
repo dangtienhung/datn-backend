@@ -35,14 +35,13 @@ export const orderController = {
           });
         }
       });
-      let totalAll = 0
+      let totalAll = 0;
       const priceShipping = Number(body.priceShipping) || 0;
       // check _id or phone user
-      const userUsedVoucher = body.inforOrderShipping.phone
+      const userUsedVoucher = body.inforOrderShipping.phone;
       // check voucher đã đc dùng hay chưa
       if (body?.moneyPromotion?.voucherId) {
-
-        const checkVoucher = await Voucher.findById({ _id: body.moneyPromotion.voucherId })
+        const checkVoucher = await Voucher.findById({ _id: body.moneyPromotion.voucherId });
 
         if (!checkVoucher) {
           return res.status(400).json({ error: 'Không tìm thấy mã voucher' });
@@ -56,18 +55,16 @@ export const orderController = {
           return res.status(400).json({ error: 'Đã hết lượt dùng Voucher' });
         }
 
-        checkVoucher?.user_used.push(userUsedVoucher)
-        checkVoucher.discount--
-        await checkVoucher.save()
+        checkVoucher?.user_used.push(userUsedVoucher);
+        checkVoucher.discount--;
+        await checkVoucher.save();
 
-        const moneyPromotion = body.moneyPromotion?.price ? body.moneyPromotion?.price : 0
-        const totalPricePr = total + priceShipping - Number(moneyPromotion)
-        totalAll = totalPricePr <= 0 ? 0 : totalPricePr
+        const moneyPromotion = body.moneyPromotion?.price ? body.moneyPromotion?.price : 0;
+        const totalPricePr = total + priceShipping - Number(moneyPromotion);
+        totalAll = totalPricePr <= 0 ? 0 : totalPricePr;
+      } else {
+        totalAll = total + priceShipping;
       }
-      else {
-        totalAll = total + priceShipping
-      }
-
 
       /* tạo đơn hàng mới */
       const order = new Order({
@@ -86,9 +83,9 @@ export const orderController = {
         to: body.email,
         text: 'Hi!',
         subject: 'cảm ơn bạn đã đặt hàng tại Trà sữa Connect',
-
       };
-      await sendEmailOrder(dataEmail)
+      await sendEmailOrder(dataEmail);
+      console.log(dataEmail);
       /* lưu đơn hàng mới */
       const orderNew = await order.save();
       if (!orderNew) {
@@ -316,7 +313,7 @@ export const orderController = {
         populate: [
           { path: 'user', select: '_id googleId username avatar' },
           { path: 'items.product', select: '_id name sale' },
-          { path: 'moneyPromotion.voucherId', },
+          { path: 'moneyPromotion.voucherId' },
         ],
       };
       /* chức năng tìm kiếm đơn hàng */

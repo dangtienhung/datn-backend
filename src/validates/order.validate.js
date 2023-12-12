@@ -4,7 +4,6 @@ export const orderValidate = joi.object({
   user: joi.string(),
   payment_intent: joi.string(),
   payment_vnpay: joi.string().default(false),
-  email: joi.string().required(),
   isPayment: joi.boolean(),
   items: joi.array().items(
     joi.object({
@@ -39,6 +38,7 @@ export const orderValidate = joi.object({
     .object({
       name: joi.string().required(),
       address: joi.string().required(),
+      email: joi.string().required(),
       phone: joi.string().required(),
       noteShipping: joi.string(),
     })
@@ -48,10 +48,9 @@ export const orderValidate = joi.object({
       'object.empty': 'inforOrderShipping must be an object',
       'any.required': 'inforOrderShipping is required',
     }),
-  moneyPromotion: joi
-    .object({
-      price: joi.number().default(0),
-      voucherId: joi.string(),
-    }),
+  moneyPromotion: joi.object({
+    price: joi.number().default(0),
+    voucherId: joi.string().allow(''),
+  }),
   is_active: joi.boolean().valid(true, false).default(true),
 });

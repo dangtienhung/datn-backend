@@ -12,7 +12,7 @@ const voucherSchema = new mongoose.Schema(
     sale: { type: Number, require: true },
     startDate: { type: Date, default: Date.now },
     // endDate sẽ hết hạn sau 7 ngày kể từ ngày tạo
-    endDate: { type: Date, default: () => moment().add(7, 'days').toDate() },
+    endDate: { type: Date, require: true },
     isActive: { type: Boolean, default: true },
     desc: {
       type: String, required: true
