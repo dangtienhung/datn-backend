@@ -16,7 +16,7 @@ export const voucherValidate = joi.object({
   discount: joi.number().required(),
   sale: joi.number().required(),
   startDate: joi.date().default(Date.now),
-  endDate: joi.date().default(Date.now + 7),
+  endDate: joi.date().default(Date.now + 1),
   isActive: joi.boolean().default(true).messages({
     'any.required': 'isActive is required',
   }),
