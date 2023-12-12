@@ -280,7 +280,13 @@ export const analyticController = {
 
   // date -> y/m/d
   fillterOrderByCalendar: async (status, date) => {
-    const fillterDate = new Date(date);
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+    const day = ('0' + currentDate.getDate()).slice(-2);
+
+    const isDate = `${year}-${month}-${day}`;
+    const fillterDate = date ? new Date(date) : new Date(isDate);
     const thongKe = await Order.aggregate([
       { $match: { status: status, createdAt: { $lte: fillterDate } } },
       {
