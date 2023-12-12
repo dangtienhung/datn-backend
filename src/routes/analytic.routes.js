@@ -13,6 +13,7 @@ router.get('/countUser', analyticController.countUser);
 
 router.get('/analytics', analyticController.analytics);
 router.get('/analyst', analyticController.analysticTotal);
+router.post('/analyst-fillter', analyticController.analysticFillter);
 router.get('/analytics-month', analyticController.analyticMonth);
 
 export default router;

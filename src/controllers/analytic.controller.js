@@ -255,7 +255,7 @@ export const analyticController = {
   },
 
   /* tổng số tiền thu theo từng ngày */
-  totalMoneyDay: async (_, res) => {
+  totalMoneyDay: async (req, res) => {
     try {
       const thongKe = await Order.aggregate([
         { $match: { status: 'done' } },
@@ -276,6 +276,24 @@ export const analyticController = {
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
+  },
+
+  // date -> y/m/d
+  fillterOrderByCalendar: async (status, date) => {
+    const fillterDate = new Date(date);
+    const thongKe = await Order.aggregate([
+      { $match: { status: status, createdAt: { $lte: fillterDate } } },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: '$total' },
+          count: { $sum: 1 },
+        },
+      },
+    ])
+      .sort({ _id: -1 })
+      .limit(7);
+    return thongKe;
   },
 
   /* tổng số tiền doanh thu theo tuần 52 tuần */
@@ -819,6 +837,26 @@ export const analyticController = {
         newArr.push({ ...value, name: key });
       }
       return res.json(newArr);
+    }
+  },
+
+  //Fillter theo lịch âm
+  analysticFillter: async (req, res) => {
+    try {
+      //date -> y/m/d
+      const done = await analyticController.fillterOrderByCalendar('done', req.body.date);
+      const canceled = await analyticController.fillterOrderByCalendar('canceled', req.body.date);
+      const confirmed = await analyticController.fillterOrderByCalendar('confirmed', req.body.date);
+      const pending = await analyticController.fillterOrderByCalendar('pending', req.body.date);
+      const data = {
+        done,
+        pending,
+        canceled,
+        confirmed,
+      };
+      return res.status(200).json(data);
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
     }
   },
 };
