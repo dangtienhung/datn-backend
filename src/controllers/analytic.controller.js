@@ -729,8 +729,9 @@ export const analyticController = {
     for (const v of result) {
       if (v.status != 'canceled') doanh_thu += v.total; //doanh thu
       for (const c of v.items) {
+        console.log(c, 'cc');
         if (!sold_product[c.name]) {
-          sold_product[c.name] = { count: 1, _id: c._id, images: [c.image] };
+          sold_product[c.name] = { count: 1, _id: c._id, images: [c.image], price: c.price };
         } else {
           if (!sold_product[c.name].images.includes(c.image)) {
             sold_product[c.name].images.push(c.image);
@@ -746,7 +747,6 @@ export const analyticController = {
         }
       }
     }
-    console.log(sold_product, 'C');
     //số user mới
     const nUs = await Coins.find({
       $expr: {
