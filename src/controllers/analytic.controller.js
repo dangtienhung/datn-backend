@@ -343,10 +343,7 @@ export const analyticController = {
 
     // Lấy số tuần trong tháng
     const totalWeeks = Math.ceil((lastDayOfMonth.getDate() - firstDayOfMonth.getDate() + 1) / 7);
-    console.log(
-      '🚀 ~ file: analytic.controller.js:321 ~ getWeeklyRevenueByStatusAndCurrentMonth: ~ totalWeeks:',
-      totalWeeks
-    );
+
 
     let weeklyRevenue = [];
 
@@ -685,7 +682,7 @@ export const analyticController = {
   analysticTotal: async (req, res) => {
     var doanh_thu = 0;
     const currentDate = new Date();
-    console.log(currentDate);
+
     const currentMonth = currentDate.getMonth() + 1;
     const currentYear = currentDate.getFullYear();
     const result = await Order.find({
@@ -746,7 +743,7 @@ export const analyticController = {
         }
       }
     }
-    console.log(sold_product, 'C');
+
     //số user mới
     const nUs = await Coins.find({
       $expr: {
