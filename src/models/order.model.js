@@ -85,6 +85,7 @@ const orderSchema = new mongoose.Schema(
       type: Boolean,
       default: true
     },
+    email: String,
     moneyPromotion: {
       price: Number,
       voucherId: {

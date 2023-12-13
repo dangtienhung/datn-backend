@@ -1,3 +1,4 @@
+import moment from 'moment';
 import dotenv from 'dotenv';
 import { generatePaymentToken } from '../configs/token.js';
 import Cart from '../models/cart.model.js';
@@ -6,7 +7,6 @@ import Voucher from '../models/voucher.model.js';
 import { orderValidate } from '../validates/order.validate.js';
 import { sendEmailOrder } from './nodeMailer.controllers.js';
 dotenv.config();
-
 export const orderController = {
   /* create */
   create: async (req, res) => {
@@ -83,6 +83,10 @@ export const orderController = {
 
       const dataEmail = {
         items,
+        statusOrder: "Chờ xác nhận",
+        orderId: order._id,
+        payment: body.paymentMethodId,
+        createdAt: moment(new Date()).format(" HH:mm:ss ĐD-MM-YYYY"),
         userInfo: body.inforOrderShipping,
         priceShipping: body.priceShipping,
         total: totalAll,
@@ -91,6 +95,7 @@ export const orderController = {
         subject: 'cảm ơn bạn đã đặt hàng tại Trà sữa Connect',
 
       };
+
       await sendEmailOrder(dataEmail)
       /* lưu đơn hàng mới */
       const orderNew = await order.save();
@@ -183,7 +188,7 @@ export const orderController = {
 
   /* cập nhật trạng thái đơn hàng */
   updateStatus: async (id, status) => {
-    try {
+    
       const updateState = await Order.findByIdAndUpdate(
         id,
         { status: status },
@@ -196,10 +201,70 @@ export const orderController = {
         },
         { path: 'items.product' },
       ]);
+      
+      const dataEmail = {
+        to: updateState.email,
+        text: 'Hi!',
+        subject: 'cảm ơn bạn đã đặt hàng tại Trà sữa Connect',
+        html: `
+          <style>
+           
+            .container {
+              max-width: 600px;
+              margin: 0 auto;
+              padding: 20px;
+              background-color: #f5f5f5;
+            }
+        
+            h1 {
+              color: #333;
+              font-size: 24px;
+              margin-bottom: 20px;
+            }
+        
+            p {
+              color: #666;
+              font-size: 16px;
+            }
+        
+            .order-status {
+              font-weight: bold;
+              margin-top: 10px;
+            }
+        
+            .footer {
+              margin-top: 20px;
+              text-align: center;
+            }
+          </style>
+       
+          <div class="container">
+            <h1>Thông báo trạng thái đơn hàng</h1>
+            <div class="receipt-right">
+            <h3><b>Dear ${updateState?.inforOrderShipping?.name} </b></h3>
+
+            <p><b>Số Điện thoại :</b> ${updateState?.inforOrderShipping?.phone}</p>
+            <p><b>Thời gian :</b> ${moment(new Date()).format(" HH:mm:ss ĐD-MM-YYYY")}</p>
+            <p><b>Hình thức thanh toán:</b> ${updateState.paymentMethodId == "vnpay" ? "VNPAY" : "Thanh toán khi nhận hàng"}</p>
+            <p><b>Id đơn hàng:</b> ${updateState._id}</p>
+            
+            <p><b>Địa chỉ :</b>${updateState?.inforOrderShipping?.address}</p>
+          </div>
+            
+            <div class="order-status"> Đơn hàng của bạn đã được cập nhật với trạng thái: <b>${status == "confirmed" ? "Đã xác nhận" : status == "done" ? "Đã hoàn thành" : "Đơn đã hủy"}</b></div>
+            <div class="footer">
+              <p>Cảm ơn bạn rất nhiều 💕💕💕!</p>
+              <p>Đội ngũ hỗ trợ khách hàng</p>
+            </div>
+          </div>
+       `
+      };
+      
+
+      await sendEmailOrder(dataEmail)
+     
       return updateState;
-    } catch (error) {
-      return res.status(500).json({ error: error.message });
-    }
+     
   },
 
   /* cập nhật trạng thái đơn hàng thành confirmed */
