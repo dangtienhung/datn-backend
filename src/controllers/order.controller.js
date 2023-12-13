@@ -16,6 +16,9 @@ export const orderController = {
         user: body.user,
         noteOrder: body.noteOrder,
         noteShipping: body.inforOrderShipping.noteShipping,
+        email: body.email,
+        price: body?.moneyPromotion?.price,
+        voucherId: body?.moneyPromotion?.voucherId
       };
       const encodeStripe = generatePaymentToken(note);
       /* validate */

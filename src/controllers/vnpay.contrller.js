@@ -53,7 +53,7 @@ const checkoutVnpay = {
         req.body.inforOrderShipping.name
       }&phone=${req.body.inforOrderShipping.phone}&total=${req.body.total}&address=${
         req.body.inforOrderShipping.address
-      }&priceShipping=${req.body.priceShipping}&expire=${moment(new Date())
+      }&email=${req.body.email}&price=${req.body?.moneyPromotion?.price||0}&voucherId=${req.body?.moneyPromotion?.voucherId||""}&priceShipping=${req.body.priceShipping}&expire=${moment(new Date())
         .add(15, 'minute')
         .toDate()
         .getTime()}`;
