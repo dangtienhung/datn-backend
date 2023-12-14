@@ -210,7 +210,8 @@ export const cartController = {
 
           } else {
             cartItem.quantity = newQuantity;
-            cartItem.total = cartItem.price * cartItem.quantity;
+            // console.log(cartItem,"cart item")
+            cartItem.total = newTotal * cartItem.quantity ;
           }
           await getCart.save();
 

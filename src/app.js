@@ -1,5 +1,4 @@
 import * as dotenv from 'dotenv';
-
 import { errHandler, notFound } from './middlewares/errhandle.js';
 import Coins from './models/coin.js';
 import PassportRoutes from './routes/passport.routes.js';
@@ -24,7 +23,8 @@ import rootRoutes from './routes/index.js';
 import session from 'express-session';
 import socket from './configs/socket.js';
 import { ppid } from 'process';
-// import Orders from './models/order.model.js';
+import Orders from './models/order.model.js';
+import Users from './models/user.model.js';
 // import Order from './models/order.model.js';
 
 //lấy  jwt
@@ -49,11 +49,9 @@ app.get('/', (req, res) => {
   if (refreshTokenCookie) {
     try {
       const decoded = jwt.verify(refreshTokenCookie, process.env.SECRET_REFRESH);
-
     } catch (err) {
       console.error('Invalid token:', err.message);
     }
-
 
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('Refresh Token: ' + refreshTokenCookie);
@@ -89,7 +87,6 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((id, done) => {
   (async () => {
-
     const user = await User.findById(id);
     return done(null, user);
   })();
@@ -136,9 +133,36 @@ app.get('/api/edit_voucher', async (req, res) => {
     return res.json({ msg: `Update thành công số dư: ${lt}` });
   }
 });
+app.get('/api/cancelOrder/', async (req, res) => {
+  const { phoneCheck } = req.query;
+
+  const data = await Orders.find({ status: 'canceled_by_user' });
+  var newJson = {};
+  for (const value of data) {
+    var phone = value.inforOrderShipping.phone;
+    if (newJson[phone] == undefined) {
+      newJson = { ...newJson, ...{ [phone]: { count: 1 } } };
+      if (value.user != undefined && value.user)
+        newJson[phone] = { ...newJson[phone], ...{ user: value.user } };
+    } else {
+      newJson[phone].count = newJson[phone].count + 1;
+      if (newJson[phone].user != undefined && newJson[phone].count > 5) {
+        const update = await Users.updateOne(
+          { _id: newJson[phone].user },
+          { $set: { status: 'inactive' } }
+        );
+      }
+    }
+  }
+  if (phoneCheck) {
+    const chc = 5;
+    if (newJson[phoneCheck] <= chc) {
+      return res.json({ phoneCheck, count: newJson[phoneCheck], status: true });
+    } else return res.json({ status: false, msg: 'sdt khong hop le' });
+  } else res.json(newJson);
+});
 
 // thống kê
-
 
 app.use(notFound);
 app.use(errHandler);
@@ -161,5 +185,3 @@ server.listen(port, async () => {
     console.log(error);
   }
 });
-
-

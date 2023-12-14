@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer'
 import * as dotenv from 'dotenv';
 dotenv.config()
 export const sendEmailOrder = async (data) => {
-  
+
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -10,7 +10,7 @@ export const sendEmailOrder = async (data) => {
       pass: 'qnwggskitxtjpaax',
     },
   })
- 
+
   const info = await transporter.sendMail({
     from: '"Hey 🙋🏻‍♂️" <milktea@gmail.com>',
     subject: data.subject,
@@ -27,6 +27,10 @@ export const sendEmailOrder = async (data) => {
                 <h3><b>Dear ${data?.userInfo?.name} </b></h3>
   
                 <p><b>Số Điện thoại :</b> ${data.userInfo?.phone ? data.userInfo?.phone : ""}</p>
+                <p><b>Thời gian :</b> ${data.createdAt}</p>
+                <p><b>Hình thức thanh toán:</b> ${data.payment == "vnpay" ? "VNPAY" : "Thanh toán khi nhận hàng"}</p>
+                <p><b>Id đơn hàng:</b> ${data.orderId}</p>
+                <p><b>Trạng thái đơn hàng:</b> ${data.statusOrder}</p>
                 <p><b>Địa chỉ :</b>${data?.userInfo?.address}</p>
               </div>
               
@@ -96,5 +100,5 @@ export const sendEmailOrder = async (data) => {
   `,
     to: data.to,
   })
-  
+
 }
