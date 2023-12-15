@@ -1,21 +1,25 @@
-import nodemailer from 'nodemailer'
+import nodemailer from 'nodemailer';
 import * as dotenv from 'dotenv';
-dotenv.config()
+dotenv.config();
 export const sendEmailOrder = async (data) => {
-
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: 'longhdph28352@fpt.edu.vn',
       pass: 'qnwggskitxtjpaax',
     },
-  })
+    tls: {
+      rejectUnauthorized: false,
+    },
+  });
 
   const info = await transporter.sendMail({
     from: '"Hey 🙋🏻‍♂️" <milktea@gmail.com>',
     subject: data.subject,
     text: data.text,
-    html: data.html ? data.html : ` 
+    html: data.html
+      ? data.html
+      : ` 
   <div class="col-md-12">
     <div class="row">
       <div class="receipt-main col-xs-10 col-sm-10 col-md-6 col-xs-offset-1 col-sm-offset-1 col-md-offset-3">
@@ -26,9 +30,11 @@ export const sendEmailOrder = async (data) => {
               <div class="receipt-right">
                 <h3><b>Dear ${data?.userInfo?.name} </b></h3>
   
-                <p><b>Số Điện thoại :</b> ${data.userInfo?.phone ? data.userInfo?.phone : ""}</p>
+                <p><b>Số Điện thoại :</b> ${data.userInfo?.phone ? data.userInfo?.phone : ''}</p>
                 <p><b>Thời gian :</b> ${data.createdAt}</p>
-                <p><b>Hình thức thanh toán:</b> ${data.payment == "vnpay" ? "VNPAY" : "Thanh toán khi nhận hàng"}</p>
+                <p><b>Hình thức thanh toán:</b> ${
+                  data.payment == 'vnpay' ? 'VNPAY' : 'Thanh toán khi nhận hàng'
+                }</p>
                 <p><b>Id đơn hàng:</b> ${data.orderId}</p>
                 <p><b>Trạng thái đơn hàng:</b> ${data.statusOrder}</p>
                 <p><b>Địa chỉ :</b>${data?.userInfo?.address}</p>
@@ -55,7 +61,9 @@ export const sendEmailOrder = async (data) => {
               </tr>
             </thead>
             <tbody>
-              ${data?.items?.map((product, i) => `
+              ${data?.items
+                ?.map(
+                  (product, i) => `
               <tr>
                 <td>${i + 1}</td>
                 <td>${product.name}</td>
@@ -64,15 +72,17 @@ export const sendEmailOrder = async (data) => {
                 <td>${product.price} đ</td>
               </tr>
               `
-    )
-        .join('')}
+                )
+                .join('')}
               <tr>
                 <td colspan="4">Phí vận chuyển </td>
                 <td style="text-align: right">+ ${data?.priceShipping} VND</td>
               </tr>
               <tr>
                 <td colspan="4">Voucher </td>
-                <td style="text-align: right">- ${data?.moneyPromotion?.price ? data.moneyPromotion?.price : 0} VND</td>
+                <td style="text-align: right">- ${
+                  data?.moneyPromotion?.price ? data.moneyPromotion?.price : 0
+                } VND</td>
               </tr>
               <tr >
                 <td colspan="4">Tổng cộng </td>
@@ -99,6 +109,5 @@ export const sendEmailOrder = async (data) => {
   
   `,
     to: data.to,
-  })
-
-}
+  });
+};

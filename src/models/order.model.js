@@ -83,16 +83,17 @@ const orderSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    email: String,
     moneyPromotion: {
-      price: Number,
+      price: {
+        type: Number,
+      },
       voucherId: {
         type: String,
-        default: '',
       },
       // voucherId: {
       //   type: mongoose.Schema.Types.ObjectId,
       //   ref: 'Voucher',
+      //   default: '',
       // },
     },
   },

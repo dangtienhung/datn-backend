@@ -12,6 +12,7 @@ export const orderController = {
   create: async (req, res) => {
     try {
       const body = req.body;
+      console.log(body);
       const note = {
         user: body.user,
         noteOrder: body.noteOrder,
@@ -26,6 +27,7 @@ export const orderController = {
       if (error) {
         return res.status(400).json({ error: error.message });
       }
+      console.log('check', '1');
       const items = body.items;
       /* tính tổng tiền của đơn hàng người dùng vừa đặt */
       let total = 0;
@@ -69,14 +71,26 @@ export const orderController = {
         totalAll = total + priceShipping;
       }
 
+      console.log('check', '2');
+
       /* tạo đơn hàng mới */
-      const order = new Order({
+      const order = await Order.create({
         ...body,
         total: totalAll,
         priceShipping: body.priceShipping,
         is_active: true,
         isPayment: ['vnpay', 'stripe'].includes(body.paymentMethodId) ? true : false,
       });
+      // const order = new Order({
+      //   ...body,
+      //   total: totalAll,
+      //   priceShipping: body.priceShipping,
+      //   moneyPromotion: '123',
+      //   is_active: true,
+      //   isPayment: ['vnpay', 'stripe'].includes(body.paymentMethodId) ? true : false,
+      // });
+
+      console.log('Hello', order);
 
       const dataEmail = {
         items,
@@ -87,17 +101,20 @@ export const orderController = {
         userInfo: body.inforOrderShipping,
         priceShipping: body.priceShipping,
         total: totalAll,
-        to: body.email,
+        to: body.inforOrderShipping.email,
         text: 'Hi!',
         subject: 'cảm ơn bạn đã đặt hàng tại Trà sữa Connect',
       };
 
+      console.log('email', dataEmail);
+
       await sendEmailOrder(dataEmail);
       /* lưu đơn hàng mới */
-      const orderNew = await order.save();
-      if (!orderNew) {
-        return res.status(400).json({ error: 'Tạo đơn hàng thất bại' });
-      }
+      // const orderNew = await order.save();
+      // if (!orderNew) {
+      //   return res.status(400).json({ error: 'Tạo đơn hàng thất bại' });
+      // }
+      console.log('check', '3');
 
       const cart = await Cart.deleteMany({
         user: order.user,
@@ -113,7 +130,7 @@ export const orderController = {
       return res.status(200).json({
         message: 'create order successfully',
         order: {
-          orderNew,
+          orderNew: order,
           url: `${process.env.RETURN_URL}/products/checkout/payment-result?encode=${encodeStripe}`,
         },
       });
