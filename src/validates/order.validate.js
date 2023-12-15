@@ -50,7 +50,7 @@ export const orderValidate = joi.object({
     }),
   moneyPromotion: joi.object({
     price: joi.number().default(0),
-    voucherId: joi.string().valid(''),
+    voucherId: joi.string() 
   }),
   is_active: joi.boolean().valid(true, false).default(true),
 });
