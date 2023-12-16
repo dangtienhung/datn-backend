@@ -428,10 +428,10 @@ export const ProductController = {
   /* get all products is_delete = true */
   getAllProductsDeletedTrueActiveTrue: async (req, res) => {
     try {
-      const { _page = 1, limit = 10, query = '' } = req.query;
+      const { _page = 1, _limit = 10, query = '' } = req.query;
       const options = {
         page: _page,
-        limit: limit,
+        limit: _limit,
         sort: { createdAt: -1 },
         populate: [
           { path: 'category', select: 'name' },
@@ -464,10 +464,10 @@ export const ProductController = {
   /* lấy ra các sản phẩm is_delete = false/ is_active là false */
   getAllProductInActive: async (req, res) => {
     try {
-      const { _page = 1, limit = 10, query = '' } = req.query;
+      const { _page = 1, _limit = 10, query = '' } = req.query;
       const options = {
         page: _page,
-        limit: limit,
+        limit: _limit,
         sort: { createdAt: -1 },
         populate: [
           { path: 'category', select: 'name' },
