@@ -12,7 +12,6 @@ export const orderController = {
   create: async (req, res) => {
     try {
       const body = req.body;
-      console.log(body);
       const note = {
         user: body.user,
         noteOrder: body.noteOrder,
@@ -27,7 +26,7 @@ export const orderController = {
       if (error) {
         return res.status(400).json({ error: error.message });
       }
-      console.log('check', '1');
+
       const items = body.items;
       /* tính tổng tiền của đơn hàng người dùng vừa đặt */
       let total = 0;
@@ -71,8 +70,6 @@ export const orderController = {
         totalAll = total + priceShipping;
       }
 
-      console.log('check', '2');
-
       /* tạo đơn hàng mới */
       const order = await Order.create({
         ...body,
@@ -81,16 +78,6 @@ export const orderController = {
         is_active: true,
         isPayment: ['vnpay', 'stripe'].includes(body.paymentMethodId) ? true : false,
       });
-      // const order = new Order({
-      //   ...body,
-      //   total: totalAll,
-      //   priceShipping: body.priceShipping,
-      //   moneyPromotion: '123',
-      //   is_active: true,
-      //   isPayment: ['vnpay', 'stripe'].includes(body.paymentMethodId) ? true : false,
-      // });
-
-      console.log('Hello', order);
 
       const dataEmail = {
         items,
@@ -106,16 +93,7 @@ export const orderController = {
         subject: 'cảm ơn bạn đã đặt hàng tại Trà sữa Connect',
       };
 
-      console.log('email', dataEmail);
-
       await sendEmailOrder(dataEmail);
-      /* lưu đơn hàng mới */
-      // const orderNew = await order.save();
-      // if (!orderNew) {
-      //   return res.status(400).json({ error: 'Tạo đơn hàng thất bại' });
-      // }
-      console.log('check', '3');
-
       const cart = await Cart.deleteMany({
         user: order.user,
       });
@@ -257,21 +235,19 @@ export const orderController = {
 
             <p><b>Số Điện thoại :</b> ${updateState?.inforOrderShipping?.phone}</p>
             <p><b>Thời gian :</b> ${moment(new Date()).format(' HH:mm:ss ĐD-MM-YYYY')}</p>
-            <p><b>Hình thức thanh toán:</b> ${
-              updateState.paymentMethodId == 'vnpay' ? 'VNPAY' : 'Thanh toán khi nhận hàng'
-            }</p>
+            <p><b>Hình thức thanh toán:</b> ${updateState.paymentMethodId == 'vnpay' ? 'VNPAY' : 'Thanh toán khi nhận hàng'
+        }</p>
             <p><b>Id đơn hàng:</b> ${updateState._id}</p>
             
             <p><b>Địa chỉ :</b>${updateState?.inforOrderShipping?.address}</p>
           </div>
             
-            <div class="order-status"> Đơn hàng của bạn đã được cập nhật với trạng thái: <b>${
-              status == 'confirmed'
-                ? 'Đã xác nhận'
-                : status == 'done'
-                ? 'Đã hoàn thành'
-                : 'Đơn đã hủy'
-            }</b></div>
+            <div class="order-status"> Đơn hàng của bạn đã được cập nhật với trạng thái: <b>${status == 'confirmed'
+          ? 'Đã xác nhận'
+          : status == 'done'
+            ? 'Đã hoàn thành'
+            : 'Đơn đã hủy'
+        }</b></div>
             <div class="footer">
               <p>Cảm ơn bạn rất nhiều 💕💕💕!</p>
               <p>Đội ngũ hỗ trợ khách hàng</p>
@@ -423,18 +399,20 @@ export const orderController = {
       }
 
       if ((startDate && !endDate) || (startDate && endDate)) {
+        const fm_Date = moment(startDate).startOf('day');
+        const to_Date = moment(endDate).endOf('day');
         const targetDate = new Date(startDate);
 
         targetDate.setHours(0, 0, 0, 0);
         const targetEndDate = new Date(targetDate);
         targetEndDate.setHours(23, 59, 59, 999);
-        if (startDate > endDate) {
+        if (startDate > endDate || fm_Date > to_Date) {
           return res.status(500).json({ error: 'startDate không lớn hơn endDate' });
         }
         const searchQuery = {
           createdAt: {
-            $gte: targetDate,
-            $lt: endDate ? endDate : targetEndDate,
+            $gte: fm_Date.toDate(),
+            $lt: to_Date ? to_Date.toDate() : fm_Date.toDate(),
           },
         };
         query = { $and: [searchQuery, query] };
@@ -499,17 +477,7 @@ export const orderController = {
     try {
       // const { _page = 1, _limit = 10, q } = req.query;
       const { id } = req.params;
-      // const options = {
-      //   page: _page,
-      //   limit: _limit,
-      //   sort: { createdAt: -1 },
-      //   populate: [
-      //     { path: 'user', select: 'username avatar account' },
-      //     { path: 'items.product', select: 'name' },
-      //   ],
-      // };
-      // const query = q ? { name: { $regex: q, $options: 'i' } } : {};
-      // const orders = await Order.paginate({ user: id, ...query }, options);
+
       const orders = await Order.find({ user: id });
       if (!orders) {
         return res.status(400).json({ error: 'get all order by user id failed' });
@@ -519,4 +487,38 @@ export const orderController = {
       return res.status(500).json({ error: error.message });
     }
   },
+
+  updateOrderPending: async (req, res) => {
+    try {
+
+      const body = req.body;
+      if (body.status !== "pending") {
+        return res.status(400).json({ error: "Đơn hàng đã được xác nhận nên không thể sửa lại" });
+      }
+      const items = body.items;
+      /* tính tổng tiền của đơn hàng người dùng vừa đặt */
+      let total = 0;
+      items.forEach((item) => {
+        total += item.quantity * item.price;
+        /* nếu mà sản phẩm có topping */
+        if (item.toppings.length > 0 && item.toppings) {
+          item.toppings.forEach((topping) => {
+            total += topping.price;
+          });
+        }
+      });
+      let totalAll = 0;
+      const priceShipping = Number(body.priceShipping) || 0;
+      // check _id or phone user
+      totalAll = total + priceShipping;
+      const orderChange = await Order.findOneAndUpdate({ _id: body._id }, {
+        ...body, total: totalAll,
+        priceShipping: body.priceShipping,
+        is_active: true,
+      }, { new: true });
+      return res.json({ message: "success", orderChange })
+    } catch (error) {
+      res.status(500).json({ error: error.message, body });
+    }
+  }
 };

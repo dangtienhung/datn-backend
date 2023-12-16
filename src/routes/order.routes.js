@@ -17,7 +17,7 @@ router.get('/order-delivered', orderController.getAllOrderDelivered);
 router.get('/order-done', orderController.getAllOrderDone);
 router.get('/order-canceled', orderController.getAllOrderCanceled);
 router.get('/order-pending', orderController.getAllOrderPending);
-// router.get('/order-user/:id', orderController.getAllOrderByUser);
+router.post('/order-update', orderController.updateOrderPending);
 router.get('/order-user/:id', orderController.getAllOrderByUserId);
 
 export default router;
