@@ -9,6 +9,7 @@ import { sendEmail } from '../configs/sendMail.js';
 import { signupSchema } from '../validates/auth.js';
 import slugify from 'slugify';
 import { userValidate } from '../validates/user.validate.js';
+import Address from '../models/address.model.js';
 
 dotenv.config();
 
@@ -62,10 +63,7 @@ export const userController = {
   },
   // register
   register: async (req, res) => {
-
-
     try {
-
       const { error } = signupSchema.validate(req.body, { abortEarly: false });
 
       if (error) {
@@ -102,13 +100,11 @@ export const userController = {
           },
         });
       } else {
-       
         return res.status(500).json({
           message: 'Tài khoản đã tồn tại !',
         });
       }
     } catch (error) {
-
       res.status(500).json({
         message: error,
       });
@@ -125,9 +121,10 @@ export const userController = {
       if (!findUser) {
         return res.status(400).json({ message: 'Tài khoản không tồn tại' });
       }
-      if (findUser.status !== "active") {
-        return res.status(400).json({ message: 'Tài khoản của bạn đã bị chặn do vi phạm chính sách cửa hàng' });
-
+      if (findUser.status !== 'active') {
+        return res
+          .status(400)
+          .json({ message: 'Tài khoản của bạn đã bị chặn do vi phạm chính sách cửa hàng' });
       }
       const isMatch = await bcrypt.compare(password, findUser.password);
       if (!isMatch) {
@@ -165,7 +162,7 @@ export const userController = {
           role: findUser.role,
           birthday: findUser.birthday,
           gender: findUser.gender,
-          status: findUser.status
+          status: findUser.status,
         },
       });
     } catch (error) {
@@ -232,7 +229,22 @@ export const userController = {
   updateInfor: async (req, res, next) => {
     try {
       const { id } = req.params;
-      const user = await User.findById(id);
+      const body = req.body;
+      let dataAddress = {
+        name: body.username,
+        userId: body.userId,
+        phone: body.phone,
+        address: body.address,
+        default: true,
+      };
+      const user = await User.findById(id).populate([
+        { path: 'address', select: '_id phone address default' },
+      ]);
+      const addressDefault = user.address.filter((item) => {
+        if (item.default) {
+          return item.address;
+        }
+      });
       if (!user) {
         return res.status(400).json({ error: 'Update error' });
       }
@@ -249,12 +261,32 @@ export const userController = {
 
       const dataUpdate = {
         ...req.body,
-        birthday: new Date(req.body.birthday),
         slug: slug,
         accessToken: token,
         refreshToken,
       };
+      delete dataUpdate.address;
       const updateUser = await User.findByIdAndUpdate(id, dataUpdate, { new: true });
+      if (!updateUser) {
+        return res.status(400).json({ message: 'Cập nhật thất bại' });
+      }
+      if (addressDefault.length > 0) {
+        const address = await Address.findByIdAndUpdate(addressDefault[0]._id, dataAddress, {
+          new: true,
+        });
+        if (!address) {
+          return res.status(400).json({ message: 'Cập nhật thất bại' });
+        }
+      } else {
+        const address = await Address.create(dataAddress);
+        console.log('kaka');
+        if (!address) {
+          return res.status(400).json({ message: 'Cập nhật thất bại' });
+        }
+        await User.findByIdAndUpdate(body.userId, {
+          $addToSet: { address: address._id },
+        });
+      }
       res.status(200).json({
         message: 'Update Success',
         user: {
@@ -262,11 +294,9 @@ export const userController = {
           username: updateUser?.username,
           slug: updateUser?.slug,
           account: updateUser?.account,
-          address: updateUser.address,
+          address: dataAddress.address,
           avatar: updateUser.avatar,
           role: updateUser.role,
-          birthday: updateUser.birthday,
-          grade: updateUser.grade,
           gender: updateUser.gender,
           accessToken: token,
           refreshToken,
@@ -428,7 +458,6 @@ export const userController = {
       /* check account exists */
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-
       const user = await User.create({
         ...req.body,
         password: hashedPassword,
@@ -449,7 +478,6 @@ export const userController = {
       return res.status(500).json({ message: 'Lỗi server', error: error.message });
     }
   },
-
 
   // reset password
   sendMailForgotPassword: async (req, res) => {

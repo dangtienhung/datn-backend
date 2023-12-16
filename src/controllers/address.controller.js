@@ -38,6 +38,7 @@ export const addressController = {
   updateAddress: async (req, res) => {
     try {
       const body = req.body;
+      console.log(body);
       const { id } = req.params;
       /* validate */
       const { error } = addressValidate.validate(body);

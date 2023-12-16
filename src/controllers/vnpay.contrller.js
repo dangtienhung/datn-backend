@@ -52,13 +52,6 @@ const checkoutVnpay = {
         .add(15, 'minute')
         .toDate()
         .getTime()}`;
-      // &name=${
-      //   req.body.inforOrderShipping.name
-      // }&phone=${req.body.inforOrderShipping.phone}&total=${req.body.total}&address=${
-      //   req.body.inforOrderShipping.address
-      // }&email=${req.body.email}&price=${req.body?.moneyPromotion?.price || 0}&voucherId=${
-      //   req.body?.moneyPromotion?.voucherId || ''
-      // }&priceShipping=${req.body.priceShipping}
       vnp_Params['vnp_TxnRef'] = moment(new Date()).format('DDHHmmss');
 
       vnp_Params['vnp_OrderType'] = 'other';
