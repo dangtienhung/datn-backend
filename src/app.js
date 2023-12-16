@@ -87,7 +87,9 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((id, done) => {
   (async () => {
-    const user = await User.findById(id);
+    const user = await User.findById(id).populate([
+      { path: 'address', select: '-__v -_id -userId' },
+    ]);
     return done(null, user);
   })();
 });

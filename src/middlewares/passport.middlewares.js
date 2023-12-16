@@ -24,7 +24,6 @@ const passportMiddleware = {
               account: profile.emails[0].value,
               role: 'customer',
               gender: 'male',
-              birthday: new Date('1999-01-01'),
             });
             return cb(null, newUser);
           }

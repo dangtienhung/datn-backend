@@ -266,10 +266,6 @@ export const userController = {
         refreshToken,
       };
       delete dataUpdate.address;
-      const updateUser = await User.findByIdAndUpdate(id, dataUpdate, { new: true });
-      if (!updateUser) {
-        return res.status(400).json({ message: 'Cập nhật thất bại' });
-      }
       if (addressDefault.length > 0) {
         const address = await Address.findByIdAndUpdate(addressDefault[0]._id, dataAddress, {
           new: true,
@@ -279,13 +275,18 @@ export const userController = {
         }
       } else {
         const address = await Address.create(dataAddress);
-        console.log('kaka');
         if (!address) {
           return res.status(400).json({ message: 'Cập nhật thất bại' });
         }
         await User.findByIdAndUpdate(body.userId, {
           $addToSet: { address: address._id },
         });
+      }
+      const updateUser = await User.findByIdAndUpdate(id, dataUpdate, { new: true }).populate([
+        { path: 'address', select: '-__v -_id -userId' },
+      ]);
+      if (!updateUser) {
+        return res.status(400).json({ message: 'Cập nhật thất bại' });
       }
       res.status(200).json({
         message: 'Update Success',
@@ -294,7 +295,7 @@ export const userController = {
           username: updateUser?.username,
           slug: updateUser?.slug,
           account: updateUser?.account,
-          address: dataAddress.address,
+          address: updateUser.address,
           avatar: updateUser.avatar,
           role: updateUser.role,
           gender: updateUser.gender,
