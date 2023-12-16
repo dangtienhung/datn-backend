@@ -211,7 +211,7 @@ export const cartController = {
           } else {
             cartItem.quantity = newQuantity;
             // console.log(cartItem,"cart item")
-            cartItem.total = newTotal * cartItem.quantity ;
+            cartItem.total = newTotal;
           }
           await getCart.save();
 

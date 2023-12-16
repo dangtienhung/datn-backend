@@ -12,13 +12,14 @@ export const orderController = {
   create: async (req, res) => {
     try {
       const body = req.body;
+      console.log(body);
       const note = {
         user: body.user,
         noteOrder: body.noteOrder,
         noteShipping: body.inforOrderShipping.noteShipping,
         email: body.email,
         price: body?.moneyPromotion?.price,
-        voucherId: body?.moneyPromotion?.voucherId
+        voucherId: body?.moneyPromotion?.voucherId,
       };
       const encodeStripe = generatePaymentToken(note);
       /* validate */
@@ -26,6 +27,7 @@ export const orderController = {
       if (error) {
         return res.status(400).json({ error: error.message });
       }
+      console.log('check', '1');
       const items = body.items;
       /* tính tổng tiền của đơn hàng người dùng vừa đặt */
       let total = 0;
@@ -38,14 +40,13 @@ export const orderController = {
           });
         }
       });
-      let totalAll = 0
+      let totalAll = 0;
       const priceShipping = Number(body.priceShipping) || 0;
       // check _id or phone user
-      const userUsedVoucher = body.inforOrderShipping.phone
+      const userUsedVoucher = body.inforOrderShipping.phone;
       // check voucher đã đc dùng hay chưa
       if (body?.moneyPromotion?.voucherId) {
-
-        const checkVoucher = await Voucher.findById({ _id: body.moneyPromotion.voucherId })
+        const checkVoucher = await Voucher.findById({ _id: body.moneyPromotion.voucherId });
 
         if (!checkVoucher) {
           return res.status(400).json({ error: 'Không tìm thấy mã voucher' });
@@ -59,49 +60,61 @@ export const orderController = {
           return res.status(400).json({ error: 'Đã hết lượt dùng Voucher' });
         }
 
-        checkVoucher?.user_used.push(userUsedVoucher)
-        checkVoucher.discount--
-        await checkVoucher.save()
+        checkVoucher?.user_used.push(userUsedVoucher);
+        checkVoucher.discount--;
+        await checkVoucher.save();
 
-        const moneyPromotion = body.moneyPromotion?.price ? body.moneyPromotion?.price : 0
-        const totalPricePr = total + priceShipping - Number(moneyPromotion)
-        totalAll = totalPricePr <= 0 ? 0 : totalPricePr
-      }
-      else {
-        totalAll = total + priceShipping
+        const moneyPromotion = body.moneyPromotion?.price ? body.moneyPromotion?.price : 0;
+        const totalPricePr = total + priceShipping - Number(moneyPromotion);
+        totalAll = totalPricePr <= 0 ? 0 : totalPricePr;
+      } else {
+        totalAll = total + priceShipping;
       }
 
+      console.log('check', '2');
 
       /* tạo đơn hàng mới */
-      const order = new Order({
+      const order = await Order.create({
         ...body,
         total: totalAll,
         priceShipping: body.priceShipping,
         is_active: true,
         isPayment: ['vnpay', 'stripe'].includes(body.paymentMethodId) ? true : false,
       });
+      // const order = new Order({
+      //   ...body,
+      //   total: totalAll,
+      //   priceShipping: body.priceShipping,
+      //   moneyPromotion: '123',
+      //   is_active: true,
+      //   isPayment: ['vnpay', 'stripe'].includes(body.paymentMethodId) ? true : false,
+      // });
+
+      console.log('Hello', order);
 
       const dataEmail = {
         items,
-        statusOrder: "Chờ xác nhận",
+        statusOrder: 'Chờ xác nhận',
         orderId: order._id,
         payment: body.paymentMethodId,
-        createdAt: moment(new Date()).format(" HH:mm:ss ĐD-MM-YYYY"),
+        createdAt: moment(new Date()).format(' HH:mm:ss ĐD-MM-YYYY'),
         userInfo: body.inforOrderShipping,
         priceShipping: body.priceShipping,
         total: totalAll,
-        to: body.email,
+        to: body.inforOrderShipping.email,
         text: 'Hi!',
         subject: 'cảm ơn bạn đã đặt hàng tại Trà sữa Connect',
-
       };
 
-      await sendEmailOrder(dataEmail)
+      console.log('email', dataEmail);
+
+      await sendEmailOrder(dataEmail);
       /* lưu đơn hàng mới */
-      const orderNew = await order.save();
-      if (!orderNew) {
-        return res.status(400).json({ error: 'Tạo đơn hàng thất bại' });
-      }
+      // const orderNew = await order.save();
+      // if (!orderNew) {
+      //   return res.status(400).json({ error: 'Tạo đơn hàng thất bại' });
+      // }
+      console.log('check', '3');
 
       const cart = await Cart.deleteMany({
         user: order.user,
@@ -117,7 +130,7 @@ export const orderController = {
       return res.status(200).json({
         message: 'create order successfully',
         order: {
-          orderNew,
+          orderNew: order,
           url: `${process.env.RETURN_URL}/products/checkout/payment-result?encode=${encodeStripe}`,
         },
       });
@@ -188,25 +201,24 @@ export const orderController = {
 
   /* cập nhật trạng thái đơn hàng */
   updateStatus: async (id, status) => {
-    
-      const updateState = await Order.findByIdAndUpdate(
-        id,
-        { status: status },
-        { new: true }
-      ).populate([
-        {
-          path: 'user',
-          select: '-password -products -order',
-          populate: { path: 'role', select: '-users' },
-        },
-        { path: 'items.product' },
-      ]);
-      
-      const dataEmail = {
-        to: updateState.email,
-        text: 'Hi!',
-        subject: 'cảm ơn bạn đã đặt hàng tại Trà sữa Connect',
-        html: `
+    const updateState = await Order.findByIdAndUpdate(
+      id,
+      { status: status },
+      { new: true }
+    ).populate([
+      {
+        path: 'user',
+        select: '-password -products -order',
+        populate: { path: 'role', select: '-users' },
+      },
+      { path: 'items.product' },
+    ]);
+
+    const dataEmail = {
+      to: updateState.email,
+      text: 'Hi!',
+      subject: 'cảm ơn bạn đã đặt hàng tại Trà sữa Connect',
+      html: `
           <style>
            
             .container {
@@ -244,27 +256,33 @@ export const orderController = {
             <h3><b>Dear ${updateState?.inforOrderShipping?.name} </b></h3>
 
             <p><b>Số Điện thoại :</b> ${updateState?.inforOrderShipping?.phone}</p>
-            <p><b>Thời gian :</b> ${moment(new Date()).format(" HH:mm:ss ĐD-MM-YYYY")}</p>
-            <p><b>Hình thức thanh toán:</b> ${updateState.paymentMethodId == "vnpay" ? "VNPAY" : "Thanh toán khi nhận hàng"}</p>
+            <p><b>Thời gian :</b> ${moment(new Date()).format(' HH:mm:ss ĐD-MM-YYYY')}</p>
+            <p><b>Hình thức thanh toán:</b> ${
+              updateState.paymentMethodId == 'vnpay' ? 'VNPAY' : 'Thanh toán khi nhận hàng'
+            }</p>
             <p><b>Id đơn hàng:</b> ${updateState._id}</p>
             
             <p><b>Địa chỉ :</b>${updateState?.inforOrderShipping?.address}</p>
           </div>
             
-            <div class="order-status"> Đơn hàng của bạn đã được cập nhật với trạng thái: <b>${status == "confirmed" ? "Đã xác nhận" : status == "done" ? "Đã hoàn thành" : "Đơn đã hủy"}</b></div>
+            <div class="order-status"> Đơn hàng của bạn đã được cập nhật với trạng thái: <b>${
+              status == 'confirmed'
+                ? 'Đã xác nhận'
+                : status == 'done'
+                ? 'Đã hoàn thành'
+                : 'Đơn đã hủy'
+            }</b></div>
             <div class="footer">
               <p>Cảm ơn bạn rất nhiều 💕💕💕!</p>
               <p>Đội ngũ hỗ trợ khách hàng</p>
             </div>
           </div>
-       `
-      };
-      
+       `,
+    };
 
-      await sendEmailOrder(dataEmail)
-     
-      return updateState;
-     
+    await sendEmailOrder(dataEmail);
+
+    return updateState;
   },
 
   /* cập nhật trạng thái đơn hàng thành confirmed */
@@ -384,7 +402,7 @@ export const orderController = {
         populate: [
           { path: 'user', select: '_id googleId username avatar' },
           { path: 'items.product', select: '_id name sale' },
-          { path: 'moneyPromotion.voucherId', },
+          { path: 'moneyPromotion.voucherId' },
         ],
       };
       /* chức năng tìm kiếm đơn hàng */

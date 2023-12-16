@@ -25,7 +25,6 @@ function sortObject(obj) {
 const checkoutVnpay = {
   payment: async (req, res) => {
     try {
-     
       const secretKey = process.env.VNP_HASHSECRET;
       let vnpUrl = process.env.VNP_URL;
       const ip =
@@ -49,14 +48,17 @@ const checkoutVnpay = {
       vnp_Params['vnp_OrderInfo'] = 'Thanh_toan_don_hang';
       vnp_Params['vnp_ReturnUrl'] = `${
         process.env.RETURN_URL
-      }/products/checkout/payment-result?userId=${req.body.user}&name=${
-        req.body.inforOrderShipping.name
-      }&phone=${req.body.inforOrderShipping.phone}&total=${req.body.total}&address=${
-        req.body.inforOrderShipping.address
-      }&email=${req.body.email}&price=${req.body?.moneyPromotion?.price||0}&voucherId=${req.body?.moneyPromotion?.voucherId||""}&priceShipping=${req.body.priceShipping}&expire=${moment(new Date())
+      }/products/checkout/payment-result?userId=${req.body.user}&expire=${moment(new Date())
         .add(15, 'minute')
         .toDate()
         .getTime()}`;
+      // &name=${
+      //   req.body.inforOrderShipping.name
+      // }&phone=${req.body.inforOrderShipping.phone}&total=${req.body.total}&address=${
+      //   req.body.inforOrderShipping.address
+      // }&email=${req.body.email}&price=${req.body?.moneyPromotion?.price || 0}&voucherId=${
+      //   req.body?.moneyPromotion?.voucherId || ''
+      // }&priceShipping=${req.body.priceShipping}
       vnp_Params['vnp_TxnRef'] = moment(new Date()).format('DDHHmmss');
 
       vnp_Params['vnp_OrderType'] = 'other';

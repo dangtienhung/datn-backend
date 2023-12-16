@@ -15,10 +15,9 @@ const orderSchema = new mongoose.Schema(
 
     // phiên giao dịch của vnpay
     payment_vnpay: { type: String },
-    isPayment:
-    {
+    isPayment: {
       type: Boolean,
-      default: false
+      default: false,
     },
     items: [
       {
@@ -52,10 +51,9 @@ const orderSchema = new mongoose.Schema(
     reasonCancelOrder: { type: String },
     noteOrder: { type: String },
     total: { type: Number },
-    priceShipping:
-    {
+    priceShipping: {
       type: Number,
-      default: 0
+      default: 0,
     },
     paymentMethodId: {
       // type: mongoose.Schema.Types.ObjectId,
@@ -66,37 +64,42 @@ const orderSchema = new mongoose.Schema(
       default: 'cod',
     },
     inforOrderShipping: {
-      name:
-      {
+      name: {
         type: String,
-        required: true
+        required: true,
       },
       address: {
         type: String,
-        required: true
+        required: true,
       },
+      email: { type: String, required: true },
       phone: {
         type: String,
-        required: true
+        required: true,
       },
       noteShipping: { type: String },
     },
     is_active: {
       type: Boolean,
-      default: true
+      default: true,
     },
-    email: String,
     moneyPromotion: {
-      price: Number,
+      price: {
+        type: Number,
+      },
       voucherId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Voucher',
-      }
-    }
+        type: String,
+      },
+      // voucherId: {
+      //   type: mongoose.Schema.Types.ObjectId,
+      //   ref: 'Voucher',
+      //   default: '',
+      // },
+    },
   },
   {
     timestamps: true,
-    versionKey: false
+    versionKey: false,
   }
 );
 
