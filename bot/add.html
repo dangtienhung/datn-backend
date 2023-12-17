@@ -55,8 +55,6 @@
                          body: formData
                     })
                     alert('tải file thành công')
-
-              
                } 
      }
      async function add(){
@@ -67,24 +65,18 @@
           await select();
           await __main__();
           alert('thêm thành công')
-
-
      }
      async function deletee(question){
           const a = await  fetch(`http://localhost:3333/api/delete?&question=${question}`);
           await select();
           await __main__();
-
           alert('thêm thành công')
-
-
      }
      async function select(){
           const a = document.getElementById('selectClass');
           document.getElementById('chooseClass').value=a.value;
           var table=document.getElementById('table');
           table.innerHTML=""
-
           await  fetch('http://localhost:3333/api/loadAll').then(res=>res.json()).then(data=>{
                const nData=data[a.value];
                for(let i = 0 ; i <nData['answer'].length;i++){

@@ -59,11 +59,17 @@ const products = mongoose.model(
       },
     ],
     description: String,
+    sizes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Size',
+      },
+    ],
   })
 );
 
 const checkouts = mongoose.model(
-  'checkouts',
+  'orders',
   new mongoose.Schema({
     name: String,
     description: String,
@@ -96,9 +102,19 @@ const trained = mongoose.model(
     data: String,
   })
 );
+const size = mongoose.model(
+  'Size',
+  mongoose.Schema({
+    data: String,
+  })
+);
 
 app.get('/products', async (req, res) => {
-  const documents = await products.find({});
+  const documents = await products.find({ is_active: true, is_deleted: false }).populate('sizes');
+  if (documents) res.json(documents);
+});
+app.get('/size', async (req, res) => {
+  const documents = await size.find({});
   if (documents) res.json(documents);
 });
 app.get('/checkouts', async (req, res) => {
@@ -149,9 +165,9 @@ app.get('/ask', async (req, res) => {
     if (response.intent == 'dtt') {
       const pp = await axios.get('http://localhost:8000/api/analyst');
       const aaa = pp.data;
-      const nn = aaa['mặt hàng bán chạy tháng này']['sản phẩm bán nhiều nhất'].name;
-      const cc = aaa['mặt hàng bán chạy tháng này']['sản phẩm bán nhiều nhất'].count;
-
+      const nn = aaa['TopSell']['sản phẩm bán nhiều nhất'].name;
+      const cc = aaa['TopSell']['sản phẩm bán nhiều nhất'].count;
+      console.log(pp.data);
       return res.json({
         answer: `Sản phẩm bán chạy nhất tháng này là ${nn} và đã bán được ${cc} lượt`,
       });
@@ -163,14 +179,14 @@ app.get('/ask', async (req, res) => {
     else if (response.intent == 'lastest_buy') {
       const _id = new mongoose.Types.ObjectId(id);
       const documents = await checkouts.find({ user: _id });
-      // console.log(documents[0]?.createdAt);
+      console.log(documents);
       if (documents[0]?.createdAt == undefined) {
         return res.json({
-          answer: `không co don hang nao gan day`,
+          answer: `Không có đơn hàng nào gần đây !`,
         });
       }
       return res.json({
-        answer: `lần cuối bạn mua hàng là ${documents[0]?.createdAt} `,
+        answer: `lần cuối bạn mua hàng là ${documents[0]?.createdAt} , giá sản phẩm đó là ${documents[0].total}`,
       });
     } else if (response.intent == 'bought_num') {
       const _id = new mongoose.Types.ObjectId(id);

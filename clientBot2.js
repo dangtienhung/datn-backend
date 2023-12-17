@@ -78,7 +78,6 @@ app.get('/hotro', (req, res) => {
       const JWTusername = decoded.username;
       JWTrole = decoded.role.name;
       res.sendFile(__dirname + '/livechat3.html');
-
     } catch (err) {
       console.error('Invalid token:', err.message);
     }
@@ -251,7 +250,6 @@ io.on('connection', async (socket) => {
   socket.on('UpdateChatSeen', async (username) => {
     await Message.updateMany({ username: username.username }, { $set: { seen: 'yes' } });
   });
-
   socket.on('chatMsg', async (message) => {
     const newMessage = new Message({
       text: message.text,
