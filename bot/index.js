@@ -186,7 +186,7 @@ app.get('/ask', async (req, res) => {
         });
       }
       return res.json({
-        answer: `lần cuối bạn mua hàng là ${documents[0]?.createdAt} , giá sản phẩm đó là ${documents[0].total}`,
+        answer: `lần cuối bạn mua hàng là ${documents[0]?.createdAt}`,
       });
     } else if (response.intent == 'bought_num') {
       const _id = new mongoose.Types.ObjectId(id);
