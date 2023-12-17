@@ -222,10 +222,8 @@ app.get('/api/loadAll', async (req, res) => {
   const p = await pre_training.find({});
   var json = {};
   var onClass = [];
-
   for (const x of p) {
     onClass.push(x.class);
-
     if (json[x.class] !== undefined) {
       json[x.class]['answer'].push(x.answer);
       json[x.class]['question'].push(x.question);
