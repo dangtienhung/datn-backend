@@ -179,14 +179,14 @@ app.get('/ask', async (req, res) => {
     else if (response.intent == 'lastest_buy') {
       const _id = new mongoose.Types.ObjectId(id);
       const documents = await checkouts.find({ user: _id });
-      console.log(documents);
+      console.log(documents[0], 'Lần cuối tôi mua hàng ở đây là khi nào thế');
       if (documents[0]?.createdAt == undefined) {
         return res.json({
           answer: `Không có đơn hàng nào gần đây !`,
         });
       }
       return res.json({
-        answer: `lần cuối bạn mua hàng là ${documents[0]?.createdAt} , giá sản phẩm đó là ${documents[0].total}`,
+        answer: `lần cuối bạn mua hàng là ${documents[0]?.createdAt} `,
       });
     } else if (response.intent == 'bought_num') {
       const _id = new mongoose.Types.ObjectId(id);
