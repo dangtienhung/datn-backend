@@ -110,20 +110,44 @@ const size = mongoose.model(
 );
 
 app.get('/products', async (req, res) => {
-  const documents = await products.find({ is_active: true, is_deleted: false }).populate('sizes');
-  if (documents) res.json(documents);
+  try {
+    const documents = await products.find({ is_active: true, is_deleted: false }).populate('sizes');
+    if (documents) res.json(documents);
+  } catch (error) {
+    return res.status(500).json({
+      error: error.message,
+    });
+  }
 });
 app.get('/size', async (req, res) => {
-  const documents = await size.find({});
-  if (documents) res.json(documents);
+  try {
+    const documents = await size.find({});
+    if (documents) res.json(documents);
+  } catch (error) {
+    return res.status(500).json({
+      error: error.message,
+    });
+  }
 });
 app.get('/checkouts', async (req, res) => {
-  const documents = await checkouts.find({});
-  res.json(documents);
+  try {
+    const documents = await checkouts.find({});
+    res.json(documents);
+  } catch (error) {
+    return res.status(500).json({
+      error: error.message,
+    });
+  }
 });
 app.get('/toppings', async (req, res) => {
-  const documents = await topping.find({});
-  res.json(documents);
+  try {
+    const documents = await topping.find({});
+    res.json(documents);
+  } catch (error) {
+    return res.status(500).json({
+      error: error.message,
+    });
+  }
 });
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
