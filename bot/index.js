@@ -291,11 +291,7 @@ app.get('/api/train', async (req, res) => {
     manager.train();
     manager.save();
   }
-  const ex = manager.export();
-  await trained.deleteMany({});
-  await trained({
-    data: ex,
-  }).save();
+ 
   res.json({ status: true });
 });
 
