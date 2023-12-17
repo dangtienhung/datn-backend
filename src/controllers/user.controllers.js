@@ -236,6 +236,10 @@ export const userController = {
         phone: body.phone,
         address: body.address,
         default: true,
+        geoLocation:{
+          lat: body.geoLocation.lat,
+          lng: body.geoLocation.lng,
+        }
       };
       const user = await User.findById(id).populate([
         { path: 'address', select: '_id phone address default' },

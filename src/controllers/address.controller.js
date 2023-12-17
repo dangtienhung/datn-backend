@@ -49,7 +49,9 @@ export const addressController = {
       }
       /* nếu mà người dùng update là true thì sẽ lấy trạng thái vừa update đó là default true, các default khác sẽ là false */
       /* update lại các address còn lại là false */
-      await Address.updateMany({ userId: body.userId }, { $set: { default: false } });
+      if (body.default) {
+        await Address.updateMany({ userId: body.userId }, { $set: { default: false } });
+      }
       /* update */
       const address = await Address.findByIdAndUpdate(id, body, {
         new: true,

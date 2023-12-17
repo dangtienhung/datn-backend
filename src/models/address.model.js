@@ -19,6 +19,16 @@ const addressSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  geoLocation: {
+    lat: {
+      type: Number,
+      required: true,
+    },
+    lng: {
+      type: Number,
+      required: true,
+    },
+  },
   default: {
     type: Boolean,
     default: false,

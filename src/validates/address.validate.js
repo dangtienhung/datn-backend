@@ -26,4 +26,8 @@ export const addressValidate = joi.object({
     'string.empty': 'userId is not allowed to be empty',
     'any.required': 'userId is required',
   }),
+  geoLocation: joi.object({
+    lat: joi.number().required(),
+    lng: joi.number().required(),
+  }),
 });
