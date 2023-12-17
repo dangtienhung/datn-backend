@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import crypto from 'crypto';
 import querystring from 'qs';
 import moment from 'moment';
+import Voucher from '../models/voucher.model.js';
 dotenv.config();
 
 process.env.TZ = 'Asia/Ho_Chi_Minh';
@@ -34,6 +35,21 @@ const checkoutVnpay = {
         req.connection.socket.remoteAddress;
 
       const amount = req.body.total;
+
+      if (req.body.moneyPromotion?.voucherId) {
+        const userUsedVoucher = req.body.inforOrderShipping.phone;
+        const checkVoucher = await Voucher.findById({ _id: req.body.moneyPromotion.voucherId });
+        if (!checkVoucher) {
+          return res.status(400).json({ message: 'Không tìm thấy mã voucher' });
+        }
+        if (checkVoucher.discount == 0) {
+          return res.status(400).json({ message: 'Voucher đã hết lượt dùng!' });
+        }
+        const exitUser = checkVoucher.user_used.includes(userUsedVoucher);
+        if (exitUser) {
+          return res.status(400).json({ message: 'Đã hết lượt dùng Voucher' });
+        }
+      }
 
       let vnp_Params = {};
       vnp_Params['vnp_Version'] = '2.1.0';
