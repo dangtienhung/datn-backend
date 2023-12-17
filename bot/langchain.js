@@ -167,6 +167,7 @@ axios
         'Shop giới thiệu cho em về món ' + value.name + 'với',
         'AskProductDes' + i
       );
+      manager.addDocument('vi', 'mô tả ' + value.name + 'với', 'AskProductDes' + i);
       manager.addDocument('vi', ' giới thiệu cho món ' + value.name + 'với', 'AskProductDes' + i);
       manager.addDocument('vi', ' giới thiệu  ' + value.name + 'với', 'AskProductDes' + i);
 

@@ -13,30 +13,32 @@ const xlsx = require('xlsx');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const axios = require('axios');
+const fs = require('fs');
 app.use(
   cors({
     origin: 'http://localhost:5173', // or '*' for a less secure option that allows all origins
   })
 );
-const manager = require('./langchain.js');
+// const manager = require('./langchain.js');
 const { all } = require('axios');
+var manager = require('./langchain.js');
 //train model
-manager.train().then(async () => {
-  manager.save();
-  //router
+// manager.train().then(async () => {
+//   manager.save();
+//   //router
 
-  // bot chat o port 3000
-  app.get('/bot', async (req, res) => {
-    let response = await manager.process('vi', req.query.message);
-    res.json(response);
+//   // bot chat o port 3000
+//   app.get('/bot', async (req, res) => {
+//     let response = await manager.process('vi', req.query.message);
+//     res.json(response);
 
-    //success
+//     //success
 
-    // res.send(response.answer || 'Xin lỗi , thông tin không có sẵn , vui lòng chuyển sang câu hỏi khác');
-  });
-  // console.log( await manager.process('vi',"hello"));
-  // app.listen(3000);//
-});
+//     // res.send(response.answer || 'Xin lỗi , thông tin không có sẵn , vui lòng chuyển sang câu hỏi khác');
+//   });
+//   // console.log( await manager.process('vi',"hello"));
+//   // app.listen(3000);//
+// });
 
 //connect serrver
 mongoose.connect(
@@ -110,24 +112,49 @@ const size = mongoose.model(
 );
 
 app.get('/products', async (req, res) => {
-  const documents = await products.find({ is_active: true, is_deleted: false }).populate('sizes');
-  if (documents) res.json(documents);
+  try {
+    const documents = await products.find({ is_active: true, is_deleted: false }).populate('sizes');
+    if (documents) res.json(documents);
+  } catch (error) {
+    return res.status(500).json({
+      error: error.message,
+    });
+  }
 });
 app.get('/size', async (req, res) => {
-  const documents = await size.find({});
-  if (documents) res.json(documents);
+  try {
+    const documents = await size.find({});
+    if (documents) res.json(documents);
+  } catch (error) {
+    return res.status(500).json({
+      error: error.message,
+    });
+  }
 });
 app.get('/checkouts', async (req, res) => {
-  const documents = await checkouts.find({});
-  res.json(documents);
+  try {
+    const documents = await checkouts.find({});
+    res.json(documents);
+  } catch (error) {
+    return res.status(500).json({
+      error: error.message,
+    });
+  }
 });
 app.get('/toppings', async (req, res) => {
-  const documents = await topping.find({});
-  res.json(documents);
+  try {
+    const documents = await topping.find({});
+    res.json(documents);
+  } catch (error) {
+    return res.status(500).json({
+      error: error.message,
+    });
+  }
 });
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
+
 io.on('connection', (socket) => {
   socket.on('ChatMessage', async (message) => {
     let response = await manager.process('vi', message);
@@ -148,11 +175,34 @@ io.on('connection', (socket) => {
     }).save();
     io.emit('ChatMessage', 'Đặt hàng thành công ! Shop cảm ơn bạn đã đặt hàng nè  ');
   });
+  socket.on('update', async () => {
+    manager = new NlpManager({ languages: ['vi'] }); //
+    a = require('./langchain.js');
+    manager.import(a.export());
+    // manager.train();
+    // manager.save();
+  });
+});
+
+app.get('/update', async (req, res) => {
+  const manager = require('./langchain.js');
+  await manager.train();
+  await manager.save();
+  res.send('ok');
 });
 app.get('/ask', async (req, res) => {
   const { query, id } = req.query;
-  const allData = await trained.findOne({});
-  if (allData) await manager.import(allData.data);
+
+  // const allData = await trained.findOne({});
+
+  // if (allData) await manager.import(allData.data);
+
+  // const { NlpManager } = require('node-nlp');
+  // const manager = new NlpManager({ languages: ['vi'] }); //
+  // const jsonData = fs.readFileSync('./model.txt', 'utf8');
+  // manager.import(jsonData);
+  // let response = await manager.process('vi', req.query.message);
+  // res.json(response);
 
   if (query) {
     let response = await manager.process('vi', query);
@@ -160,6 +210,16 @@ app.get('/ask', async (req, res) => {
     if (response.intent == 'None') {
       return res.json({
         answer: `Xin lôi toi khong hieu y của bạn`,
+      });
+    }
+    if (response.intent.includes('AskProduct')) {
+      const str = response.intent;
+      const number = str.match(/\d+/)[0];
+      var llsd = await axios.get('http://localhost:3333/products');
+      llsd = llsd.data;
+      var ob = llsd[number];
+      return res.json({
+        answer: `gia hien tai cua ${ob.name} size ${ob.sizes[0].name} la ${ob.sizes[0].price} va sale ${ob.sale}`,
       });
     }
     if (response.intent == 'dtt') {
@@ -199,14 +259,7 @@ app.get('/ask', async (req, res) => {
     return res.json({ answer: response.answer });
   }
 });
-app.get('/sss', async (req, res) => {
-  const v = await products.find({});
-  var context = '';
-  for (let a of v) {
-    context += `Sản phẩm ${a.name} có giá là ${a.sale}.`;
-  }
-  res.send(context);
-});
+
 app.get('/admin', async (req, res) => {
   res.sendFile(__dirname + '/add.html');
 });
@@ -259,6 +312,9 @@ app.get('/api/delete', async (req, res) => {
   res.json({ status: true });
 });
 app.get('/api/train', async (req, res) => {
+  // const { NlpManager } = require('node-nlp');
+  // const manager = new NlpManager({ languages: ['vi'] }); //
+  const manager = require('./langchain.js');
   const p = await pre_training.find({});
 
   for (const v of p) {
@@ -267,11 +323,13 @@ app.get('/api/train', async (req, res) => {
     manager.train();
     manager.save();
   }
+
   const ex = manager.export();
-  await trained.deleteMany({});
-  await trained({
-    data: ex,
-  }).save();
+  fs.writeFileSync('./model.txt', ex);
+  // await trained.deleteMany({});
+  // await trained({
+  //   data: ex,
+  // }).save();
   res.json({ status: true });
 });
 
