@@ -209,7 +209,7 @@ export const ProductController = {
     try {
       const product = await Product.findById(req.params.id).populate([
         { path: 'category', select: 'name' },
-        { path: 'sizes', select: 'name price' },
+        { path: 'sizes', select: 'name price is_default' },
         { path: 'toppings', select: '-products' },
       ]);
       if (!product) {
@@ -239,7 +239,43 @@ export const ProductController = {
       const CatRefProduct = await Category.findByIdAndUpdate(product.category, {
         $pull: { products: req.params.id },
       });
-      await product.updateOne(req.body, { new: true });
+
+      // /* cập nhật lại size */
+      const sizes = product.sizes;
+      const sizeListNew = [];
+      const sizeBody = req.body.size;
+      if (sizeBody.length > 0) {
+        const results = sizeBody.filter((sizeItem) => {
+          return !sizeItem._id;
+        });
+        if (results.length > 0) {
+          for (let sizeItem of results) {
+            const size = await Size.create(sizeItem);
+            sizeListNew.push(size);
+          }
+        }
+      }
+      if (sizes.length > 0) {
+        for (let i = 0; i < sizes.length; i++) {
+          await Size.findByIdAndUpdate(sizes[i], {
+            $pull: { productId: product._id },
+          });
+        }
+      }
+
+      const { size, sizeDefault } = req.body;
+
+      if (size.length > 0) {
+        for (let sizeItem of size) {
+          await Size.findByIdAndUpdate(sizeItem._id, sizeItem, { new: true });
+          sizeListNew.push(sizeItem._id);
+        }
+      }
+      const data = { ...req.body, sizes: [...sizeListNew, ...sizeDefault] };
+      const resultUpdate = await Product.findByIdAndUpdate(req.body._id, data, { new: true });
+      if (!resultUpdate) {
+        return res.status(500).json({ message: 'fail', err: 'Update failed' });
+      }
       if (!CatRefProduct) {
         return res.status(404).json({ message: 'fail', err: 'Update failed' });
       }
@@ -271,6 +307,86 @@ export const ProductController = {
       next(error);
     }
   },
+
+  // updateProduct: async (req, res, next) => {
+  //   try {
+  //     const body = req.body;
+  //     console.log('🚀 ~ file: product.controller.js:292 ~ updateProduct: ~ body:', body);
+  //     const { id } = req.params;
+  //     const { category } = req.body;
+  //     const { error } = productValidate.validate(req.body, { abortEarly: false });
+  //     if (error) {
+  //       return res
+  //         .status(400)
+  //         .json({ message: 'fail', err: error.details.map((err) => err.message) });
+  //     }
+  //     const existCategory = await Category.findById(category);
+  //     if (!existCategory) {
+  //       return res.status(404).json({ message: 'fail', err: 'Not found category' });
+  //     }
+  //     /* dựa vào id và tìm ra produc có tồn tại hay khong */
+  //     const productExit = await Product.findById(id);
+  //     if (!productExit) {
+  //       return res.status(404).json({ message: 'fail', err: 'Not found Product' });
+  //     }
+  //     /* delete size đó luôn */
+  //     if (productExit.sizes.length > 0) {
+  //       const sizeList = productExit.sizes;
+  //       if (sizeList.length > 0) {
+  //         for (let size of sizeList) {
+  //           await Size.findByIdAndDelete(size);
+  //         }
+  //       }
+  //     }
+  //     /* gỡ topping trước đó mà product đã gắn */
+  //     const toppingList = productExit.toppings;
+  //     if (toppingList.length > 0) {
+  //       for (let topping of toppingList) {
+  //         await Topping.findByIdAndUpdate(topping, {
+  //           $pull: { products: productExit._id },
+  //         });
+  //       }
+  //     }
+  //     /* gỡ category ra khỏi product */
+  //     await Category.findByIdAndUpdate(productExit.category, {
+  //       $pull: { products: productExit._id },
+  //     });
+  //     const { size, sizeDefault, toppings } = body;
+  //     /* tạo size */
+  //     const sizeListNew = [];
+  //     if (sizes.length > 0) {
+  //       for (let size of sizes) {
+  //         const sizeItem = {
+  //           name: size.name,
+  //           price: size.price,
+  //         };
+  //         const result = await Size.create(sizeItem);
+  //         sizeListNew.push(result._id);
+  //       }
+  //     }
+  //     console.log('first ahihi');
+  //     /* update product đó */
+  //     const data = { ...body, sizes: sizeListNew };
+  //     console.log('🚀 ~ file: product.controller.js:200 ~ updateProduct: ~ data:', data);
+  //     const productUpdate = await Product.findByIdAndUpdate({ _id: id }, data, { new: true });
+  //     if (!productUpdate) {
+  //       return res.status(404).json({ message: 'fail', err: 'Update Product failed' });
+  //     }
+  //     /* update id product to category */
+  //     for (let topping of body.toppings) {
+  //       await Topping.findByIdAndUpdate(topping, {
+  //         $addToSet: { products: productUpdate._id },
+  //       });
+  //     }
+  //     /* update category */
+  //     await Category.findByIdAndUpdate(body.category, {
+  //       $addToSet: { products: productUpdate._id },
+  //     }).exec();
+  //     return res.status(200).json({ message: 'success', data: productUpdate });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // },
 
   /* xóa cứng */
   deleteRealProduct: async (req, res, next) => {
@@ -399,7 +515,7 @@ export const ProductController = {
         sort: { createdAt: -1 },
         populate: [
           { path: 'category', select: 'name' },
-          { path: 'sizes', select: 'name price' },
+          { path: 'sizes', select: 'name price is_default' },
           { path: 'toppings', select: 'name price' },
         ],
       };
