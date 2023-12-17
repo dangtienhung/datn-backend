@@ -726,7 +726,7 @@ export const analyticController = {
     for (const v of result) {
       if (v.status != 'canceled') doanh_thu += v.total; //doanh thu
       for (const c of v.items) {
-        console.log(c, 'cc');
+       
         if (!sold_product[c.name]) {
           sold_product[c.name] = { count: 1, _id: c._id, images: [c.image], price: c.price };
         } else {

@@ -34,7 +34,7 @@ manager.train().then(async () => {
 
     // res.send(response.answer || 'Xin lỗi , thông tin không có sẵn , vui lòng chuyển sang câu hỏi khác');
   });
-  // console.log( await manager.process('vi',"hello"));
+   
   // app.listen(3000);//
 });
 
@@ -180,7 +180,7 @@ app.get('/ask', async (req, res) => {
 
   if (query) {
     let response = await manager.process('vi', query);
-    console.log(response);
+  
     if (response.intent == 'None') {
       return res.json({
         answer: `Xin lôi toi khong hieu y của bạn`,
@@ -191,7 +191,7 @@ app.get('/ask', async (req, res) => {
       const aaa = pp.data;
       const nn = aaa['TopSell']['sản phẩm bán nhiều nhất'].name;
       const cc = aaa['TopSell']['sản phẩm bán nhiều nhất'].count;
-      console.log(pp.data);
+      
       return res.json({
         answer: `Sản phẩm bán chạy nhất tháng này là ${nn} và đã bán được ${cc} lượt`,
       });
@@ -203,7 +203,7 @@ app.get('/ask', async (req, res) => {
     else if (response.intent == 'lastest_buy') {
       const _id = new mongoose.Types.ObjectId(id);
       const documents = await checkouts.find({ user: _id });
-      console.log(documents);
+     
       if (documents[0]?.createdAt == undefined) {
         return res.json({
           answer: `Không có đơn hàng nào gần đây !`,

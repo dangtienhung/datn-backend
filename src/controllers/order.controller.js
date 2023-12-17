@@ -7,6 +7,8 @@ import Voucher from '../models/voucher.model.js';
 import { orderValidate } from '../validates/order.validate.js';
 import { sendEmailOrder } from './nodeMailer.controllers.js';
 dotenv.config();
+
+
 export const orderController = {
   /* create */
   create: async (req, res) => {
@@ -193,7 +195,7 @@ export const orderController = {
     ]);
 
     const dataEmail = {
-      to: updateState.email,
+      to: updateState.inforOrderShipping.email,
       text: 'Hi!',
       subject: 'cảm ơn bạn đã đặt hàng tại Trà sữa Connect',
       html: `
@@ -319,6 +321,25 @@ export const orderController = {
       if (!orderCanceled) {
         return res.status(400).json({ error: 'canceled order failed' });
       }
+        
+      const dataEmail1 = {
+        items:orderCanceled.items,
+        statusOrder:`<b>Đơn đã hủy </b> </br>
+        ${orderCanceled.user ? `<p>Lý do hủy: ${reasonCancelOrder}!</p> ` : ""}`,
+        orderId: orderCanceled._id,
+        payment: orderCanceled.paymentMethodId,
+        createdAt: moment(new Date()).format(' HH:mm:ss ĐD-MM-YYYY'),
+        userInfo: orderCanceled.inforOrderShipping,
+        priceShipping: orderCanceled.priceShipping,
+        total: orderCanceled.total,
+        to: orderCanceled.inforOrderShipping.email,
+        text: 'Hi!',
+        subject: 'cảm ơn bạn đã đặt hàng tại Trà sữa Connect',
+      };
+
+       
+
+      await sendEmailOrder(dataEmail1);
       return res.status(200).json({ message: 'canceled order successfully', order: orderCanceled });
     } catch (error) {
       return res.status(500).json({ error: error.message });
