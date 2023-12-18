@@ -4,7 +4,7 @@ const Enviroment = () => {
     return `http://localhost:5173`;
   } else if (process.env.NODE_ENV === 'production') {
     console.log('Đây là môi trường sản phẩm');
-    return `https://fe-du-an-tot-nghiep-hrdg4lmqx-dangtienhung.vercel.app`;
+    return `https://milk-tea-connect.click/`;
   } else {
     return 'http://localhost:5173';
   }

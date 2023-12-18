@@ -6,7 +6,7 @@ const app = express();
 const port = 3333;
 app.use(
   cors({
-    origin: 'http://localhost:5173', // or '*' for a less secure option that allows all origins
+    origin: ['http://localhost:5173', "https://milk-tea-connect.click", "https://sub.milk-tea-connect.click/","https://admin.milk-tea-connect.click/"], // or '*' for a less secure option that allows all origins
   })
 );
 
