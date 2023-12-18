@@ -16,7 +16,7 @@ const axios = require('axios');
 const fs = require('fs');
 app.use(
   cors({
-    origin: 'http://localhost:5173', // or '*' for a less secure option that allows all origins
+    origin: ['http://localhost:5173', "https://milk-tea-connect.click", "https://sub.milk-tea-connect.click/","https://admin.milk-tea-connect.click/"], // or '*' for a less secure option that allows all origins
   })
 );
 // const manager = require('./langchain.js');
@@ -363,7 +363,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   }).save();
   res.json(result);
 });
-app.use(cors({ origin: ['http://localhost:5173'], credentials: true }));
+app.use(cors({ origin: ['http://localhost:5173', "https://milk-tea-connect.click", "https://sub.milk-tea-connect.click/","https://admin.milk-tea-connect.click/"], credentials: true }));
 
 server.listen(3333, () => {
   console.log('Server đang lắng nghe trên cổng 3333');

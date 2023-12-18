@@ -503,7 +503,7 @@ export const userController = {
       foundUser.passwordResetToken = hashedToken;
       foundUser.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000);
       await foundUser.save();
-      const resetURL = `Please follow this link to reset your password. This link is valid still 10 minutes from now. <a href="http://localhost:5173/reset-forgot-password/${token}">Click Here</a>`;
+      const resetURL = `Please follow this link to reset your password. This link is valid still 10 minutes from now. <a href="https://milk-tea-connect.click/reset-forgot-password/${token}">Click Here</a>`;
 
       const data = {
         to: email,

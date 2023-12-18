@@ -23,6 +23,7 @@ export const orderValidate = joi.object({
         name: joi.string().required(),
         price: joi.number().required(),
         _id: joi.string().required(),
+        is_default: joi.boolean().default(false),
       }),
     })
   ),
