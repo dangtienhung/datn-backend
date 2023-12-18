@@ -63,7 +63,7 @@ const checkoutVnpay = {
       vnp_Params['vnp_IpAddr'] = ip;
       vnp_Params['vnp_Locale'] = 'vn';
       vnp_Params['vnp_OrderInfo'] = 'Thanh_toan_don_hang';
-      vnp_Params['vnp_ReturnUrl'] = `${Enviroment()}/products/checkout/payment-result?userId=${
+      vnp_Params['vnp_ReturnUrl'] = `https://milk-tea-connect.click/products/checkout/payment-result?userId=${
         req.body.user
       }&expire=${moment(new Date()).add(15, 'minute').toDate().getTime()}`;
       vnp_Params['vnp_TxnRef'] = moment(new Date()).format('DDHHmmss');

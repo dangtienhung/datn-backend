@@ -111,7 +111,7 @@ export const orderController = {
         message: 'create order successfully',
         order: {
           orderNew: order,
-          url: `${Enviroment()}/products/checkout/payment-result?encode=${encodeStripe}`,
+          url: `https://milk-tea-connect.click/products/checkout/payment-result?encode=${encodeStripe}`,
         },
       });
     } catch (error) {
