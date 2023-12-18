@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import querystring from 'qs';
 import moment from 'moment';
 import Voucher from '../models/voucher.model.js';
+import Enviroment from '../utils/checkEnviroment.js';
 dotenv.config();
 
 process.env.TZ = 'Asia/Ho_Chi_Minh';
@@ -62,12 +63,9 @@ const checkoutVnpay = {
       vnp_Params['vnp_IpAddr'] = ip;
       vnp_Params['vnp_Locale'] = 'vn';
       vnp_Params['vnp_OrderInfo'] = 'Thanh_toan_don_hang';
-      vnp_Params['vnp_ReturnUrl'] = `${
-        process.env.RETURN_URL
-      }/products/checkout/payment-result?userId=${req.body.user}&expire=${moment(new Date())
-        .add(15, 'minute')
-        .toDate()
-        .getTime()}`;
+      vnp_Params['vnp_ReturnUrl'] = `${Enviroment()}/products/checkout/payment-result?userId=${
+        req.body.user
+      }&expire=${moment(new Date()).add(15, 'minute').toDate().getTime()}`;
       vnp_Params['vnp_TxnRef'] = moment(new Date()).format('DDHHmmss');
 
       vnp_Params['vnp_OrderType'] = 'other';
