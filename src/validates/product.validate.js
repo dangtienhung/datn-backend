@@ -1,6 +1,7 @@
 import joi from 'joi';
 
 const productValidate = joi.object({
+  _id: joi.string(),
   name: joi.string().required({
     'string.base': 'Name must be a string',
     'string.empty': 'Name is not allowed to be empty ',
@@ -37,6 +38,7 @@ const productValidate = joi.object({
       joi.object({
         name: joi.string(),
         price: joi.number().default(0),
+        _id: joi.string(),
       })
     )
     .required(),
