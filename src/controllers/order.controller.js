@@ -6,8 +6,8 @@ import Order from '../models/order.model.js';
 import Voucher from '../models/voucher.model.js';
 import { orderValidate } from '../validates/order.validate.js';
 import { sendEmailOrder } from './nodeMailer.controllers.js';
+import Enviroment from '../utils/checkEnviroment.js';
 dotenv.config();
-
 
 export const orderController = {
   /* create */
@@ -111,7 +111,7 @@ export const orderController = {
         message: 'create order successfully',
         order: {
           orderNew: order,
-          url: `${process.env.RETURN_URL}/products/checkout/payment-result?encode=${encodeStripe}`,
+          url: `${Enviroment()}/products/checkout/payment-result?encode=${encodeStripe}`,
         },
       });
     } catch (error) {
@@ -237,19 +237,21 @@ export const orderController = {
 
             <p><b>Số Điện thoại :</b> ${updateState?.inforOrderShipping?.phone}</p>
             <p><b>Thời gian :</b> ${moment(new Date()).format(' HH:mm:ss ĐD-MM-YYYY')}</p>
-            <p><b>Hình thức thanh toán:</b> ${updateState.paymentMethodId == 'vnpay' ? 'VNPAY' : 'Thanh toán khi nhận hàng'
-        }</p>
+            <p><b>Hình thức thanh toán:</b> ${
+              updateState.paymentMethodId == 'vnpay' ? 'VNPAY' : 'Thanh toán khi nhận hàng'
+            }</p>
             <p><b>Id đơn hàng:</b> ${updateState._id}</p>
             
             <p><b>Địa chỉ :</b>${updateState?.inforOrderShipping?.address}</p>
           </div>
             
-            <div class="order-status"> Đơn hàng của bạn đã được cập nhật với trạng thái: <b>${status == 'confirmed'
-          ? 'Đã xác nhận'
-          : status == 'done'
-            ? 'Đã hoàn thành'
-            : 'Đơn đã hủy'
-        }</b></div>
+            <div class="order-status"> Đơn hàng của bạn đã được cập nhật với trạng thái: <b>${
+              status == 'confirmed'
+                ? 'Đã xác nhận'
+                : status == 'done'
+                ? 'Đã hoàn thành'
+                : 'Đơn đã hủy'
+            }</b></div>
             <div class="footer">
               <p>Cảm ơn bạn rất nhiều 💕💕💕!</p>
               <p>Đội ngũ hỗ trợ khách hàng</p>
@@ -321,11 +323,11 @@ export const orderController = {
       if (!orderCanceled) {
         return res.status(400).json({ error: 'canceled order failed' });
       }
-        
+
       const dataEmail1 = {
-        items:orderCanceled.items,
-        statusOrder:`<b>Đơn đã hủy </b> </br>
-        ${orderCanceled.user ? `<p>Lý do hủy: ${reasonCancelOrder}!</p> ` : ""}`,
+        items: orderCanceled.items,
+        statusOrder: `<b>Đơn đã hủy </b> </br>
+        ${orderCanceled.user ? `<p>Lý do hủy: ${reasonCancelOrder}!</p> ` : ''}`,
         orderId: orderCanceled._id,
         payment: orderCanceled.paymentMethodId,
         createdAt: moment(new Date()).format(' HH:mm:ss ĐD-MM-YYYY'),
@@ -336,8 +338,6 @@ export const orderController = {
         text: 'Hi!',
         subject: 'cảm ơn bạn đã đặt hàng tại Trà sữa Connect',
       };
-
-       
 
       await sendEmailOrder(dataEmail1);
       return res.status(200).json({ message: 'canceled order successfully', order: orderCanceled });
@@ -511,10 +511,9 @@ export const orderController = {
 
   updateOrderPending: async (req, res) => {
     try {
-
       const body = req.body;
-      if (body.status !== "pending") {
-        return res.status(400).json({ error: "Đơn hàng đã được xác nhận nên không thể sửa lại" });
+      if (body.status !== 'pending') {
+        return res.status(400).json({ error: 'Đơn hàng đã được xác nhận nên không thể sửa lại' });
       }
       const items = body.items;
       /* tính tổng tiền của đơn hàng người dùng vừa đặt */
@@ -532,14 +531,19 @@ export const orderController = {
       const priceShipping = Number(body.priceShipping) || 0;
       // check _id or phone user
       totalAll = total + priceShipping;
-      const orderChange = await Order.findOneAndUpdate({ _id: body._id }, {
-        ...body, total: totalAll,
-        priceShipping: body.priceShipping,
-        is_active: true,
-      }, { new: true });
-      return res.json({ message: "success", orderChange })
+      const orderChange = await Order.findOneAndUpdate(
+        { _id: body._id },
+        {
+          ...body,
+          total: totalAll,
+          priceShipping: body.priceShipping,
+          is_active: true,
+        },
+        { new: true }
+      );
+      return res.json({ message: 'success', orderChange });
     } catch (error) {
       res.status(500).json({ error: error.message, body });
     }
-  }
+  },
 };
