@@ -215,7 +215,7 @@ app.get('/ask', async (req, res) => {
     if (response.intent.includes('AskProduct')) {
       const str = response.intent;
       const number = str.match(/\d+/)[0];
-      var llsd = await axios.get('http://localhost:3333/products');
+      var llsd = await axios.get('http://103.57.221.160:3333/products');
       llsd = llsd.data;
       var ob = llsd[number];
       return res.json({
@@ -223,7 +223,7 @@ app.get('/ask', async (req, res) => {
       });
     }
     if (response.intent == 'dtt') {
-      const pp = await axios.get('http://localhost:8000/api/analyst');
+      const pp = await axios.get('http://103.57.221.160:8000/api/analyst');
       const aaa = pp.data;
       const nn = aaa['TopSell']['sản phẩm bán nhiều nhất'].name;
       const cc = aaa['TopSell']['sản phẩm bán nhiều nhất'].count;

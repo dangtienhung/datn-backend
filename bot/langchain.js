@@ -109,7 +109,7 @@ manager.addAnswer('vi', 'NeedHelp', 'Shop lúc nào có mặt nè , bạn cần 
 manager.addAnswer('vi', 'NeedHelp', 'Shop đang online nè  , bạn có chuyện gì thế ');
 
 axios
-  .get('http://localhost:3333/products')
+  .get('http://103.57.221.160:3333/products')
   .then((response) => {
     let i = 0;
     let AllProduct =
@@ -273,7 +273,7 @@ axios
 //bảng checkouts
 
 axios
-  .get('http://localhost:3333/checkouts')
+  .get('http://103.57.221.160:3333/checkouts')
   .then((response) => {
     let i = 0;
     response['data'].forEach((value) => {
@@ -342,7 +342,7 @@ manager.addDocument('vi', 'Topping topping [q=topping]', 'isToppingF');
 //call axios o day
 
 axios
-  .get('http://localhost:3333/toppings')
+  .get('http://103.57.221.160:3333/toppings')
   .then((response) => {
     let i = 0;
     let listTopping = '<ol>';

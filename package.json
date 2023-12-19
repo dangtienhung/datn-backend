@@ -9,7 +9,8 @@
     "start": "nodemon ./src/app.js",
     "startBot": "npx nodemon ./bot/index.js",
     "dev": "nodemon ./clientBot2.js",
-    "all": "concurrently \"npm run dev\" \"npm run startBot\" \"npm start\" "
+    "all": "concurrently \"npm run dev\" \"npm run startBot\" \"npm start\" ",
+    "runCode":"npm run all"
   },
   "keywords": [],
   "author": "",
@@ -47,6 +48,7 @@
     "passport-github": "^1.1.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-twitter": "^1.0.4",
+    "pm2": "^5.3.0",
     "qs": "^6.11.2",
     "random": "^4.1.0",
     "rimraf": "^5.0.1",

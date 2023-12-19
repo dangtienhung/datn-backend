@@ -79,7 +79,7 @@ manager.addDocument(
   'BFFSS2k'
 );
 manager.addDocument('vi', 'Trà sữa có những loại nào là phổ biến và tôi có thể chọn?', 'BFFSS2k');
-axios.get('http://localhost:3333/products').then((response) => {
+axios.get('http://103.57.221.160:3333/products').then((response) => {
   let AllProduct = "<span style='display:flex'>";
   for (let i = 0; i < response['data'].length; i++) {
     if (i == 5) break;
