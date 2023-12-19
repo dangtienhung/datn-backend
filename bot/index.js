@@ -16,7 +16,7 @@ const axios = require('axios');
 const fs = require('fs');
 app.use(
   cors({
-    origin: ['http://localhost:5173', "https://milk-tea-connect.click", "https://sub.milk-tea-connect.click/", "https://admin.milk-tea-connect.click/", "http://103.57.221.160:8000", "http://103.57.221.160:3333"], // or '*' for a less secure option that allows all origins
+    origin: "*"
   })
 );
 // const manager = require('./langchain.js');
