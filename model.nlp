@@ -908,7 +908,7 @@
           },
           {
             "domain": "default",
-            "utterance": "shop45c48cce2e2d7fbdea1afc51c7c6ad26",
+            "utterance": "shopeccbc87e4b5ce2fe28308fd9f2a7baf3",
             "intent": "greeting"
           },
           {
@@ -923,32 +923,32 @@
           },
           {
             "domain": "default",
-            "utterance": "Chào shop, shop có ship không ạ 45c48cce2e2d7fbdea1afc51c7c6ad26",
+            "utterance": "Chào shop, shop có ship không ạ a87ff679a2f3e71d9181a67b7542122c",
             "intent": "AboutShip"
           },
           {
             "domain": "default",
-            "utterance": "ship ko shop ơie4da3b7fbbce2345d7772b0674a318d5",
+            "utterance": "ship ko shop ơia87ff679a2f3e71d9181a67b7542122c",
             "intent": "AboutShip"
           },
           {
             "domain": "default",
-            "utterance": "Có ai online khôngcfcd208495d565ef66e7dff9f98764da",
+            "utterance": "Có ai online khôngd3d9446802a44259755d38e6d163e820",
             "intent": "NeedHelp"
           },
           {
             "domain": "default",
-            "utterance": "Tôi cần giúp đỡa87ff679a2f3e71d9181a67b7542122c",
+            "utterance": "Tôi cần giúp đỡd3d9446802a44259755d38e6d163e820",
             "intent": "NeedHelp"
           },
           {
             "domain": "default",
-            "utterance": "E cảm ơn shop ạcfcd208495d565ef66e7dff9f98764da",
+            "utterance": "E cảm ơn shop ạc4ca4238a0b923820dcc509a6f75849b",
             "intent": "thanks"
           },
           {
             "domain": "default",
-            "utterance": "tks shop nhéc9f0f895fb98ab9159f51fd0297e236d",
+            "utterance": "tks shop nhéc4ca4238a0b923820dcc509a6f75849b",
             "intent": "thanks"
           },
           {
@@ -1729,7 +1729,7 @@
       ],
       [
         "vi",
-        "shop45c48cce2e2d7fbdea1afc51c7c6ad26"
+        "shopeccbc87e4b5ce2fe28308fd9f2a7baf3"
       ],
       [
         "vi",
@@ -1741,27 +1741,27 @@
       ],
       [
         "vi",
-        "Chào shop, shop có ship không ạ 45c48cce2e2d7fbdea1afc51c7c6ad26"
+        "Chào shop, shop có ship không ạ a87ff679a2f3e71d9181a67b7542122c"
       ],
       [
         "vi",
-        "ship ko shop ơie4da3b7fbbce2345d7772b0674a318d5"
+        "ship ko shop ơia87ff679a2f3e71d9181a67b7542122c"
       ],
       [
         "vi",
-        "Có ai online khôngcfcd208495d565ef66e7dff9f98764da"
+        "Có ai online khôngd3d9446802a44259755d38e6d163e820"
       ],
       [
         "vi",
-        "Tôi cần giúp đỡa87ff679a2f3e71d9181a67b7542122c"
+        "Tôi cần giúp đỡd3d9446802a44259755d38e6d163e820"
       ],
       [
         "vi",
-        "E cảm ơn shop ạcfcd208495d565ef66e7dff9f98764da"
+        "E cảm ơn shop ạc4ca4238a0b923820dcc509a6f75849b"
       ],
       [
         "vi",
-        "tks shop nhéc9f0f895fb98ab9159f51fd0297e236d"
+        "tks shop nhéc4ca4238a0b923820dcc509a6f75849b"
       ],
       [
         "vi",

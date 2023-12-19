@@ -64,7 +64,9 @@ app.get('/', (req, res) => {
 app.use(morgan('common'));
 app.use(cookieParser());
 app.use(express.json());
-app.use(cors({ origin: "*" }));
+app.use(cors({
+  origin: ['http://localhost:5173', "https://milk-tea-connect.click", "https://sub.milk-tea-connect.click/", "https://admin.milk-tea-connect.click/","http://milk-tea-connect.click", "http://103.57.221.160:8000", "http://103.57.221.160:3333"], credentials: true, methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  optionsSuccessStatus: 204, }));
 
 app.use(
   session({
@@ -179,7 +181,7 @@ const port = process.env.PORT || 5000;
 
 const server = http.createServer(app);
 const io = new SocketIo(server);
-server.listen(port, hostname, async () => {
+server.listen(port, async () => {
   try {
     socket(io);
     console.log(`Server is running on port ${port}`);

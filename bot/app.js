@@ -6,7 +6,8 @@ const app = express();
 const port = 3333;
 app.use(
   cors({
-    origin:"*"
+    origin: ['http://localhost:5173', "https://milk-tea-connect.click/", "https://sub.milk-tea-connect.click/", "https://admin.milk-tea-connect.click/", "http://103.57.221.160:8000", "http://103.57.221.160:3333"], credentials: true, methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    optionsSuccessStatus: 204,
   })
 );
 
