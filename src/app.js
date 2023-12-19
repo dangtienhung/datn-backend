@@ -65,7 +65,7 @@ app.get('/', (req, res) => {
 app.use(morgan('common'));
 app.use(cookieParser());
 app.use(express.json());
-app.use(cors({ origin: '*', credentials: true }));
+app.use(cors({ origin: true, credentials: true }));
 
 app.use(
   session({
