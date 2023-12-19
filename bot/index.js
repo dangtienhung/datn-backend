@@ -363,7 +363,15 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   }).save();
   res.json(result);
 });
-app.use(cors({ origin: ['http://localhost:5173'], credentials: true }));
+app.use(
+  cors({
+    origin: [
+      'http://localhost:5173',
+      'https://fe-du-an-tot-nghiep-hrdg4lmqx-dangtienhung.vercel.app/',
+    ],
+    credentials: true,
+  })
+);
 
 server.listen(3333, () => {
   console.log('Server đang lắng nghe trên cổng 3333');

@@ -107,11 +107,13 @@ export const orderController = {
         });
       }
 
+      const url = `${Enviroment()}/products/checkout/payment-result?encode=${encodeStripe}`;
+
       return res.status(200).json({
         message: 'create order successfully',
         order: {
           orderNew: order,
-          url: `${Enviroment()}/products/checkout/payment-result?encode=${encodeStripe}`,
+          url,
         },
       });
     } catch (error) {

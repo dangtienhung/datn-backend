@@ -4,19 +4,21 @@ import dotenv from 'dotenv';
 import User from '../models/user.model.js';
 
 import { generateRefreshToken, generateToken } from '../configs/token.js';
+import Enviroment from '../utils/checkEnviroment.js';
 dotenv.config();
-// git;
+
 const PassportRoutes = express.Router();
 
 PassportRoutes.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 PassportRoutes.get(
   '/google/callback',
-  passport.authenticate('google', { failureRedirect: process.env.LOGINPAGE }),
+  passport.authenticate('google', { failureRedirect: Enviroment() + '/signin' }),
   function (req, res) {
     const { role } = req.user;
     if (role === 'customer') {
-      res.redirect(process.env.HOMEPAGE);
+      const urlRedirect = Enviroment();
+      res.redirect(urlRedirect);
     }
   }
 );
