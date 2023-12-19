@@ -14,11 +14,22 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const axios = require('axios');
 const fs = require('fs');
-app.use(
-  cors({
-    origin: "*"
-  })
-);
+
+const allowedOrigins = ['http://localhost:5173', "https://milk-tea-connect.click", "https://sub.milk-tea-connect.click/", "https://admin.milk-tea-connect.click/", "http://103.57.221.160:8000", "http://103.57.221.160:3333"];
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.includes(origin)) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  }
+
+}));
 // const manager = require('./langchain.js');
 const { all } = require('axios');
 var manager = require('./langchain.js');
@@ -364,9 +375,20 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   }).save();
   res.json(result);
 });
+const allowedOrigins1 = ['http://localhost:5173', "https://milk-tea-connect.click", "https://sub.milk-tea-connect.click/", "https://admin.milk-tea-connect.click/", "http://103.57.221.160:8000", "http://103.57.221.160:3333"];
 app.use(cors({
-  origin: ['http://localhost:5173', "https://milk-tea-connect.click", "https://sub.milk-tea-connect.click/", "https://admin.milk-tea-connect.click/", "http://103.57.221.160:8000", "http://103.57.221.160:3333"], credentials: true, methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  optionsSuccessStatus: 204,
+  origin: function (origin, callback) {
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins1.includes(origin)) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  }
+
 }));
 const hostname = '103.57.221.160';
 
