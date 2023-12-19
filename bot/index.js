@@ -348,6 +348,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     const sheet = workbook.Sheets[sheetName];
     result[sheetName] = xlsx.utils.sheet_to_json(sheet);
   });
+  
   const allData = await trained.findOne({});
   manager.import(allData.data);
   for (const v of result.Sheet1) {
@@ -364,7 +365,8 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   res.json(result);
 });
 app.use(cors({ origin: ['http://localhost:5173', "https://milk-tea-connect.click", "https://sub.milk-tea-connect.click/","https://admin.milk-tea-connect.click/"], credentials: true }));
+const hostname = '103.57.221.160';
 
-server.listen(3333, () => {
+server.listen(3333,hostname, () => {
   console.log('Server đang lắng nghe trên cổng 3333');
 });

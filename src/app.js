@@ -34,7 +34,7 @@ dotenv.config();
 /* config */
 
 //Setup dirname
-
+const hostname = '103.57.221.160';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 //file name html
@@ -179,7 +179,7 @@ const port = process.env.PORT || 5000;
 
 const server = http.createServer(app);
 const io = new SocketIo(server);
-server.listen(port, async () => {
+server.listen(port, hostname, async () => {
   try {
     socket(io);
     console.log(`Server is running on port ${port}`);

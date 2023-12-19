@@ -276,7 +276,8 @@ io.on('connection', async (socket) => {
     io.emit('AdminMsg', { text: message.text, username: JWTusername, to: 'toAdmin' });
   });
 });
+const hostname = '103.57.221.160';
 
-server.listen(4001, (req, res) => {
+server.listen(4001, hostname,(req, res) => {
   console.log(chalk.bgCyanBright(chalk.yellow('Bot 2 start success !')));
 });
