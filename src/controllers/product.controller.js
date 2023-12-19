@@ -156,7 +156,7 @@ export const ProductController = {
         sort: { createdAt: -1 },
         populate: [
           { path: 'category', select: 'name' },
-          { path: 'sizes', select: 'name price' },
+          { path: 'sizes', select: 'name price is_default' },
           { path: 'toppings', select: 'name price' },
         ],
       };
