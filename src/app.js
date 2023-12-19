@@ -179,17 +179,17 @@ const port = process.env.PORT || 5000;
 //Chat
 let server;
 
-if (process.env.NODE_ENV === 'production') {
-  // Sử dụng HTTPS trong production
-  const options = {
-    key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
-    cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem')),
-  };
-  server = https.createServer(options, app);
-} else {
-  // Sử dụng HTTP trong development
-  server = http.createServer(app);
-}
+// if (process.env.NODE_ENV === 'production') {
+// Sử dụng HTTPS trong production
+// const options = {
+// key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
+// cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem')),
+// };
+// server = https.createServer(options, app);
+// } else {
+// Sử dụng HTTP trong development
+server = http.createServer(app);
+// }
 // const server = http.createServer(app);
 const io = new SocketIo(server);
 server.listen(port, async () => {
