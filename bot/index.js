@@ -16,7 +16,7 @@ const axios = require('axios');
 const fs = require('fs');
 app.use(
   cors({
-    origin: ['http://localhost:5173', "https://milk-tea-connect.click", "https://sub.milk-tea-connect.click/","https://admin.milk-tea-connect.click/"], // or '*' for a less secure option that allows all origins
+    origin: ['http://localhost:5173', "https://milk-tea-connect.click", "https://sub.milk-tea-connect.click/", "https://admin.milk-tea-connect.click/", "http://103.57.221.160:8000", "http://103.57.221.160:3333"], // or '*' for a less secure option that allows all origins
   })
 );
 // const manager = require('./langchain.js');
@@ -162,9 +162,9 @@ io.on('connection', (socket) => {
     io.emit(
       'ChatMessage',
       "<str style='color:green'>" +
-        (response.answer ||
-          'Xin lỗi ,shop chưa hiểu câu hỏi của bạn ,  bạn vui lòng hãy chat cụ thể hơn ạ 🥹  !') +
-        '</str>'
+      (response.answer ||
+        'Xin lỗi ,shop chưa hiểu câu hỏi của bạn ,  bạn vui lòng hãy chat cụ thể hơn ạ 🥹  !') +
+      '</str>'
     );
   });
   socket.on('Order', async (message) => {
@@ -348,7 +348,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     const sheet = workbook.Sheets[sheetName];
     result[sheetName] = xlsx.utils.sheet_to_json(sheet);
   });
-  
+
   const allData = await trained.findOne({});
   manager.import(allData.data);
   for (const v of result.Sheet1) {
@@ -364,9 +364,9 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   }).save();
   res.json(result);
 });
-app.use(cors({ origin: ['http://localhost:5173', "https://milk-tea-connect.click", "https://sub.milk-tea-connect.click/","https://admin.milk-tea-connect.click/"], credentials: true }));
+app.use(cors({ origin: ['http://localhost:5173', "https://milk-tea-connect.click", "https://sub.milk-tea-connect.click/", "https://admin.milk-tea-connect.click/", "http://103.57.221.160:8000", "http://103.57.221.160:3333"], credentials: true }));
 const hostname = '103.57.221.160';
 
-server.listen(3333,hostname, () => {
+server.listen(3333, hostname, () => {
   console.log('Server đang lắng nghe trên cổng 3333');
 });
