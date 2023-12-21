@@ -115,7 +115,7 @@ passport.use(passportMiddleware.GoogleAuth);
 /* routes */
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', 'https://milk-tea-connect.click');
-  // Other CORS headers can be set if needed
+  
   next();
 });
 app.use('/api-docs', middleSwaggers);
