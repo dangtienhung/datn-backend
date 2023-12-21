@@ -13,6 +13,7 @@ import express from 'express';
 import { fileURLToPath } from 'url';
 import helmet from 'helmet';
 import http from 'http';
+import https from 'https';
 import jwt from 'jsonwebtoken';
 import middleSwaggers from './docs/index.js';
 import morgan from 'morgan';
@@ -22,9 +23,9 @@ import path from 'path';
 import rootRoutes from './routes/index.js';
 import session from 'express-session';
 import socket from './configs/socket.js';
-import { ppid } from 'process';
 import Orders from './models/order.model.js';
 import Users from './models/user.model.js';
+import fs from 'fs';
 // import Order from './models/order.model.js';
 
 //lấy  jwt
@@ -190,8 +191,20 @@ connectDb();
 const port = process.env.PORT || 5000;
 
 //Chat
+let server;
 
-const server = http.createServer(app);
+// if (process.env.NODE_ENV === 'production') {
+// Sử dụng HTTPS trong production
+// const options = {
+// key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
+// cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem')),
+// };
+// server = https.createServer(options, app);
+// } else {
+// Sử dụng HTTP trong development
+server = http.createServer(app);
+// }
+// const server = http.createServer(app);
 const io = new SocketIo(server);
 server.listen(port, async () => {
   try {

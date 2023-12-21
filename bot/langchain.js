@@ -114,8 +114,7 @@ axios
     let i = 0;
     let AllProduct =
       "<span style='display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; height: 500px;overflow-y: auto; width:100%'>";
-    response['data'].forEach((value) => {
-      
+    response?.['data'].forEach((value) => {
       let nameText = value.name.length > 14 ? value.name.substring(0, 14) + '...' : value.name;
       AllProduct +=
         "<a href='/products' style='display: block; width:150px; height:220px; padding:10px; border:1px #ccc solid; color: white; margin:10px; box-shadow:0 4px 8px 0 rgba(0,0,0,0.2); border-radius:10px; text-align:center;'>" +
@@ -134,26 +133,26 @@ axios
         'vi',
         'AskProduct' + i,
         'Giá hiện tại của ' +
-          value.name +
+          value?.name +
           'size' +
-          value.sizes[0].name +
+          value.sizes[0]?.name +
           ' là ' +
-          value.sizes[0].price +
+          value.sizes[0]?.price +
           'và đang sale' +
-          +value.sale +
+          +value?.sale +
           'VND nhé bạn !'
       );
       manager.addAnswer(
         'vi',
         'AskProduct' + i,
         'Giá của ' +
-          value.name +
+          value?.name +
           'size' +
-          value.sizes[0].name +
+          value.sizes[0]?.name +
           ' là ' +
-          value.sizes[0].price +
+          value.sizes[0]?.price +
           'và đang sale' +
-          value.sale +
+          value?.sale +
           'VND nè !'
       );
       //description
