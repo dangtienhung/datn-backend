@@ -65,21 +65,8 @@ app.get('/', (req, res) => {
 app.use(morgan('common'));
 app.use(cookieParser());
 app.use(express.json());
-const allowedOrigins = ['http://localhost:5173', "https://milk-tea-connect.click", "https://sub.milk-tea-connect.click/", "https://admin.milk-tea-connect.click/", "http://103.57.221.160:8000", "http://103.57.221.160:3333"];
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) {
-      return callback(null, true);
-    }
 
-    if (allowedOrigins.includes(origin)) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  }
 
-}));
 
 app.use(
   session({
@@ -112,10 +99,9 @@ passport.deserializeUser((id, done) => {
 /* OAuth2 */
 passport.use(passportMiddleware.GoogleAuth);
 
-/* routes */
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'https://milk-tea-connect.click');
-  
+  res.header("Access-Control-Allow-Origin", "https://milk-tea-connect.click");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   next();
 });
 app.use('/api-docs', middleSwaggers);

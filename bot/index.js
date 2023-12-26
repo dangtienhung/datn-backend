@@ -15,21 +15,7 @@ const upload = multer({ storage: storage });
 const axios = require('axios');
 const fs = require('fs');
 
-const allowedOrigins = ['http://localhost:5173', "https://milk-tea-connect.click", "https://sub.milk-tea-connect.click/", "https://admin.milk-tea-connect.click/", "http://103.57.221.160:8000", "http://103.57.221.160:3333"];
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) {
-      return callback(null, true);
-    }
-
-    if (allowedOrigins.includes(origin)) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  }
-
-}));
+ 
 // const manager = require('./langchain.js');
 const { all } = require('axios');
 var manager = require('./langchain.js');
@@ -226,7 +212,7 @@ app.get('/ask', async (req, res) => {
     if (response.intent.includes('AskProduct')) {
       const str = response.intent;
       const number = str.match(/\d+/)[0];
-      var llsd = await axios.get('http://103.57.221.160:3333/products');
+      var llsd = await axios.get('https://sub.milk-tea-connect.click/products');
       llsd = llsd.data;
       var ob = llsd[number];
       return res.json({
@@ -234,7 +220,7 @@ app.get('/ask', async (req, res) => {
       });
     }
     if (response.intent == 'dtt') {
-      const pp = await axios.get('http://103.57.221.160:8000/api/analyst');
+      const pp = await axios.get('https://sub.milk-tea-connect.click/api/analyst');
       const aaa = pp.data;
       const nn = aaa['TopSell']['sản phẩm bán nhiều nhất'].name;
       const cc = aaa['TopSell']['sản phẩm bán nhiều nhất'].count;
@@ -375,23 +361,8 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   }).save();
   res.json(result);
 });
-const allowedOrigins1 = ['http://localhost:5173', "https://milk-tea-connect.click", "https://sub.milk-tea-connect.click/", "https://admin.milk-tea-connect.click/", "http://103.57.221.160:8000", "http://103.57.221.160:3333"];
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) {
-      return callback(null, true);
-    }
-
-    if (allowedOrigins1.includes(origin)) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  }
-
-}));
-const hostname = '103.57.221.160';
-
-server.listen(3333, hostname, () => {
+ 
+ 
+server.listen(3333,  () => {
   console.log('Server đang lắng nghe trên cổng 3333');
 });
